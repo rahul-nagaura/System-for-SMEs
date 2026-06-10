@@ -1,65 +1,82 @@
-import Image from "next/image";
+import HomeClient from "./home-client";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+export const revalidate = 3600;
+
+const defaultReviews = [
+  {
+    name: "Anand K.",
+    role: "Retail Chain Owner",
+    text: "I was managing 15 retail stores via phone calls. After one session, we moved to a dashboard. I finally had a Sunday off after 3 years.",
+    rating: 5
+  },
+  {
+    name: "Priya M.",
+    role: "Manufacturing Director",
+    text: "Raghav understands the reality of Indian SME staff. He doesn't suggest complex tech they won't use. He suggests what actually works.",
+    rating: 5
+  },
+  {
+    name: "Vikram Singh",
+    role: "Logistics Provider",
+    text: "The best ₹1500 I've spent on my business. The roadmap alone saved me 2 months of trial and error with different softwares.",
+    rating: 5
+  }
+];
+
+const defaultFAQs = [
+  {
+    question: "What if I don't use any tech right now?",
+    answer: "That's perfectly fine. We start from wherever you are. Whether you're using pen and paper or WhatsApp, our goal is to find the *simplest* next step for you."
+  },
+  {
+    question: "Will you implement the systems for me?",
+    answer: "This session is for strategy and a roadmap. If you need implementation support after the session, we can discuss a full consulting engagement, but there is no obligation."
+  },
+  {
+    question: "Is this session suitable for any industry?",
+    answer: "The principles of systems apply to almost any business. However, I specialize in Manufacturing, Retail, Wholesale, and Logistics."
+  },
+  {
+    question: "How do I prepare for the session?",
+    answer: "Just bring your biggest operational headaches and an open mind. If you have an org chart or a list of your current staff roles, that's a bonus."
+  }
+];
+
+export default async function LandingPage() {
+  let content = {
+    settings: {
+      pricing_amount: "2499",
+      owner_photo_url: "/raghav.jpg"
+    },
+    faqs: defaultFAQs,
+    reviews: defaultReviews,
+    vault: []
+  };
+
+  const webappUrl = process.env.GOOGLE_SCRIPT_WEBAPP_URL;
+  if (webappUrl) {
+    try {
+      const res = await fetch(`${webappUrl}?action=fetchContent`, {
+        next: { revalidate: 60 }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) {
+          content = {
+            settings: {
+              pricing_amount: data.settings?.pricing_amount || "2499",
+              owner_photo_url: data.settings?.owner_photo_url || "/raghav.jpg"
+            },
+            faqs: data.faqs && data.faqs.length > 0 ? data.faqs : defaultFAQs,
+            reviews: data.reviews && data.reviews.length > 0 ? data.reviews : defaultReviews,
+            vault: data.vault || []
+          };
+        }
+      }
+    } catch (err) {
+      console.error("Landing page server-side fetch failed:", err);
+    }
+  }
+
+  return <HomeClient content={content} />;
 }

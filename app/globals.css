@@ -1,26 +1,178 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* === SME Reference Site Exact Colors === */
+  --color-yellow: #ffd21f;
+  --color-yellow-dark: #e2b900;
+  --color-black: #080808;
+  --color-ink: #141414;
+  --color-muted: #666a70;
+  --color-line: #d8d8d8;
+  --color-paper: #ffffff;
+  --color-soft: #f2f2f2;
+  --color-danger: #ef5252;
+  --color-success: #23ba62;
+
+  /* === Mapped Theme Classes for HTML parity === */
+  --color-primary-container: #fcd12a;
+  --color-text-primary: #0a0a0a;
+  --color-surface-muted: #f5f5f5;
+  --color-on-surface-variant: #4d4633;
+  --color-on-primary-container: #6f5a00;
+
+  /* === SME Protocol Design System Colors === */
+  --color-surface: #fff8f2;
+  --color-surface-dim: #e3d9c9;
+  --color-surface-bright: #fff8f2;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #fdf2e2;
+  --color-surface-container: #f8ecdc;
+  --color-surface-container-high: #f2e7d7;
+  --color-surface-container-highest: #ece1d1;
+  --color-on-surface: #201b11;
+  --color-inverse-surface: #353025;
+  --color-inverse-on-surface: #faefdf;
+  --color-outline: #817660;
+  --color-outline-variant: #d3c5ac;
+  --color-surface-tint: #775a00;
+  --color-primary: #775a00;
+  --color-on-primary: #ffffff;
+  --color-secondary: #725b22;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fcdc95;
+  --color-on-secondary-container: #776026;
+  --color-tertiary: #006878;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #00d0ed;
+  --color-on-tertiary-container: #005562;
+  --color-background: #fff8f2;
+  --color-on-background: #201b11;
+  --color-surface-variant: #ece1d1;
+
+  /* === Spacing === */
+  --spacing-section-padding-desktop: 120px;
+  --spacing-section-padding-mobile: 80px;
+  --spacing-gutter: 24px;
+  --spacing-margin-safe: 32px;
+  --spacing-stack-gap: 16px;
+
+  /* === Typography === */
+  --font-sans: 'Inter', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  .brutalist-theme *, 
+  .brutalist-theme *::before, 
+  .brutalist-theme *::after {
+    border-radius: 0px !important;
+    box-sizing: border-box;
   }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #141414;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  img { display: block; max-width: 100%; }
+
+  /* Material Symbols */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Eyebrow label with yellow dash — matches reference site */
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 34px;
+    height: 2px;
+    margin-right: 9px;
+    vertical-align: middle;
+    background: #ffd21f;
+  }
+  .eyebrow.no-mark::before { display: none; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility font-display-xl {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+@utility text-display-xl {
+  font-size: 80px;
+  line-height: 1.0;
+}
+@utility text-display-xl-mobile {
+  font-size: 48px;
+  line-height: 1.1;
+}
+@utility font-headline-lg {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@utility text-headline-lg {
+  font-size: 48px;
+  line-height: 1.2;
+}
+@utility text-headline-lg-mobile {
+  font-size: 32px;
+  line-height: 1.2;
+}
+@utility font-section-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+@utility text-section-label {
+  font-size: 12px;
+  line-height: 16px;
+}
+@utility font-body-lg {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+@utility text-body-lg {
+  font-size: 18px;
+  line-height: 1.6;
+}
+@utility font-body-md {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+@utility text-body-md {
+  font-size: 16px;
+  line-height: 1.6;
+}
+@utility font-button-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+}
+@utility text-button-text {
+  font-size: 16px;
+  line-height: 1.0;
+}
+
+/* Custom scrollbar for prompt blocks */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0e0e0e;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #333;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ffd21f;
 }
