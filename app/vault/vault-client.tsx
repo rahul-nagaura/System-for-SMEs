@@ -178,18 +178,10 @@ export default function VaultPage({ content }: { content: any }) {
     (item: any) => !sheetGuideIds.has(item.id)
   );
 
-  // 3. Combine them: Sheet entries first (newest top), then remaining default guides, and always AI Prompt Kit at the very end
+  // 3. Combine them: Sheet entries first (newest top), then remaining default guides
   const resourcesList = [
     ...sheetGuides,
-    ...filteredDefaultGuides,
-    {
-      id: "ai-prompt-kit",
-      title: "AI Prompt Kit",
-      tag: "Prompt",
-      icon: "smart_toy",
-      intro: "Automate mundane tasks with these tried & tested prompts.",
-      isLocalAnchor: true,
-    }
+    ...filteredDefaultGuides
   ];
 
   // 4. Get sheet prompts (section is "ai_prompts") and reverse
@@ -413,9 +405,9 @@ export default function VaultPage({ content }: { content: any }) {
           </p>
           <Link
             className="bg-black text-white px-12 py-6 font-button-text text-button-text hover:bg-zinc-800 hover:text-white hover:border-zinc-800 transition-all border-2 border-black inline-block text-center"
-            href="/bml"
+            href="/"
           >
-            Business Audit Karo →
+            System Kaise Banayein, Dekho →
           </Link>
         </div>
       </section>

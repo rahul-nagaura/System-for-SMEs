@@ -822,13 +822,13 @@ export default function BMLCalculator() {
               {/* FULL-WIDTH PRIMARY BUTTON */}
               <div className="order-3 lg:order-3 lg:col-span-2 pt-2 pb-2">
                 <Link
-                  href="/booking"
+                  href="/"
                   className="w-full bg-[#FCD12A] border-none border-b-[5px] border-[#0E0E0E] text-[#0E0E0E] font-['Archivo'] font-black text-lg sm:text-[22px] md:text-[28px] tracking-[0.01em] p-[30px] cursor-pointer flex items-center justify-center gap-4 transition-transform hover:-translate-y-0.5 rounded-none text-center block"
                 >
-                  BOOK YOUR STRATEGY SESSION <span className="text-xl sm:text-2xl">&rarr;</span>
+                  GET YOUR CUSTOM SYSTEMS ROADMAP <span className="text-xl sm:text-2xl">&rarr;</span>
                 </Link>
                 <div className="text-center text-xs text-[#6B6B66] mt-3.5 tracking-[0.02em] font-medium">
-                  <b>30-min call</b> &middot; a specific systems roadmap for your business &middot; <b>no obligation</b>
+                  <b>1-on-1 Strategy Session</b> &middot; A customized systems blueprint for your business &middot; <b>Step-by-step plan</b>
                 </div>
               </div>
             </div>
