@@ -166,6 +166,13 @@ function doGet(e) {
       var idxIntro = getIndex('intro', 4);
       var idxContent = getIndex('content', 5);
       var idxSection = getIndex('section', 6);
+      var idxDownloadUrl = getIndex('downloadurl', -1);
+      if (idxDownloadUrl === -1) {
+        idxDownloadUrl = getIndex('download_url', -1);
+      }
+      if (idxDownloadUrl === -1) {
+        idxDownloadUrl = getIndex('download link', -1);
+      }
       
       for (var i = 1; i < vaultRows.length; i++) {
         var row = vaultRows[i];
@@ -176,6 +183,7 @@ function doGet(e) {
         var intro = row[idxIntro];
         var contentVal = row[idxContent];
         var section = row[idxSection];
+        var downloadUrl = idxDownloadUrl !== -1 ? row[idxDownloadUrl] : '';
         
         if (slug && title) {
           vault.push({
@@ -185,7 +193,8 @@ function doGet(e) {
             icon: icon || 'rocket_launch',
             intro: intro || '',
             content: contentVal || '',
-            section: section || 'vault'
+            section: section || 'vault',
+            downloadUrl: downloadUrl || ''
           });
         }
       }
