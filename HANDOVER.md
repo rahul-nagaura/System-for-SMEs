@@ -111,6 +111,7 @@ UI.
 - Vault closing CTA ("Confused kahan se shuru karu?") font size increased; **hero is now bold on
   mobile** — fixed a missing CSS utility (`font-display-xl-mobile`) added in `globals.css`.
 - Vault closing CTA button (now text **"System Kaise Banayein, Dekho →"**) redirect changed from `/bml` to `/` to direct users back to the landing page.
+- Vault detail page footer CTA button (now text **"Get Help Implementing This"**) redirect changed from `/booking` to `/` to direct users back to the landing page first.
 - BML Calculator results page CTA button (now text **"GET YOUR CUSTOM SYSTEMS ROADMAP →"**) redirect changed from `/booking` to `/` to direct users back to the landing page, and updated the subtext below it to reflect a paid session.
 - Removed the redundant **AI Prompt Kit** card from the **Vault ke andar kya hai** resource library section (since the full interactive Prompt section already lives at the top of the Vault page).
 

@@ -269,10 +269,10 @@ export default async function ResourcePage({
         {/* Footer actions */}
         <footer className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/booking"
+            href="/"
             className="bg-[#edb605] text-[#201b11] font-bold py-5 px-10 rounded-full flex items-center justify-center gap-2 hover:bg-[#e2b900] active:scale-95 transition-all text-center border-2 border-[#2b3040]/20 shadow-md"
           >
-            Apply this to your Business
+            Get Help Implementing This
             <span className="material-symbols-outlined text-lg">arrow_forward</span>
           </Link>
           <Link
