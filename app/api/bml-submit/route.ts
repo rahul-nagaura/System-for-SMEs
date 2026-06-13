@@ -163,7 +163,13 @@ export async function POST(request: Request) {
     operations: sanitizedOps,
     finance: sanitizedFin,
     human: sanitizedHum,
-    digital: sanitizedDig
+    digital: sanitizedDig,
+    // Lead-capture fields (multi-select problems arrive pre-joined as a string)
+    biggestProblem: sanitize(String(body.biggestProblem || "")),
+    typeOfBusiness: sanitize(String(body.typeOfBusiness || "")),
+    businessDescription: sanitize(String(body.businessDescription || "")),
+    cityState: sanitize(String(body.cityState || "")),
+    investmentReadiness: sanitize(String(body.investmentReadiness || ""))
   };
 
   try {

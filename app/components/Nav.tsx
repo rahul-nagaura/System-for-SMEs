@@ -17,17 +17,11 @@ export default function Nav() {
 
       {/* Desktop Links */}
       <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-[#080808]">
-        <Link href="/#problems" className="hover:text-[#ffd21f] transition-colors">
-          Process
+        <Link href="/vault" className="hover:text-[#ffd21f] transition-colors">
+          Vault
         </Link>
-        <Link href="/#value" className="hover:text-[#ffd21f] transition-colors">
-          Value
-        </Link>
-        <Link href="/vault" className="text-[#080808] hover:text-[#ffd21f] transition-colors border-b-2 border-[#ffd21f] pb-0.5 font-bold">
-          VAULT
-        </Link>
-        <Link href="/#faq" className="hover:text-[#ffd21f] transition-colors">
-          FAQ
+        <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
+          BML Calculator
         </Link>
       </nav>
 
@@ -60,20 +54,6 @@ export default function Nav() {
           <Link
             onClick={() => setIsOpen(false)}
             className="text-[#080808] hover:text-[#ffd21f] font-bold text-sm uppercase tracking-wider py-2 border-b border-zinc-100"
-            href="/#problems"
-          >
-            Process
-          </Link>
-          <Link
-            onClick={() => setIsOpen(false)}
-            className="text-[#080808] hover:text-[#ffd21f] font-bold text-sm uppercase tracking-wider py-2 border-b border-zinc-100"
-            href="/#value"
-          >
-            Value
-          </Link>
-          <Link
-            onClick={() => setIsOpen(false)}
-            className="text-[#080808] hover:text-[#ffd21f] font-bold text-sm uppercase tracking-wider py-2 border-b border-zinc-100"
             href="/vault"
           >
             Vault
@@ -81,9 +61,9 @@ export default function Nav() {
           <Link
             onClick={() => setIsOpen(false)}
             className="text-[#080808] hover:text-[#ffd21f] font-bold text-sm uppercase tracking-wider py-2 border-b border-zinc-100"
-            href="/#faq"
+            href="/bml"
           >
-            FAQ
+            BML Calculator
           </Link>
           <Link
             onClick={() => setIsOpen(false)}

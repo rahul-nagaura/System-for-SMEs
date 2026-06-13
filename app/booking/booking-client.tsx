@@ -1,8 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import BookingNav from "@/app/components/BookingNav";
+import Nav from "@/app/components/Nav";
+import { revenueOptions } from "@/app/bml/bml-data";
+
+// Available call slots (Raghav confirms the exact one over WhatsApp).
+const timeSlots = ["2:00–3:00 PM", "10:00–11:00 PM", "11:00 PM–12:00 AM"];
+
+// Raghav's WhatsApp number (country code + number, digits only) for the
+// click-to-chat link built on submit.
+const WHATSAPP_NUMBER = "919417149638";
+
+// Build a wa.me link with the chosen date + slot pre-filled into the message.
+const buildWhatsAppUrl = (date: string, slot: string) => {
+  const message = `Hi Team, I've completed my onboarding form and booked a Systems Strategy Session with Raghav for ${date}, ${slot}. I'd like to proceed to the next step — could you please share the payment link to confirm my slot? Thank you!`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+};
 
 interface FormData {
   fullName: string;
@@ -10,11 +24,14 @@ interface FormData {
   businessName: string;
   description: string;
   teamSize: string;
+  revenue: string;
   tracking: string;
   problems: string[];
   otherProblem: string;
   fixedBefore: string;
   authority: string;
+  bookingDate: string;
+  slot: string;
 }
 
 const initialFormState: FormData = {
@@ -23,17 +40,37 @@ const initialFormState: FormData = {
   businessName: "",
   description: "",
   teamSize: "",
+  revenue: "",
   tracking: "",
   problems: [],
   otherProblem: "",
   fixedBefore: "",
   authority: "",
+  bookingDate: "",
+  slot: "",
 };
 
 export default function BookingPage() {
   const [form, setForm] = useState<FormData>(initialFormState);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // Next 7 days as selectable date labels. Computed in IST so server-rendered
+  // and client-hydrated labels match. Past days never appear and the list
+  // rolls forward automatically each day.
+  const dateOptions = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() + i);
+        return d.toLocaleDateString("en-IN", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          timeZone: "Asia/Kolkata",
+        });
+      }),
+    []
+  );
 
   const handleTextChange = (k: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [k]: e.target.value });
@@ -64,6 +101,10 @@ export default function BookingPage() {
       alert("Please select your current team size in Section 02.");
       return;
     }
+    if (!form.revenue) {
+      alert("Please select your average monthly revenue in Section 02.");
+      return;
+    }
     if (!form.tracking) {
       alert("Please select how you track daily tasks/sales in Section 02.");
       return;
@@ -74,6 +115,14 @@ export default function BookingPage() {
     }
     if (!form.authority) {
       alert("Please select your decision-making authority in Section 04.");
+      return;
+    }
+    if (!form.bookingDate) {
+      alert("Please pick a preferred date in Section 05.");
+      return;
+    }
+    if (!form.slot) {
+      alert("Please pick a preferred time slot in Section 05.");
       return;
     }
 
@@ -91,29 +140,41 @@ export default function BookingPage() {
       console.error("Failed to submit booking session to database: ", err);
     } finally {
       setIsSubmitting(false);
+      // Show the confirmation screen (fallback) and redirect to WhatsApp so the
+      // user can confirm timing + get the payment link. The chosen date + slot
+      // are already saved to the Results sheet above.
       setSubmitted(true);
+      window.location.href = buildWhatsAppUrl(form.bookingDate, form.slot);
     }
   };
 
   if (submitted) {
     return (
       <div className="min-h-screen bg-[#fff8f2] text-[#201b11] flex flex-col font-sans">
-        <BookingNav activePage="booking" />
+        <Nav />
         <main className="flex-grow pt-32 pb-24 px-6 max-w-xl mx-auto w-full flex flex-col justify-center items-center text-center space-y-6">
           <div className="w-20 h-20 rounded-full bg-[#fcdc95] flex items-center justify-center border-2 border-[#725b22] shadow-md animate-bounce">
             <span className="material-symbols-outlined text-4xl text-[#775a00]">check</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight">Form Secured &amp; Received!</h1>
           <p className="text-base text-[#4f4633] leading-relaxed max-w-md">
-            Thank you for completing your onboarding protocol. Your details have been encrypted and saved. We will review your answers and contact you shortly to schedule your Systems Strategy Session.
+            Your details are saved. We&apos;re taking you to WhatsApp to confirm your slot and share the payment link. If it doesn&apos;t open automatically, tap below.
           </p>
-          <div className="pt-6">
+          <div className="pt-6 flex flex-col sm:flex-row gap-3">
+            <a
+              href={buildWhatsAppUrl(form.bookingDate, form.slot)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#edb605] text-[#201b11] font-bold py-4 px-8 border-2 border-[#725b22] uppercase tracking-wider hover:brightness-105 active:scale-95 transition-all inline-flex items-center justify-center gap-2"
+            >
+              Continue on WhatsApp
+              <span className="material-symbols-outlined text-lg">open_in_new</span>
+            </a>
             <Link
               href="/"
-              className="bg-[#edb605] text-[#201b11] font-bold py-4 px-8 border-2 border-[#725b22] uppercase tracking-wider hover:brightness-105 active:scale-95 transition-all inline-flex items-center gap-2"
+              className="bg-transparent text-[#201b11] font-bold py-4 px-8 border-2 border-[#725b22] uppercase tracking-wider hover:bg-[#725b22]/5 active:scale-95 transition-all inline-flex items-center justify-center gap-2"
             >
               Back to Home
-              <span className="material-symbols-outlined text-lg">arrow_forward</span>
             </Link>
           </div>
         </main>
@@ -123,7 +184,7 @@ export default function BookingPage() {
 
   return (
     <div className="min-h-screen bg-[#fff8f2] text-[#201b11] flex flex-col font-sans selection:bg-[#edb605]/30">
-      <BookingNav activePage="booking" />
+      <Nav />
 
       {/* Main Form Area */}
       <main className="flex-grow pt-24 pb-24 px-6 max-w-[800px] mx-auto w-full">
@@ -215,6 +276,26 @@ export default function BookingPage() {
                     }`}
                   >
                     {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4">
+              <p className="text-[17px] font-bold">What is your average monthly revenue? *</p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {revenueOptions.map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => selectRadio("revenue", opt.text)}
+                    className={`border-2 p-4 text-center text-sm font-bold transition-all duration-200 ${
+                      form.revenue === opt.text
+                        ? "border-[#edb605] bg-[#fcdc95]"
+                        : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
+                    }`}
+                  >
+                    {opt.text}
                   </button>
                 ))}
               </div>
@@ -356,6 +437,55 @@ export default function BookingPage() {
             </div>
           </section>
 
+          {/* SECTION 5: Schedule the Call */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#775a00]">05. Book Your Slot</span>
+              <div className="h-[1px] flex-grow bg-[#725b22]/20"></div>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-[17px] font-bold">Pick your preferred date *</p>
+              <p className="text-xs text-[#4f4633]/70">We&apos;ll confirm the final date with you on WhatsApp.</p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                {dateOptions.map((date) => (
+                  <button
+                    key={date}
+                    type="button"
+                    onClick={() => selectRadio("bookingDate", date)}
+                    className={`border-2 p-3 text-center text-xs font-bold transition-all duration-200 ${
+                      form.bookingDate === date
+                        ? "border-[#edb605] bg-[#fcdc95]"
+                        : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
+                    }`}
+                  >
+                    {date}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-4">
+              <p className="text-[17px] font-bold">Pick your preferred time slot *</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {timeSlots.map((slot) => (
+                  <button
+                    key={slot}
+                    type="button"
+                    onClick={() => selectRadio("slot", slot)}
+                    className={`border-2 p-4 text-center text-sm font-bold transition-all duration-200 ${
+                      form.slot === slot
+                        ? "border-[#edb605] bg-[#fcdc95]"
+                        : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
+                    }`}
+                  >
+                    {slot}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* Submit */}
           <footer className="pt-12 space-y-4">
             <button
@@ -367,7 +497,7 @@ export default function BookingPage() {
                 <>Securing Connection...</>
               ) : (
                 <>
-                  Submit &amp; See You in the Session
+                  Book My Session
                   <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </>
               )}
@@ -380,13 +510,12 @@ export default function BookingPage() {
       </main>
 
       {/* Global Footer */}
-      <footer className="bg-[#f8ecdc]/50 border-t-2 border-[#725b22] w-full py-12 mt-24">
+      <footer className="bg-[#f8ecdc]/50 border-t-2 border-[#725b22] w-full py-8 mt-24">
         <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="font-extrabold text-sm uppercase text-[#201b11]">Systems for SME</div>
           <div className="flex gap-8 text-xs font-bold uppercase tracking-wider">
-            <a href="#" className="text-[#4f4633] hover:text-[#775a00] transition-colors">Privacy Protocol</a>
-            <a href="#" className="text-[#4f4633] hover:text-[#775a00] transition-colors">Terms of Service</a>
-            <a href="#" className="text-[#4f4633] hover:text-[#775a00] transition-colors">Security Audit</a>
+            <Link href="/bml" className="text-[#4f4633] hover:text-[#775a00] transition-colors">BML Calculator</Link>
+            <Link href="/vault" className="text-[#4f4633] hover:text-[#775a00] transition-colors">Vault</Link>
           </div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-[#725b22]/70">© 2026 Systems for SME. All rights reserved.</p>
         </div>

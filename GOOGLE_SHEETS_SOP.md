@@ -8,11 +8,12 @@ This Standard Operating Procedure (SOP) defines the structure, column definition
 * **What it is**: Global key-value configurations that control static text, prices, and assets across the entire website dynamically.
 * **Database Actions**: Manual updates only.
 
+> **Note**: Only the two keys below are read by the website. Any other key you add here is ignored.
+
 | Key | Value (Example) | What it controls (Description) |
 | :--- | :--- | :--- |
-| `pricing_amount` | `2499` | The numeric checkout price shown on the landing page (e.g. ₹2,499). |
+| `pricing_amount` | `2499` | The numeric checkout price shown on the landing page. The site automatically prefixes `₹` if you don't include it (e.g. `2499` → ₹2,499). |
 | `owner_photo_url` | `/raghav.jpg` | The image path or external URL for Raghav's profile photo. |
-| `session_price_label` | `INR 2,499` | The text label displayed next to pricing or within CTA buttons. |
 
 ---
 
@@ -44,18 +45,19 @@ This Standard Operating Procedure (SOP) defines the structure, column definition
 
 ---
 
-## Tab 4 — Questions
-* **What it is**: The questions, answer options, and point configurations that drive the BML Quiz.
-* **Database Actions**: Manual edits only. Each row represents a single answer option.
+## Tab 4 — Reviews
+* **What it is**: Customer testimonials shown in the reviews section of the landing page.
+* **Database Actions**: Manual additions and edits. Each row represents one testimonial card. *(Optional: if this tab is missing or empty, the site falls back to its built-in default reviews.)*
 
-| Column Header | Description / Content | Data Type & Formatting Rules |
+| Column Header | Description / Content | Data Type & Formatting |
 | :--- | :--- | :--- |
-| `id` | Unique identifier for the BML question. | String ID (e.g., `Q1`, `Q2`) |
-| `section` | The business maturity category being assessed. | Must be exactly: **`Operations`**, **`Finance`**, **`Human`**, or **`Digital`** |
-| `question_text` | The question statement displayed on the quiz card. | Plain text string |
-| `option_label` | The text label representing a single answer option. | Plain text |
-| `option_points` | The score weight assigned if this option is selected. | Numeric integer (usually `0`, `1`, `2`, or `3`) |
-| `order` | The sorting weight determining the question sequence. | Numeric integer |
+| `Name` | The reviewer's name. | Plain text string |
+| `Role` | The reviewer's role or business type (e.g. `Retail Chain Owner`). | Plain text string |
+| `Text` | The testimonial body. | Plain text paragraph |
+| `Rating` | Star rating out of 5. | Numeric integer `1`–`5` (defaults to `5` if blank) |
+
+> [!NOTE]
+> **The BML Quiz questions are NOT stored in the spreadsheet.** They are defined in code (`app/bml/bml-data.ts`). There is no "Questions" tab. To change quiz wording, options, or point weights, edit `bml-data.ts` — not the sheet.
 
 ---
 
@@ -63,19 +65,34 @@ This Standard Operating Procedure (SOP) defines the structure, column definition
 * **What it is**: Lead details captured automatically upon BML Quiz completion.
 * **Database Actions**: **READ-ONLY**. The website appends rows automatically. Never edit manually.
 
+The website appends these **24 columns**, in this exact order:
+
 | Column Header | Description / Content | Data Type & Source |
 | :--- | :--- | :--- |
-| `timestamp` | The date and time when the quiz was completed. | ISO DateTime string (automated) |
-| `name` | The full name submitted by the user. | String (user input) |
-| `email` | The contact email address. | Valid email string (validated on server) |
-| `phone` | The contact phone number. | Numeric digits (10 to 15 digits, validated on server) |
-| `operations` | The score percentage achieved in the Operations section. | Numeric percentage value |
-| `finance` | The score percentage achieved in the Finance section. | Numeric percentage value |
-| `human` | The score percentage achieved in the Human Capital section. | Numeric percentage value |
-| `digital` | The score percentage achieved in the Digital Maturity section. | Numeric percentage value |
-| `score_15` | The total overall score calculated out of 15 points. | Numeric score (0 to 15) |
-| `level` | The calculated Business Maturity Level. | String category (e.g. `L1`, `L2`, `L3`, `L4`, `L5`) |
-| `biggest_gap` | The largest operational gap identified. | Must be: `Operations`, `Finance`, `Human`, or `Digital` |
+| `Timestamp` | The date and time when the quiz was completed. | DateTime (automated) |
+| `Name` | The full name submitted by the user. | String (user input) |
+| `Business Name` | The user's business name. | String (user input) |
+| `Email` | The contact email address. | Valid email string (validated on server) |
+| `WhatsApp` | The contact phone/WhatsApp number. | 10–15 digits (required, validated on server) |
+| `Monthly Revenue` | The selected average monthly revenue band. | String (e.g. `₹5L - ₹20L`) |
+| `Biggest Pain Point` | The problem(s) the user selected on the intro step (multi-select). | Comma-separated string (e.g. `Sales low hain, Staff leaves quickly`) |
+| `Overall Score %` | The overall maturity percentage. | Percentage string (e.g. `62%`) |
+| `Maturity Level` | The calculated Business Maturity Level. | String (e.g. `Level 2 - Owner-Dependent`) |
+| `Weakest System` | The weakest dimension identified. | Must be: `Operational Efficiency`, `Financial Control`, `Human Capital`, or `Digital Maturity` |
+| `Q1` | The answer chosen for Question 1. | String (`label - text`) |
+| `Q1_Details` | Free-text detail if "Other" was chosen for Q1. | String (may be blank) |
+| `Q2` | The answer chosen for Question 2. | String (`label - text`) |
+| `Q2_Details` | Free-text detail if "Other" was chosen for Q2. | String (may be blank) |
+| `Q3` | The answer chosen for Question 3. | String (`label - text`) |
+| `Q3_Details` | Free-text detail if "Other" was chosen for Q3. | String (may be blank) |
+| `Q4` | The answer chosen for Question 4. | String (`label - text`) |
+| `Q4_Details` | Free-text detail if "Other" was chosen for Q4. | String (may be blank) |
+| `Q5` | The answer chosen for Question 5. | String (`label - text`) |
+| `Q5_Details` | Free-text detail if "Other" was chosen for Q5. | String (may be blank) |
+| `Type of Business` | The business type selected on the lead-capture step. | String: `Manufacturing`, `Digital Service/Product`, `Retail`, `Wholesale/Trader`, or `Other` |
+| `Business Description` | The user's brief description of their business. | Plain text (user input) |
+| `City/State` | The user's city and state. | String (user input) |
+| `Investment Readiness` | Whether the user is ready to invest to solve their problems. | String (one of the 4 readiness options) |
 
 ---
 
@@ -83,14 +100,24 @@ This Standard Operating Procedure (SOP) defines the structure, column definition
 * **What it is**: User onboarding answers collected when booking a Systems Strategy Session.
 * **Database Actions**: **READ-ONLY**. The website appends rows automatically. Never edit manually.
 
+The website appends these **14 columns**, in this exact order:
+
 | Column Header | Description / Content | Data Type & Source |
 | :--- | :--- | :--- |
-| `timestamp` | The date and time when the booking form was submitted. | ISO DateTime string (automated) |
-| `name` | The full name of the business owner. | String (user input) |
-| `phone` | The contact phone number. | String (user input, validated on server) |
-| `businessName` | The registered or commercial name of the business. | String (user input) |
-| `description` | Description of business operations and workflows. | Plain text (user input) |
-| `teamSize` | The size range of their current workforce. | String choice (e.g., `Just me`, `2-5`, `6-15`, `16-30`, `30+`) |
+| `Timestamp` | The date and time when the booking form was submitted. | DateTime (automated) |
+| `Full Name` | The full name of the business owner. | String (user input) |
+| `Phone Number` | The contact phone number. | String (user input, validated on server) |
+| `Business Name` | The registered or commercial name of the business. | String (user input) |
+| `Description` | Description of business operations and workflows. | Plain text (user input) |
+| `Team Size` | The size range of their current workforce. | String choice: `Just me`, `2–5`, `6–15`, `16–30`, `30+` |
+| `Tracking` | How they currently track daily tasks/sales. | String choice: `registers`, `whatsapp`, `excel`, `software`, `none` |
+| `Problems` | The bottleneck areas selected (multi-select). | Comma-separated values from: `staff`, `data`, `owner_dependency`, `sales`, `scale` |
+| `Other Problem` | Free-text "other" bottleneck, if provided. | String (may be blank) |
+| `Fixed Before` | Whether they've tried fixing this before. | String choice: `yes`, `no`, `other` (Partial Attempt) |
+| `Authority` | Their decision-making authority. | String choice: `owner`, `partner`, `representative` |
+| `Monthly Revenue` | The selected average monthly revenue band (same options as the BML quiz). | String (e.g. `₹5L - ₹20L`) |
+| `Preferred Date` | The date the user picked for the call (one of the next 7 days). | String (e.g. `Mon, 16 Jun`) |
+| `Preferred Time Slot` | The time slot the user picked. | String: `2:00–3:00 PM`, `10:00–11:00 PM`, or `11:00 PM–12:00 AM` |
 
 ---
 

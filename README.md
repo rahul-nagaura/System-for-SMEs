@@ -78,7 +78,12 @@ website/
 │   │   ├── bml-submit/       # Handles BML lead submissions & validation
 │   │   ├── booking-submit/   # Handles booking onboarding submissions & validation
 │   │   └── content-feed/     # Fetches & caches CMS content from Google Sheets
-│   ├── bml/                  # BML Calculator route & levels configuration
+│   ├── bml/                  # BML Calculator (split into focused files):
+│   │   ├── page.tsx          #   server wrapper (SEO metadata + dynamic import)
+│   │   ├── bml-client.tsx    #   the interactive quiz/results UI + state
+│   │   ├── bml-data.ts       #   static content: questions, options, themes, levels, gap copy
+│   │   ├── bml-scoring.ts    #   pure scoring math (computeDimensions, ring geometry)
+│   │   └── bml-card.ts       #   Canvas → PNG downloadable result card
 │   ├── booking/              # Onboarding Booking page route
 │   ├── components/           # Shared UI components (Navbars, Toggles, Copyboxes)
 │   ├── vault/                # Vault page and dynamic articles/prompt routes
@@ -102,7 +107,7 @@ Instead of hosting an expensive SQL database, this application uses **Google She
 1. **Reads (Content Feed)**: When a user visits the homepage or the Vault, Next.js calls our `/api/content-feed` API route. This route sends a secure `GET` request to your Google Apps Script Web App. The script reads your Google Sheet tabs (`GlobalSettings`, `FAQs`, `Vault`) and returns them as a clean JSON payload.
 2. **Writes (Form Submissions)**: When a user submits a form (e.g. the BML calculator or booking form), our API routes perform strict validation checks (regex formats, lengths, rate limiting) and sanitize the input. If the validation passes, the server sends a secure `POST` request to the Apps Script, which immediately appends the lead as a new row in the `Leads` or `Results` tab.
 
-To optimize load times and prevent API limits, the read feeds are wrapped in an in-memory cache that updates every 10 minutes in production (or instantly on requests containing the `?nocache=true` parameter).
+To optimize load times and prevent API limits, all server-side reads from Google Sheets share a single revalidation interval of **1 hour (3600 seconds)**. The `/api/content-feed` route additionally keeps an in-memory copy for up to 1 hour. You can always fetch fresh values immediately by appending the `?nocache=true` parameter to the content-feed request.
 
 ---
 

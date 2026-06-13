@@ -3,276 +3,33 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import BookingNav from "@/app/components/BookingNav";
+import Nav from "@/app/components/Nav";
 import CustomToggle from "@/app/components/CustomToggle";
-
-type Option = {
-  label: string;
-  text: string;
-  score: number;
-};
-
-type QuestionStep = {
-  id: number;
-  qNum: string;
-  qLabel: string;
-  question: string;
-  options: Option[];
-};
-
-const questions: QuestionStep[] = [
-  {
-    id: 1,
-    qNum: "Q1/5:",
-    qLabel: "OPERATIONAL MATURITY",
-    question: "Agar aapko aaj 10 din family trip par jaana ho - aur phone band rahe 10 din, to aapke business ka kya hoga? *",
-    options: [
-      { label: "A", text: "Mere bina to kuch nhi chalta", score: 0 },
-      { label: "B", text: "thoda bahut kaam ho jayega, par aate hi problems ka dher lag jaata h", score: 1 },
-      { label: "C", text: "Smoothly chalta rahega - mere paas proper teams and systems hain", score: 3 },
-      { label: "D", text: "Other (Please elaborate)", score: 1 },
-    ],
-  },
-  {
-    id: 2,
-    qNum: "Q2/5:",
-    qLabel: "DATA VISIBILITY",
-    question: "Client asks for 1000+ units (ya average order quantity se jyada ka order) urgently. How fast can you check available stock and expected order completion date? *",
-    options: [
-      { label: "A", text: "Hours / manual counting", score: 0 },
-      { label: "B", text: "30–60 mins using Tally + Excel Formulas", score: 1 },
-      { label: "C", text: "Instant Inventory and Order Management Dashboards", score: 3 },
-      { label: "D", text: "Other (Please specify)", score: 1 },
-    ],
-  },
-  {
-    id: 3,
-    qNum: "Q3/5.",
-    qLabel: "TEAM TRAINING",
-    question: "Team Training - naye staff ko train kaise krte hain? *",
-    options: [
-      { label: "A", text: "I personally train everyone", score: 0 },
-      { label: "B", text: "Some standard documents/tutorials but mostly khud hi sikhana", score: 1 },
-      { label: "C", text: "Clear SOP & training system", score: 3 },
-      { label: "D", text: "Other", score: 1 },
-    ],
-  },
-  {
-    id: 4,
-    qNum: "Q4/5.",
-    qLabel: "INTERNAL COMMUNICATION",
-    question: "Internal Communication ya instructions kaise dete ho> *",
-    options: [
-      { label: "A", text: "Manual guide ya call/whatsapp", score: 0 },
-      { label: "B", text: "Structured WhatsApp Groups by teams", score: 1 },
-      { label: "C", text: "Automated Task Assignment, Reporting & Deadlines system", score: 3 },
-      { label: "D", text: "Other", score: 1 },
-    ],
-  },
-  {
-    id: 5,
-    qNum: "Q5/5:",
-    qLabel: "LEAD GENERATION",
-    question: "Lead Generation - naye customers kaise dhundhte hai? *",
-    options: [
-      { label: "A", text: "Only word of mouth", score: 0 },
-      { label: "B", text: "Some ads / website / personal visits", score: 1 },
-      { label: "C", text: "Automated lead generation funnel", score: 3 },
-      { label: "D", text: "Other", score: 1 },
-    ],
-  },
-];
-
-const biggestProblems = [
-  { label: "A", text: "Sab kuch mere pe hi depend hai" },
-  { label: "B", text: "Staff leaves quickly" },
-  { label: "C", text: "Koi data tracking nahi hai, only guesswork" },
-  { label: "D", text: "Sales low hain" },
-  { label: "E", text: "Marketing aur Branding is missing" },
-  { label: "F", text: "No Organizational Structure & Reporting Mechanism" },
-];
-
-const revenueOptions = [
-  { label: "A", text: "Under ₹5L" },
-  { label: "B", text: "₹5L - ₹20L" },
-  { label: "C", text: "₹20L - ₹50L" },
-  { label: "D", text: "₹50L - ₹5Cr" },
-  { label: "E", text: "Above ₹5Cr" },
-];
-
-const gapMappings: Record<string, { title: string; cost: string; stagnation: string }> = {
-  "Sab kuch mere pe hi depend hai": {
-    title: "Dependency on Owner",
-    cost: "Working IN the business instead of ON it, trapping you in daily operations.",
-    stagnation: "If you don't delegate, 12 months from now you will still be working 14-hour days, exhausted, with zero business value if you want to exit.",
-  },
-  "Staff leaves quickly": {
-    title: "Team Retention & SOPs",
-    cost: "High staff turnover forces you to constantly retrain, creating severe operational inconsistency.",
-    stagnation: "Without clear documentation and SOPs, 12 months from now you will still be stuck rehiring, retraining, and cleaning up manual staff mistakes daily.",
-  },
-  "Koi data tracking nahi hai, only guesswork": {
-    title: "Data Visibility & Metrics",
-    cost: "Flying blind without numbers, leading to margin leaks and impossible forecasting.",
-    stagnation: "Without data tracking, 12 months from now you will still be leaking money, guessing margins, and leaving your profits entirely on the table.",
-  },
-  "Sales low hain": {
-    title: "Sales Conversion Process",
-    cost: "Leads are slipping through the cracks due to a lack of a structured conversion pipeline.",
-    stagnation: "Without a structured sales process, 12 months from now you will still be losing warm leads to faster, more automated competitors.",
-  },
-  "Marketing aur Branding is missing": {
-    title: "Lead Generation Funnel",
-    cost: "Relying entirely on unpredictable word of mouth, capping your ability to scale.",
-    stagnation: "Without consistent marketing, 12 months from now you will still be waiting for the phone to ring, anxious about next month's payroll.",
-  },
-  "No Organizational Structure & Reporting Mechanism": {
-    title: "Reporting & Team Structure",
-    cost: "Team accountability is non-existent, forcing you to manually follow up on every task.",
-    stagnation: "Without reporting systems, 12 months from now you will still be micromanaging every single WhatsApp text to ensure basic tasks are done.",
-  },
-};
-
-type CardTheme = {
-  id: string;
-  name: string;
-  bg: string;
-  text: string;
-  accent: string;
-  border: string;
-  labelBg: string;
-  labelText: string;
-  trackBg: string;
-  dotColor: string;
-};
-
-const cardThemes: CardTheme[] = [
-  {
-    id: "black",
-    name: "Classic Black",
-    bg: "#0E0E0E",
-    text: "#FFFFFF",
-    accent: "#FCD12A",
-    border: "#222222",
-    labelBg: "#FCD12A",
-    labelText: "#0E0E0E",
-    trackBg: "#222222",
-    dotColor: "#FCD12A"
-  },
-  {
-    id: "coral",
-    name: "Brutalist Coral",
-    bg: "#1A0A0E",
-    text: "#FFFFFF",
-    accent: "#F43F5E",
-    border: "#35151D",
-    labelBg: "#F43F5E",
-    labelText: "#1A0A0E",
-    trackBg: "#35151D",
-    dotColor: "#F43F5E"
-  },
-  {
-    id: "orange",
-    name: "Sunset Orange",
-    bg: "#1A0F0A",
-    text: "#FFFFFF",
-    accent: "#F97316",
-    border: "#3B2014",
-    labelBg: "#F97316",
-    labelText: "#1A0F0A",
-    trackBg: "#3B2014",
-    dotColor: "#F97316"
-  },
-  {
-    id: "teal",
-    name: "Modern Teal",
-    bg: "#0A1A18",
-    text: "#FFFFFF",
-    accent: "#14B8A6",
-    border: "#15332F",
-    labelBg: "#14B8A6",
-    labelText: "#0A1A18",
-    trackBg: "#15332F",
-    dotColor: "#14B8A6"
-  },
-  {
-    id: "green",
-    name: "Forest Green",
-    bg: "#0A1A0E",
-    text: "#FFFFFF",
-    accent: "#22C55E",
-    border: "#14381F",
-    labelBg: "#22C55E",
-    labelText: "#0A1A0E",
-    trackBg: "#14381F",
-    dotColor: "#22C55E"
-  },
-  {
-    id: "blue",
-    name: "Midnight Blue",
-    bg: "#091124",
-    text: "#FFFFFF",
-    accent: "#3B82F6",
-    border: "#152445",
-    labelBg: "#3B82F6",
-    labelText: "#091124",
-    trackBg: "#152445",
-    dotColor: "#3B82F6"
-  },
-  {
-    id: "violet",
-    name: "Electric Violet",
-    bg: "#120924",
-    text: "#FFFFFF",
-    accent: "#8B5CF6",
-    border: "#28164F",
-    labelBg: "#8B5CF6",
-    labelText: "#120924",
-    trackBg: "#28164F",
-    dotColor: "#8B5CF6"
-  },
-  {
-    id: "pink",
-    name: "Brutalist Pink",
-    bg: "#1A0A15",
-    text: "#FFFFFF",
-    accent: "#EC4899",
-    border: "#3B142F",
-    labelBg: "#EC4899",
-    labelText: "#1A0A15",
-    trackBg: "#3B142F",
-    dotColor: "#EC4899"
-  }
-];
-
-const RADIUS = 52;                       // must match SVG circle r
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-const START_ANGLE = 1.5 * Math.PI;       // top (12 o'clock)
-
-function getRingGeometry(score: number, max = 15) {
-  const fraction = Math.max(0, Math.min(1, score / max)); // clamp 0–1
-
-  return {
-    fraction,
-    // for SVG <circle>
-    dashArray: CIRCUMFERENCE,
-    dashOffset: CIRCUMFERENCE * (1 - fraction),
-    // for Canvas arc()
-    startAngle: START_ANGLE,
-    endAngle: START_ANGLE + fraction * 2 * Math.PI,
-    // shared color — same thresholds both paths use
-    color: fraction <= 0.4 ? "#E5484D" : fraction <= 0.7 ? "#E8A93B" : "#2E9E5B",
-  };
-}
+import {
+  questions,
+  biggestProblems,
+  revenueOptions,
+  businessTypes,
+  investmentOptions,
+  cardThemes,
+  levels,
+  gapCopy,
+} from "./bml-data";
+import { getRingGeometry, getBandColor, computeDimensions } from "./bml-scoring";
+import { downloadResultCard } from "./bml-card";
 
 export default function BMLCalculator() {
   const [step, setStep] = useState<number>(0); // 0 = Intro, 1-5 = Q1-Q5, 6 = Lead Capture, 7 = Result
   const [name, setName] = useState<string>("");
   const [businessName, setBusinessName] = useState<string>("");
-  const [biggestProblem, setBiggestProblem] = useState<string>("");
+  const [selectedProblems, setSelectedProblems] = useState<string[]>([]);
   const [revenue, setRevenue] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [whatsapp, setWhatsapp] = useState<string>("");
+  const [typeOfBusiness, setTypeOfBusiness] = useState<string>("");
+  const [businessDescription, setBusinessDescription] = useState<string>("");
+  const [cityState, setCityState] = useState<string>("");
+  const [investmentReadiness, setInvestmentReadiness] = useState<string>("");
   const [answers, setAnswers] = useState<{ [key: number]: number }>({});
   const [otherDetails, setOtherDetails] = useState<{ [key: number]: string }>({});
   const [tempOther, setTempOther] = useState<string>("");
@@ -298,74 +55,16 @@ export default function BMLCalculator() {
     };
   }, [isDownloadOpen]);
 
-  const totalScore = Object.entries(answers).reduce((sum, [qId, optionIndex]) => {
-    const qNum = parseInt(qId);
-    const q = questions[qNum - 1];
-    if (q && q.options[optionIndex]) {
-      return sum + q.options[optionIndex].score;
-    }
-    return sum;
-  }, 0);
-
-  // 2. Dimension calculations based on answers
-  const s1 = answers[1] !== undefined ? questions[0].options[answers[1]].score : 1;
-  const s2 = answers[2] !== undefined ? questions[1].options[answers[2]].score : 1;
-  const s3 = answers[3] !== undefined ? questions[2].options[answers[3]].score : 1;
-  const s4 = answers[4] !== undefined ? questions[3].options[answers[4]].score : 1;
-  const s5 = answers[5] !== undefined ? questions[4].options[answers[5]].score : 1;
-
-  let opEff = Math.round(((s1 + s4) / 6) * 50 + 35);
-  let finCtrl = Math.round((s2 / 3) * 50 + 35);
-  let humCap = Math.round((s3 / 3) * 50 + 35);
-  let digMat = Math.round((s5 / 3) * 50 + 35);
-
-  let weakestDim = "Operational Efficiency";
-  if (biggestProblem === "Staff leaves quickly" || biggestProblem === "No Organizational Structure & Reporting Mechanism") {
-    weakestDim = "Human Capital";
-  } else if (biggestProblem === "Koi data tracking nahi hai, only guesswork") {
-    weakestDim = "Financial Control";
-  } else if (biggestProblem === "Sales low hain" || biggestProblem === "Marketing aur Branding is missing") {
-    weakestDim = "Digital Maturity";
-  }
-
-  if (weakestDim === "Operational Efficiency") {
-    opEff = Math.min(opEff, finCtrl - 5, humCap - 5, digMat - 5, 40);
-  } else if (weakestDim === "Financial Control") {
-    finCtrl = Math.min(finCtrl, opEff - 5, humCap - 5, digMat - 5, 40);
-  } else if (weakestDim === "Human Capital") {
-    humCap = Math.min(humCap, opEff - 5, finCtrl - 5, digMat - 5, 40);
-  } else if (weakestDim === "Digital Maturity") {
-    digMat = Math.min(digMat, opEff - 5, finCtrl - 5, humCap - 5, 40);
-  }
-
-  opEff = Math.max(15, Math.min(100, opEff));
-  finCtrl = Math.max(15, Math.min(100, finCtrl));
-  humCap = Math.max(15, Math.min(100, humCap));
-  digMat = Math.max(15, Math.min(100, digMat));
-
-  const averagePercentage = Math.round((opEff + finCtrl + humCap + digMat) / 4);
-  const displayScore = Math.round((averagePercentage / 100) * 15);
+  // Derive the four dimension scores, weakest gap, overall % and 0–15
+  // score from the answers (see bml-scoring.ts for the math).
+  const { opEff, finCtrl, humCap, digMat, weakestDim, averagePercentage, displayScore } =
+    computeDimensions(answers, selectedProblems);
   const ringGeometry = getRingGeometry(displayScore);
-
-  const levels = [
-    { min: 0,  max: 3,  name: "Chaotic (Founder-Trapped)", line: "Your business stops the moment you turn off your phone." },
-    { min: 4,  max: 7,  name: "Owner-Dependent",           line: "Your business is running you, not the other way around." },
-    { min: 8,  max: 10, name: "Organized",                 line: "You have systems — but they still need you to run them." },
-    { min: 11, max: 13, name: "Systemized",                line: "Your business runs on processes, not on your presence." },
-    { min: 14, max: 15, name: "Self-Running (Scalable)",   line: "Your business runs and grows without you in the room." }
-  ];
 
   const currentLevel = levels.find(l => displayScore >= l.min && displayScore <= l.max) || levels[0];
   const currentLevelIndex = levels.indexOf(currentLevel) + 1;
   const stageNameOnly = currentLevel.name.split(" ")[0];
 
-  const getBandColor = (val: number) => {
-    if (val <= 40) return "#E5484D"; // Red
-    if (val <= 70) return "#E8A93B"; // Amber
-    return "#2E9E5B";                // Green
-  };
-
-  const ringColor = getBandColor(averagePercentage);
   const currentTheme = cardThemes.find(t => t.id === themeId) || cardThemes[0];
 
   const dimensionsList = [
@@ -375,294 +74,24 @@ export default function BMLCalculator() {
     { name: "Digital Maturity", value: digMat }
   ];
 
-  const gapCopy = {
-    "Operational Efficiency": {
-      cost: "20+ hours a week",
-      line: "in repetitive instructions and fire-fighting.",
-      risk: "If you stay in Owner-Dependent mode for another 12 months, every process still lives in your head. The day you step away, work stops — and your Operational Efficiency gap only widens as you take on more.",
-      steps: [
-        ["Audit", "your top 5 recurring tasks — write down everything you repeat weekly."],
-        ["Document", "one SOP today for the most repeated task."],
-        ["Delegate", "that task to one team member who now owns the SOP."]
-      ]
-    },
-    "Financial Control": {
-      cost: "lakhs in cash",
-      line: "tied up in untracked flow and invoicing delays.",
-      risk: "Without tighter Financial Control, you keep flying blind on margins. In 12 months you'll have grown revenue but not profit — and still won't know which products actually make money.",
-      steps: [
-        ["Track", "every rupee in and out for 30 days, one simple sheet."],
-        ["Tighten", "your invoicing cycle — chase dues weekly, not monthly."],
-        ["Review", "product-level margins so you stop selling at a loss."]
-      ]
-    },
-    "Human Capital": {
-      cost: "every new hire",
-      line: "lost to turnover, constant retraining and role confusion.",
-      risk: "With a weak Human Capital system, you keep rehiring and retraining the same roles. A year from now you'll still be the only one who knows how anything works — and good people keep leaving.",
-      steps: [
-        ["Define", "clear roles — who owns what, on one page."],
-        ["Build", "a 1-week onboarding checklist for the next hire."],
-        ["Train", "one person to fully own a process end-to-end."]
-      ]
-    },
-    "Digital Maturity": {
-      cost: "hours daily",
-      line: "lost to manual work that software should be doing.",
-      risk: "Staying low on Digital Maturity means manual registers, WhatsApp chaos and no real data. Competitors who systemize move faster while you spend the day copying numbers between books.",
-      steps: [
-        ["Pick", "one painful manual task to move into a simple tool."],
-        ["Centralize", "your data — one source of truth, not 5 notebooks."],
-        ["Automate", "one repetitive report so it runs without you."]
-      ]
-    }
-  };
-
   const currentCopy = gapCopy[weakestDim as keyof typeof gapCopy] || gapCopy["Operational Efficiency"];
 
+  // Render + download the shareable result card (see bml-card.ts).
   const downloadPNG = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 720;
-    canvas.height = 1280;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const currentTheme = cardThemes.find(t => t.id === themeId) || cardThemes[0];
-
-    // 1. Background
-    ctx.fillStyle = currentTheme.bg;
-    ctx.fillRect(0, 0, 720, 1280);
-
-    // 2. Subtle Inset Border
-    ctx.strokeStyle = currentTheme.border;
-    ctx.lineWidth = 4;
-    ctx.strokeRect(20, 20, 680, 1240);
-
-    // 3. Header
-    // Logo text
-    ctx.fillStyle = currentTheme.text;
-    ctx.font = "900 22px Archivo, sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("SYSTEMS FOR SME", 60, 90);
-
-    // Eyebrow
-    ctx.fillStyle = "#9A9A93";
-    ctx.font = "bold 14px Inter, sans-serif";
-    ctx.textAlign = "right";
-    ctx.fillText("BML DIAGNOSTIC", 660, 90);
-
-    // Divider Line
-    ctx.strokeStyle = currentTheme.border;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(60, 125);
-    ctx.lineTo(660, 125);
-    ctx.stroke();
-
-    // 4. Footer
-    // Footer Divider Line
-    ctx.strokeStyle = currentTheme.border;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(60, 1130);
-    ctx.lineTo(660, 1130);
-    ctx.stroke();
-
-    // Handle @systems_for_sme (centered)
-    ctx.fillStyle = currentTheme.accent;
-    ctx.font = "900 22px Inter, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("@systems_for_sme", 360, 1195);
-
-    // 5. Calculate layout heights and spacing dynamically to center content
-    const heights: { name: string; height: number }[] = [];
-    
-    // Name & Badge is always shown
-    heights.push({ name: "name", height: 110 });
-
-    if (showScoreRing) {
-      heights.push({ name: "scoreRing", height: 230 });
-    }
-
-    if (showLevel) {
-      heights.push({ name: "levelLine", height: 80 });
-    }
-
-    if (showDimensions) {
-      heights.push({ name: "dimensions", height: 200 });
-    }
-
-    // Biggest Gap is always shown
-    heights.push({ name: "biggestGap", height: 90 });
-
-    const totalContentHeight = heights.reduce((sum, h) => sum + h.height, 0);
-    const totalAvailableHeight = 850; // space between Y=180 and Y=1030
-    
-    // Distribute spacing
-    const maxSpacing = 50;
-    const spacing = heights.length > 1 ? Math.min(maxSpacing, (totalAvailableHeight - totalContentHeight) / (heights.length - 1)) : 0;
-    const actualBlockHeight = totalContentHeight + spacing * (heights.length - 1);
-    const startY = 180 + (totalAvailableHeight - actualBlockHeight) / 2;
-
-    let currentY = startY;
-
-    heights.forEach((item) => {
-      if (item.name === "name") {
-        ctx.fillStyle = currentTheme.text;
-        ctx.font = "900 32px Archivo, sans-serif";
-        ctx.textAlign = "left";
-        ctx.fillText(exportName || "Founder", 60, currentY + 45);
-
-        if (showLevel) {
-          const badgeText = `LEVEL ${currentLevelIndex} · ${stageNameOnly.toUpperCase()}`;
-          ctx.font = "900 15px Inter, sans-serif";
-          const textWidth = ctx.measureText(badgeText).width;
-
-          // Draw yellow badge background
-          ctx.fillStyle = currentTheme.labelBg;
-          ctx.fillRect(60, currentY + 68, textWidth + 24, 30);
-
-          // Draw text inside badge
-          ctx.fillStyle = currentTheme.labelText;
-          ctx.fillText(badgeText, 72, currentY + 88);
-        }
-        currentY += item.height + spacing;
-      } 
-      
-      else if (item.name === "scoreRing") {
-        const centerX = 360;
-        const centerY = currentY + 110;
-        const radius = 80;
-
-        // Draw track
-        ctx.strokeStyle = currentTheme.trackBg;
-        ctx.lineWidth = 17;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-
-        // Draw progress fill
-        ctx.strokeStyle = currentTheme.accent;
-        ctx.lineWidth = 17;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, ringGeometry.startAngle, ringGeometry.endAngle, false);
-        ctx.stroke();
-
-        // Draw score inside ring
-        ctx.fillStyle = currentTheme.text;
-        ctx.font = "900 64px Archivo, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(averagePercentage.toString() + "%", centerX, centerY + 12);
-
-        ctx.fillStyle = "#9A9A93";
-        ctx.font = "900 15px Inter, sans-serif";
-        ctx.fillText("OVERALL", centerX, centerY + 42);
-
-        currentY += item.height + spacing;
-      } 
-      
-      else if (item.name === "levelLine") {
-        ctx.fillStyle = currentTheme.id === 'light' ? '#54544F' : '#D7D7D2';
-        ctx.font = "bold 21px Inter, sans-serif";
-        ctx.textAlign = "center";
-
-        // Wrapped stage line text
-        const text = currentLevel.line;
-        const words = text.split(" ");
-        let line = "";
-        let lines = [];
-        const maxWidth = 560;
-
-        for (let n = 0; n < words.length; n++) {
-          let testLine = line + words[n] + " ";
-          let metrics = ctx.measureText(testLine);
-          let testWidth = metrics.width;
-          if (testWidth > maxWidth && n > 0) {
-            lines.push(line);
-            line = words[n] + " ";
-          } else {
-            line = testLine;
-          }
-        }
-        lines.push(line);
-
-        let textY = currentY + 30;
-        lines.forEach((l) => {
-          ctx.fillText(l.trim(), 360, textY);
-          textY += 30;
-        });
-
-        currentY += item.height + spacing;
-      } 
-      
-      else if (item.name === "dimensions") {
-        ctx.textAlign = "left";
-        let barY = currentY + 20;
-
-        dimensionsList.forEach((dim) => {
-          const isWeak = dim.name === weakestDim;
-
-          // Dimension Label
-          ctx.fillStyle = currentTheme.text;
-          ctx.font = "bold 18px Inter, sans-serif";
-          ctx.fillText(dim.name, 60, barY);
-
-          // If weakest, draw GAP badge
-          if (isWeak) {
-            ctx.font = "900 11px Inter, sans-serif";
-            const badgeWidth = ctx.measureText("GAP").width;
-            ctx.fillStyle = "#E5484D";
-            ctx.fillRect(60 + ctx.measureText(dim.name).width + 12, barY - 16, badgeWidth + 12, 20);
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillText("GAP", 60 + ctx.measureText(dim.name).width + 18, barY - 2);
-          }
-
-          // Percentage
-          ctx.fillStyle = currentTheme.id === 'light' ? '#6B6B66' : '#9A9A93';
-          ctx.font = "bold 18px Archivo, sans-serif";
-          ctx.textAlign = "right";
-          ctx.fillText(`${dim.value}%`, 660, barY);
-
-          // Progress Track
-          ctx.fillStyle = currentTheme.trackBg;
-          ctx.fillRect(60, barY + 12, 600, 10);
-
-          // Progress Fill
-          ctx.fillStyle = currentTheme.accent;
-          ctx.fillRect(60, barY + 12, 600 * (dim.value / 100), 10);
-
-          barY += 45;
-          ctx.textAlign = "left";
-        });
-
-        currentY += item.height + spacing;
-      } 
-      
-      else if (item.name === "biggestGap") {
-        // Draw vertical yellow accent line
-        ctx.fillStyle = currentTheme.accent;
-        ctx.fillRect(60, currentY, 6, 70);
-
-        // Subtext
-        ctx.fillStyle = "#9A9A93";
-        ctx.font = "900 13px Inter, sans-serif";
-        ctx.textAlign = "left";
-        ctx.fillText("BIGGEST GAP", 80, currentY + 18);
-
-        // Main value
-        ctx.fillStyle = currentTheme.text;
-        ctx.font = "900 24px Archivo, sans-serif";
-        ctx.fillText(weakestDim.toUpperCase(), 80, currentY + 50);
-
-        currentY += item.height + spacing;
-      }
+    downloadResultCard({
+      themeId,
+      exportName,
+      showScoreRing,
+      showLevel,
+      showDimensions,
+      averagePercentage,
+      currentLevelIndex,
+      stageNameOnly,
+      currentLevelLine: currentLevel.line,
+      ringGeometry,
+      dimensionsList,
+      weakestDim,
     });
-
-    // Download flow
-    const link = document.createElement("a");
-    link.download = `${exportName.trim().replace(/\s+/g, "_")}_BML_Score.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
   };
 
   const handleNext = () => {
@@ -675,8 +104,8 @@ export default function BMLCalculator() {
         alert("Please enter your business name");
         return;
       }
-      if (!biggestProblem) {
-        alert("Please select your biggest problem");
+      if (selectedProblems.length === 0) {
+        alert("Please select at least one problem");
         return;
       }
       if (!revenue) {
@@ -711,6 +140,26 @@ export default function BMLCalculator() {
       alert("Please enter a valid email address");
       return;
     }
+    if (!whatsapp.trim() || whatsapp.replace(/[\s\-+]/g, "").length < 10) {
+      alert("Please enter a valid phone number");
+      return;
+    }
+    if (!typeOfBusiness) {
+      alert("Please select your type of business");
+      return;
+    }
+    if (!businessDescription.trim()) {
+      alert("Please explain your business in brief");
+      return;
+    }
+    if (!cityState.trim()) {
+      alert("Please enter your city and state");
+      return;
+    }
+    if (!investmentReadiness) {
+      alert("Please tell us if you are ready to invest");
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -727,7 +176,11 @@ export default function BMLCalculator() {
       email,
       whatsapp,
       revenue,
-      biggestProblem,
+      biggestProblem: selectedProblems.join(", "),
+      typeOfBusiness,
+      businessDescription,
+      cityState,
+      investmentReadiness,
       averagePercentage,
       currentLevel: `Level ${currentLevelIndex} - ${stageNameOnly}`,
       weakestDim,
@@ -763,15 +216,24 @@ export default function BMLCalculator() {
     setAnswers({ ...answers, [qId]: optionIndex });
   };
 
+  // Add/remove a pain point from the multi-select list.
+  const toggleProblem = (problemText: string) => {
+    setSelectedProblems((prev) =>
+      prev.includes(problemText)
+        ? prev.filter((p) => p !== problemText)
+        : [...prev, problemText]
+    );
+  };
+
 
   return (
     <div className={`min-h-screen ${
       step === 7 ? "bg-[#F7F7F5] text-[#0E0E0E]" : "bg-[#fff8f2] text-[#2b3040]"
     } font-sans flex flex-col relative overflow-x-hidden transition-colors duration-300`}>
-      <BookingNav activePage={step === 7 ? "results" : "bml"} />
+      <Nav />
 
       {/* Main Content Area */}
-      <main className={`flex-grow pt-24 pb-32 px-6 ${
+      <main className={`flex-grow pt-24 px-6 ${step < 6 ? "pb-32" : "pb-10"} ${
         step === 7 ? "max-w-5xl" : "max-w-3xl"
       } mx-auto w-full flex flex-col justify-start`}>
         {step < 6 ? (
@@ -854,30 +316,34 @@ export default function BMLCalculator() {
                   <div className="space-y-4 pt-4 border-t border-[#2b3040]/10">
                     <div>
                       <span className="text-[11px] font-bold uppercase tracking-wider text-[#edb605]">Pain Point Analysis</span>
-                      <h3 className="text-xl font-bold text-[#2b3040] mt-1">What do you feel is the biggest problem that you face? *</h3>
+                      <h3 className="text-xl font-bold text-[#2b3040] mt-1">What do you feel are the biggest problems that you face? *</h3>
+                      <p className="text-xs text-[#2b3040]/50 font-medium mt-1">Select all that apply.</p>
                     </div>
                     <div className="grid grid-cols-1 gap-3">
-                      {biggestProblems.map((prob) => (
-                        <button
-                          key={prob.label}
-                          type="button"
-                          className={`flex items-start gap-3 md:gap-4 p-3 md:p-3.5 rounded-lg border text-left transition-all duration-200 ${
-                            biggestProblem === prob.text
-                              ? "border-[#edb605] bg-[#edb605]/5 font-semibold"
-                              : "border-[#2b3040]/10 bg-[#fff8f2]/30 hover:bg-[#2b3040]/5"
-                          }`}
-                          onClick={() => setBiggestProblem(prob.text)}
-                        >
-                          <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                            biggestProblem === prob.text ? "border-[#edb605] bg-white" : "border-[#2b3040]/30 bg-white"
-                          }`}>
-                            <div className={`w-2.5 h-2.5 rounded-full bg-[#edb605] transition-transform ${
-                              biggestProblem === prob.text ? "scale-100" : "scale-0"
-                            }`}></div>
-                          </div>
-                          <span className="text-sm text-[#2b3040]">{prob.text}</span>
-                        </button>
-                      ))}
+                      {biggestProblems.map((prob) => {
+                        const isChecked = selectedProblems.includes(prob.text);
+                        return (
+                          <button
+                            key={prob.label}
+                            type="button"
+                            className={`flex items-start gap-3 md:gap-4 p-3 md:p-3.5 rounded-lg border text-left transition-all duration-200 ${
+                              isChecked
+                                ? "border-[#edb605] bg-[#edb605]/5 font-semibold"
+                                : "border-[#2b3040]/10 bg-[#fff8f2]/30 hover:bg-[#2b3040]/5"
+                            }`}
+                            onClick={() => toggleProblem(prob.text)}
+                          >
+                            <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                              isChecked ? "border-[#edb605] bg-[#edb605]" : "border-[#2b3040]/30 bg-white"
+                            }`}>
+                              <span className={`material-symbols-outlined text-white text-sm font-black transition-transform ${
+                                isChecked ? "scale-100" : "scale-0"
+                              }`}>check</span>
+                            </div>
+                            <span className="text-sm text-[#2b3040]">{prob.text}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -986,7 +452,7 @@ export default function BMLCalculator() {
           </div>
         ) : step === 6 ? (
           /* Step 6: Lead Capture */
-          <div className="w-full pt-6 space-y-6 max-w-md mx-auto z-10 relative">
+          <div className="w-full pt-6 space-y-6 max-w-lg mx-auto z-10 relative">
             {/* Progress Tracker */}
             <div className="space-y-2">
               <div className="flex justify-between items-end">
@@ -1026,20 +492,104 @@ export default function BMLCalculator() {
                     />
                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#666666] opacity-40 group-focus-within:text-[#edb605] transition-colors">mail</span>
                   </div>
+                  <p className="text-[11px] text-[#666666]/70 ml-1">Business email is preferred.</p>
                 </div>
-                {/* WhatsApp Field */}
+                {/* Phone Field */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="whatsapp">WhatsApp Number (Optional)</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="whatsapp">Phone Number *</label>
                   <div className="relative group">
                     <input
                       className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all"
                       id="whatsapp"
                       placeholder="+91 98XXX XXXXX"
+                      required
                       type="tel"
                       value={whatsapp}
                       onChange={(e) => setWhatsapp(e.target.value)}
                     />
                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#666666] opacity-40 group-focus-within:text-[#edb605] transition-colors">phone_iphone</span>
+                  </div>
+                  <p className="text-[11px] text-[#666666]/70 ml-1">Personal or business contact.</p>
+                </div>
+                {/* Type of Business */}
+                <div className="space-y-2">
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase">Type of Business *</label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {businessTypes.map((opt) => (
+                      <button
+                        key={opt.label}
+                        type="button"
+                        onClick={() => setTypeOfBusiness(opt.text)}
+                        className={`flex items-center gap-3 p-3 rounded-xl border text-left text-sm transition-all duration-200 ${
+                          typeOfBusiness === opt.text
+                            ? "border-[#edb605] bg-[#edb605]/5 font-semibold text-[#1a1a1a]"
+                            : "border-[#e0d8d0] bg-[#f4ede6] hover:border-[#edb605]/50 text-[#1a1a1a]"
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          typeOfBusiness === opt.text ? "border-[#edb605]" : "border-[#666666]/30"
+                        }`}>
+                          <div className={`w-2 h-2 rounded-full bg-[#edb605] transition-transform ${
+                            typeOfBusiness === opt.text ? "scale-100" : "scale-0"
+                          }`}></div>
+                        </div>
+                        {opt.text}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Business Brief */}
+                <div className="space-y-2">
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="bml-description">Explain Your Business in Brief *</label>
+                  <textarea
+                    className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all resize-none"
+                    id="bml-description"
+                    rows={3}
+                    required
+                    placeholder="What does your business do?"
+                    value={businessDescription}
+                    onChange={(e) => setBusinessDescription(e.target.value)}
+                  />
+                </div>
+                {/* City / State */}
+                <div className="space-y-2">
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="city-state">City / State *</label>
+                  <input
+                    className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all"
+                    id="city-state"
+                    type="text"
+                    required
+                    placeholder="e.g. Jaipur, Rajasthan"
+                    value={cityState}
+                    onChange={(e) => setCityState(e.target.value)}
+                  />
+                  <p className="text-[11px] text-[#666666]/70 ml-1">Please enter city and state.</p>
+                </div>
+                {/* Investment Readiness */}
+                <div className="space-y-2">
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase">Are You Ready to Invest to Solve Your Business Problems? *</label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {investmentOptions.map((opt) => (
+                      <button
+                        key={opt.label}
+                        type="button"
+                        onClick={() => setInvestmentReadiness(opt.text)}
+                        className={`flex items-start gap-3 p-3 rounded-xl border text-left text-sm transition-all duration-200 ${
+                          investmentReadiness === opt.text
+                            ? "border-[#edb605] bg-[#edb605]/5 font-semibold text-[#1a1a1a]"
+                            : "border-[#e0d8d0] bg-[#f4ede6] hover:border-[#edb605]/50 text-[#1a1a1a]"
+                        }`}
+                      >
+                        <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          investmentReadiness === opt.text ? "border-[#edb605]" : "border-[#666666]/30"
+                        }`}>
+                          <div className={`w-2 h-2 rounded-full bg-[#edb605] transition-transform ${
+                            investmentReadiness === opt.text ? "scale-100" : "scale-0"
+                          }`}></div>
+                        </div>
+                        {opt.text}
+                      </button>
+                    ))}
                   </div>
                 </div>
                 {/* CTA Button */}
@@ -1093,7 +643,7 @@ export default function BMLCalculator() {
           </div>
         ) : (
           /* Step 7: Results Screen */
-          <div className="w-full pt-6 space-y-12 animate-in fade-in duration-500 max-w-[1120px] mx-auto pb-16">
+          <div className="w-full pt-6 space-y-12 animate-in fade-in duration-500 max-w-[1120px] mx-auto pb-2">
             <section className="pt-[54px] pb-[18px]">
               <h1 className="font-['Archivo'] font-extrabold text-[30px] sm:text-[42px] md:text-[52px] leading-[1.02] tracking-tight max-w-[680px] text-[#0E0E0E]">
                 Hey <span className="font-extrabold">{name || "Founder"}</span>, your business is <em style={{ fontStyle: "normal", background: "linear-gradient(transparent 62%, #FCD12A 62%)" }}>{stageNameOnly}.</em>
@@ -1228,7 +778,7 @@ export default function BMLCalculator() {
               </div>
 
               {/* RIGHT COLUMN — the action */}
-              <div className="order-3 lg:order-2 flex flex-col gap-[22px] text-left">
+              <div className="order-2 lg:order-2 flex flex-col gap-[22px] text-left">
                 {/* Next Steps */}
                 <div className="bg-[#0E0E0E] text-white p-[26px] rounded-none">
                   <h3 className="font-['Archivo'] font-extrabold text-[18px] tracking-[0.02em] mb-[18px] text-white">
@@ -1270,7 +820,7 @@ export default function BMLCalculator() {
               </div>
 
               {/* FULL-WIDTH PRIMARY BUTTON */}
-              <div className="order-2 lg:order-3 lg:col-span-2 pt-2 pb-[60px]">
+              <div className="order-3 lg:order-3 lg:col-span-2 pt-2 pb-2">
                 <Link
                   href="/booking"
                   className="w-full bg-[#FCD12A] border-none border-b-[5px] border-[#0E0E0E] text-[#0E0E0E] font-['Archivo'] font-black text-lg sm:text-[22px] md:text-[28px] tracking-[0.01em] p-[30px] cursor-pointer flex items-center justify-center gap-4 transition-transform hover:-translate-y-0.5 rounded-none text-center block"

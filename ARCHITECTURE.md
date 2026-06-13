@@ -43,8 +43,8 @@ Content configured by the business owner (pricing values, Raghav's portrait URL,
 [ Google Sheet ] ──► [ Apps Script (fetchContent) ] ──► [ Next.js Server (/api/content-feed) ] ──► [ Pages ]
 ```
 
-* **Caching Strategy**: To keep page loads instantaneous and bypass Google rate limits, content is cached in-memory on the Next.js server.
-* **Busting the Cache**: You can bypass the cache and fetch fresh values from the spreadsheet immediately by appending `?nocache=true` to the request (e.g. `http://localhost:3000/api/content-feed?nocache=true`). In development mode (`NODE_ENV === "development"`), the cache duration is set to 0 seconds, so pages always load fresh sheet content.
+* **Caching Strategy**: To keep page loads instantaneous and bypass Google rate limits, every server-side read from the spreadsheet uses the **same 1-hour (3600s) revalidation interval**. This single interval is applied consistently across the landing page (`/`), the Vault list (`/vault`), each Vault article (`/vault/[slug]`), and the `/api/content-feed` route (which also keeps a 1-hour in-memory copy). Because Next.js uses the *lowest* `revalidate` value found on a route, keeping these in sync is what guarantees the intended 1-hour refresh.
+* **Busting the Cache**: You can bypass the cache and fetch fresh values from the spreadsheet immediately by appending `?nocache=true` to the request (e.g. `http://localhost:3000/api/content-feed?nocache=true`). In development mode, Next.js fetches fresh content on every request regardless of the interval.
 
 ---
 
@@ -95,3 +95,31 @@ We use Next.js's dual component model to maximize SEO crawling indexability whil
 ## 5. Environment Config Reference
 
 * **`GOOGLE_SCRIPT_WEBAPP_URL`**: Used by `/api/content-feed`, `/api/bml-submit`, `/api/booking-submit`, and `/vault/[slug]/page.tsx` on the Next.js server side to connect with the Google Sheets Apps Script.
+
+---
+
+## 6. BML Calculator File Structure
+
+The BML Calculator is the most complex feature on the site, so it is deliberately split into small, single-purpose files inside `app/bml/`. Each file has one job, which keeps the interactive UI readable and makes the scoring logic easy to verify in isolation.
+
+| File | Type | Responsibility |
+| :--- | :--- | :--- |
+| **`page.tsx`** | Server Component | Exports SEO metadata and dynamically imports the client component (with a loading spinner). No logic. |
+| **`bml-client.tsx`** | Client Component (`"use client"`) | The interactive experience: quiz step state, form inputs, the live results screen, and the download modal. It holds the React state and JSX, and **delegates all data, math, and image rendering** to the three files below. |
+| **`bml-data.ts`** | Plain data (no React) | All static content: the 5 quiz `questions` + answer options/points, the intro `biggestProblems` and `revenueOptions`, the downloadable-card `cardThemes`, the 5 maturity `levels` (L1–L5), and the per-gap result copy (`gapCopy`). **Edit quiz wording, options, or copy here.** |
+| **`bml-scoring.ts`** | Pure functions (no React/DOM) | The math: `computeDimensions()` turns the user's answers + stated biggest problem into the four dimension percentages, the forced "weakest" gap, the overall percentage, and the 0–15 score. Also `getRingGeometry()` and `getBandColor()` for the progress ring and color bands. Pure functions = easy to unit-test. |
+| **`bml-card.ts`** | Canvas helper | `downloadResultCard()` draws the shareable 720×1280 result card on an off-screen `<canvas>` and triggers a PNG download. It receives a plain `CardData` object (no React state), so the drawing code stays isolated from the UI. |
+
+**Data flow within the feature:**
+
+```text
+  bml-data.ts ──(questions, levels, themes, copy)──┐
+                                                    ▼
+  user answers ──► bml-client.tsx ──► computeDimensions() ──► scores/percentages
+                        │                (bml-scoring.ts)
+                        │
+                        └──► downloadResultCard(CardData) ──► PNG download
+                                  (bml-card.ts)
+```
+
+> **Why the split?** Previously all of this lived in a single ~1,500-line `bml-client.tsx`. Separating the static content (`bml-data`), the math (`bml-scoring`), and the image generation (`bml-card`) means you can change quiz copy without touching logic, adjust scoring without scrolling past hundreds of lines of JSX, and reason about the canvas rendering on its own.

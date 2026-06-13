@@ -29,7 +29,7 @@ function doPost(e) {
           .setMimeType(ContentService.MimeType.JSON);
       }
       
-      // Append row: Timestamp, Name, Business Name, Email, WhatsApp, Monthly Revenue, Biggest Pain Point, Overall Score %, Maturity Level, Weakest System, Q1, Q1_Details, Q2, Q2_Details, Q3, Q3_Details, Q4, Q4_Details, Q5, Q5_Details
+      // Append row: Timestamp, Name, Business Name, Email, WhatsApp, Monthly Revenue, Biggest Pain Point, Overall Score %, Maturity Level, Weakest System, Q1, Q1_Details, Q2, Q2_Details, Q3, Q3_Details, Q4, Q4_Details, Q5, Q5_Details, Type of Business, Business Description, City/State, Investment Readiness
       leadsSheet.appendRow([
         new Date(),
         data.name || '',
@@ -50,7 +50,11 @@ function doPost(e) {
         data.q4 || '',
         data.q4_details || '',
         data.q5 || '',
-        data.q5_details || ''
+        data.q5_details || '',
+        data.typeOfBusiness || '',
+        data.businessDescription || '',
+        data.cityState || '',
+        data.investmentReadiness || ''
       ]);
       
       return ContentService.createTextOutput(JSON.stringify({ success: true }))
@@ -65,7 +69,7 @@ function doPost(e) {
           .setMimeType(ContentService.MimeType.JSON);
       }
       
-      // Append row: Timestamp, Full Name, Phone Number, Business Name, Description, Team Size, Tracking, Problems, Other Problem, Fixed Before, Authority
+      // Append row: Timestamp, Full Name, Phone Number, Business Name, Description, Team Size, Tracking, Problems, Other Problem, Fixed Before, Authority, Monthly Revenue, Preferred Date, Preferred Time Slot
       resultsSheet.appendRow([
         new Date(),
         data.fullName || '',
@@ -77,7 +81,10 @@ function doPost(e) {
         data.problems ? data.problems.join(', ') : '',
         data.otherProblem || '',
         data.fixedBefore || '',
-        data.authority || ''
+        data.authority || '',
+        data.revenue || '',
+        data.bookingDate || '',
+        data.slot || ''
       ]);
       
       return ContentService.createTextOutput(JSON.stringify({ success: true }))

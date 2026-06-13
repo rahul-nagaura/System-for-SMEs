@@ -261,26 +261,6 @@ export default function VaultPage({ content }: { content: any }) {
         </div>
       </section>
 
-      {/* Section 2: Primary CTA (BML Calculator) */}
-      <section className="bg-text-primary py-16 px-gutter">
-        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="max-w-xl">
-            <h2 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container mb-4">
-              Start Here: BML Calculator
-            </h2>
-            <p className="font-body-lg text-body-lg text-white">
-              2 minute ka diagnostic jo batata hai aapka business aap pe kitna depend karta hai — aur kahan system lagana hai.
-            </p>
-          </div>
-          <Link
-            className="w-full md:w-auto bg-primary-container text-on-primary-container px-12 py-6 font-button-text text-button-text hover:bg-surface-bright hover:text-on-background transition-colors text-center border-2 border-text-primary"
-            href="/bml"
-          >
-            Free Audit Lo
-          </Link>
-        </div>
-      </section>
-
       {/* Section 4: AI Prompt Kit Details */}
       <section ref={promptSectionRef} id="ai-prompt-kit" className="bg-[#141414] py-section-padding-mobile md:py-section-padding-desktop px-gutter overflow-hidden relative text-white">
         <div className="max-w-[1200px] mx-auto relative z-10">
@@ -402,13 +382,33 @@ export default function VaultPage({ content }: { content: any }) {
         </div>
       </section>
 
+      {/* Section 2: Primary CTA (BML Calculator) */}
+      <section className="bg-text-primary py-16 px-gutter">
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="max-w-xl">
+            <h2 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container mb-4">
+              Start Here: BML Calculator
+            </h2>
+            <p className="font-body-lg text-body-lg text-white">
+              2 minute ka diagnostic jo batata hai aapka business aap pe kitna depend karta hai — aur kahan system lagana hai.
+            </p>
+          </div>
+          <Link
+            className="w-full md:w-auto bg-primary-container text-on-primary-container px-12 py-6 font-button-text text-button-text hover:bg-surface-bright hover:text-on-background transition-colors text-center border-2 border-text-primary"
+            href="/bml"
+          >
+            Free Audit Lo
+          </Link>
+        </div>
+      </section>
+
       {/* Section 5: Closing CTA */}
       <section className="bg-primary-container py-24 px-gutter">
         <div className="max-w-[1200px] mx-auto text-center">
-          <h2 className="font-display-xl-mobile md:font-headline-lg text-on-background mb-6">
+          <h2 className="font-display-xl-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-6">
             Confused kahan se shuru karu?
           </h2>
-          <p className="font-body-lg text-on-background font-bold mb-10">
+          <p className="font-body-lg text-2xl md:text-3xl text-on-background font-bold mb-10">
             Audit se shuru karo.
           </p>
           <Link

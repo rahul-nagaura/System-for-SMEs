@@ -42,7 +42,7 @@ export default function RootLayout({
 
 function SiteFooter() {
   return (
-    <footer className="bg-[#141414] border-t-4 border-[#ffd21f] text-white py-12 px-6 md:px-12">
+    <footer className="bg-[#141414] border-t-4 border-[#ffd21f] text-white py-8 px-6 md:px-12">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
         {/* Left Info */}
         <div className="space-y-2">
@@ -61,11 +61,8 @@ function SiteFooter() {
 
         {/* Right Links */}
         <div className="flex flex-wrap gap-x-8 gap-y-4 text-xs md:text-sm font-medium text-white">
-          <Link href="#" className="hover:text-[#ffd21f] transition-colors">
-            Privacy Policy
-          </Link>
-          <Link href="#" className="hover:text-[#ffd21f] transition-colors">
-            Terms of Service
+          <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
+            BML Calculator
           </Link>
           <Link href="/vault" className="hover:text-[#ffd21f] transition-colors">
             Vault

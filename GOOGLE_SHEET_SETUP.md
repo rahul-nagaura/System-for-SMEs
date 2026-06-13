@@ -30,7 +30,7 @@ Type the following exact column headers into **Row 1** of each respective tab:
 Acts as a key-value store for global configurations.
 * **Headers**: `Key`, `Value`
 * **Purpose**:
-  * `Key`: The variable name (e.g. `pricing`, `owner_photo_url`).
+  * `Key`: The variable name. The website only reads `pricing_amount` and `owner_photo_url`.
   * `Value`: The actual value (e.g. `2499`, `/raghav.jpg`).
 
 ### 2. `FAQs` Tab
@@ -105,7 +105,7 @@ Copy and paste this sample row data into your spreadsheet to verify the connecti
 ### `GlobalSettings` Tab Sample
 | Key | Value |
 | :--- | :--- |
-| `pricing` | `2499` |
+| `pricing_amount` | `2499` |
 | `owner_photo_url` | `/raghav.jpg` |
 
 ### `FAQs` Tab Sample

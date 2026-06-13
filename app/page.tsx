@@ -57,7 +57,7 @@ export default async function LandingPage() {
   if (webappUrl) {
     try {
       const res = await fetch(`${webappUrl}?action=fetchContent`, {
-        next: { revalidate: 60 }
+        next: { revalidate: 3600 } // 1 hour — kept in sync with the page `revalidate` above
       });
       if (res.ok) {
         const data = await res.json();

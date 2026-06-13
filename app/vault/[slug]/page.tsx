@@ -139,9 +139,9 @@ export default async function ResourcePage({
         ? `${webappUrl}?action=fetchContent&t=${Date.now()}` 
         : `${webappUrl}?action=fetchContent`;
       
-      const fetchOptions: RequestInit = isDev 
-        ? { cache: "no-store" } 
-        : { next: { revalidate: 600 } };
+      const fetchOptions: RequestInit = isDev
+        ? { cache: "no-store" }
+        : { next: { revalidate: 3600 } }; // 1 hour — same interval used across the site
 
       const res = await fetch(fetchUrl, fetchOptions);
       const data = await res.json();

@@ -39,9 +39,9 @@ export async function GET(request: Request) {
       ? `${webappUrl}?action=fetchContent&t=${now}` 
       : `${webappUrl}?action=fetchContent`;
       
-    const fetchOptions: RequestInit = nocache 
-      ? { cache: "no-store" } 
-      : { next: { revalidate: 600 } };
+    const fetchOptions: RequestInit = nocache
+      ? { cache: "no-store" }
+      : { next: { revalidate: 3600 } }; // 1 hour — matches CACHE_DURATION and the rest of the site
 
     const response = await fetch(fetchUrl, {
       method: "GET",
