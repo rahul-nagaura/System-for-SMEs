@@ -13,6 +13,7 @@ const resources: Record<string, {
   intro: string;
   sections?: { heading: string; body: string }[];
   section?: string;
+  downloadUrl?: string;
 }> = {
   "sop": {
     title: "SOP Generator Prompt",
@@ -65,7 +66,8 @@ const resources: Record<string, {
       { heading: "Step 4 — Create a Communication Protocol", body: "Stop running on WhatsApp chaos. Define: where decisions are logged, how updates are shared, and who is responsible for what." },
       { heading: "Step 5 — Hold Weekly Operations Review", body: "Set up a 30-minute sync meeting with your key team members. Review: KPIs met, bottlenecks faced, and key tasks for the upcoming week. This builds team accountability." }
     ],
-    section: "vault"
+    section: "vault",
+    downloadUrl: "https://drive.google.com/file/d/12zv75PLjSBl7n9lm2LfJ8ggb899yYrRO/view"
   },
   "manufacturing-guide": {
     title: "Manufacturing Owner's Guide",
@@ -78,7 +80,8 @@ const resources: Record<string, {
       { heading: "Step 3 — Reorder Point Inventory", body: "Never run out of raw materials. Establish minimum stock levels (reorder points) for key materials and assign one person to trigger purchases when those levels are breached." },
       { heading: "Step 4 — Set Quality Checkpoints", body: "Install quality check steps before packing and shipping. Define clear criteria for passes and rejects so defects are caught on the shop floor rather than by the customer." }
     ],
-    section: "vault"
+    section: "vault",
+    downloadUrl: "https://drive.google.com/file/d/18SWuOBNeWF7_ZT5HTBR4159lEQHg99KJ/view"
   },
   "sop-guide": {
     title: "SOP Guide",
@@ -91,7 +94,8 @@ const resources: Record<string, {
       { heading: "Record Loom Videos", body: "Don't just write. Record a 3-minute video showing how to do the task (especially software tasks). Embed the video link at the top of the written SOP." },
       { heading: "Review and Update", body: "Processes change. Review SOPs quarterly with the team members who perform them to keep documentation aligned with reality." }
     ],
-    section: "vault"
+    section: "vault",
+    downloadUrl: "https://drive.google.com/file/d/17Tf4NIaEr_brTSZvtrBgrx-686UVXxav/view"
   },
   "roles-responsibilities": {
     title: "Roles & Responsibilities",
@@ -104,7 +108,8 @@ const resources: Record<string, {
       { heading: "Outline Decision Authority", body: "Tell them exactly what decisions they can make without your approval. For example, 'Sales reps can offer up to 5% discount' or 'Purchasing can approve orders up to ₹20,000'." },
       { heading: "Review Performance Monthly", body: "Sit down for 15 minutes each month to review scorecards and provide feedback, shifting the focus from hours worked to outcomes delivered." }
     ],
-    section: "vault"
+    section: "vault",
+    downloadUrl: "https://drive.google.com/file/d/1ZyNOw8N6wo2CaFawDmvGeXjSOkUQHRoe/view"
   }
 };
 
@@ -122,6 +127,7 @@ export default async function ResourcePage({
     intro: string;
     sections?: { heading: string; body: string }[];
     section?: string;
+    downloadUrl?: string;
   } | null = null;
 
   const webappUrl = process.env.GOOGLE_SCRIPT_WEBAPP_URL;
@@ -154,7 +160,8 @@ export default async function ResourcePage({
             icon: found.icon || (found.section === "ai_prompts" ? "smart_toy" : "rocket_launch"),
             intro: found.intro || "",
             sections,
-            section: found.section || "vault"
+            section: found.section || "vault",
+            downloadUrl: found.downloadUrl || found.download_url || ""
           };
         }
       }
@@ -208,6 +215,32 @@ export default async function ResourcePage({
             </div>
           </div>
         </section>
+
+        {/* Download Callout */}
+        {resource.downloadUrl && (
+          <div className="bg-[#fcdc95]/50 border-2 border-[#725b22]/20 p-6 md:p-8 rounded-[24px] flex flex-col sm:flex-row justify-between items-center gap-6 shadow-sm">
+            <div className="flex items-center gap-4">
+              <span className="material-symbols-outlined text-4xl text-[#775a00] p-2 bg-[#fcdc95] rounded-xl select-none">
+                download
+              </span>
+              <div className="space-y-1">
+                <h3 className="font-bold text-lg text-[#201b11]">Download the Full PDF Guide</h3>
+                <p className="text-xs text-[#4f4633] font-medium leading-relaxed max-w-md">
+                  Access the complete, print-ready document including advanced templates and worksheets.
+                </p>
+              </div>
+            </div>
+            <a
+              href={resource.downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto bg-[#edb605] text-[#201b11] hover:brightness-105 active:scale-95 transition-all font-bold px-8 py-4 rounded-full text-center flex items-center justify-center gap-2 border-2 border-[#2b3040]/20 shadow-md text-sm whitespace-nowrap"
+            >
+              Open PDF Guide
+              <span className="material-symbols-outlined text-lg">open_in_new</span>
+            </a>
+          </div>
+        )}
 
         {/* Content sections */}
         <section className="space-y-8">
