@@ -16,8 +16,7 @@ export default function ConditionalLayout({
   // Standalone pages that define their own headers/footers
   const isStandalone =
     pathname === "/bml" ||
-    pathname === "/booking" ||
-    (pathname.startsWith("/vault/") && pathname !== "/vault");
+    pathname === "/booking";
 
   if (isStandalone) {
     return <>{children}</>;

@@ -94,8 +94,7 @@ UI.
   Date, Preferred Time Slot).
 
 ### E. Navigation unified
-- The main `Nav` (`app/components/Nav.tsx`) is now used on **every** page, including BML and booking
-  (which previously used a separate `BookingNav`).
+- The main `Nav` (`app/components/Nav.tsx`) is now used on **every** page, including BML, booking (which previously used a separate `BookingNav`), and Vault detail pages (which previously had a custom local header).
 - **Nav right side:** previously Process / Value / Vault / FAQ → **now Vault · BML Calculator ·
   Book Your Session**.
 - **Footers (right side):** previously Privacy / Terms / Vault → **now BML Calculator · Vault**

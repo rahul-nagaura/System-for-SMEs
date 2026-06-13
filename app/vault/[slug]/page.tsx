@@ -181,19 +181,6 @@ export default async function ResourcePage({
 
   return (
     <div className="min-h-screen bg-[#fff8f2] text-[#201b11] font-sans pb-24">
-      {/* Navigation Shell */}
-      <header className="sticky top-0 w-full z-50 bg-[#fff8f2]/90 backdrop-blur-xl border-b border-[#2b3040]/10 shadow-sm h-16 flex items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#edb605] text-3xl font-black">analytics</span>
-          <span className="font-extrabold text-[20px] tracking-tight text-[#2b3040]">Systems for SME</span>
-        </Link>
-        <div className="flex gap-4">
-          <Link href="/vault" className="text-sm font-bold text-[#2b3040]/70 hover:text-[#edb605] transition-colors">
-            ← Vault Hub
-          </Link>
-        </div>
-      </header>
-
       {/* Main Container */}
       <main className="max-w-[800px] mx-auto px-6 pt-12 space-y-12">
         {/* Intro */}
