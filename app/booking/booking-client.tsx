@@ -14,7 +14,11 @@ const WHATSAPP_NUMBER = "919417149638";
 
 // Build a wa.me link with the chosen date + slot pre-filled into the message.
 const buildWhatsAppUrl = (date: string, slot: string) => {
-  const message = `Hi Team, I've completed my onboarding form and booked a Systems Strategy Session with Raghav for ${date}, ${slot}. I'd like to proceed to the next step — could you please share the payment link to confirm my slot? Thank you!`;
+  const message = `Hi. I want to book a Systems Strategy Session. I have selected the following slot
+Time: ${slot}
+Date: ${date}
+
+Please share the payment credentials.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 

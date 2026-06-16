@@ -86,7 +86,7 @@ UI.
   never show) + **3 time slots** (2–3 PM, 10–11 PM, 11 PM–12 AM).
 - **On submit:** the form (incl. date + slot) saves to the `Results` sheet, then the user is
   **redirected to WhatsApp** via a `wa.me` link with a **pre-filled message** that includes the
-  chosen date + slot ("…please share the payment link…"). A confirmation screen with a "Continue on
+  chosen date + slot ("…Please share the payment credentials."). A confirmation screen with a "Continue on
   WhatsApp" button is the desktop fallback. Number is in `WHATSAPP_NUMBER` in `booking-client.tsx`.
 - **Double-booking** is intentionally handled manually (slots are labels, not live availability);
   Raghav confirms + takes payment, first-to-pay wins. See the discussion in git history if needed.
