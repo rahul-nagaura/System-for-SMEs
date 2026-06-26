@@ -90,8 +90,9 @@ UI.
   WhatsApp" button is the desktop fallback. Number is in `WHATSAPP_NUMBER` in `booking-client.tsx`.
 - **Double-booking** is intentionally handled manually (slots are labels, not live availability);
   Raghav confirms + takes payment, first-to-pay wins. See the discussion in git history if needed.
+- **Slot Freezing (June 26, 2026):** Implemented dynamic slot freezing. The booking form fetches blocked dates/slots from a new `BlockedSlots` sheet tab on mount, and disables matching date or time slot buttons in the UI automatically.
 - **Sheet impact:** `Results` tab went from **11 → 14 columns** (added Monthly Revenue, Preferred
-  Date, Preferred Time Slot).
+  Date, Preferred Time Slot), and a new `BlockedSlots` tab was added to power calendar freezing.
 
 ### E. Navigation unified
 - The main `Nav` (`app/components/Nav.tsx`) is now used on **every** page, including BML, booking (which previously used a separate `BookingNav`), and Vault detail pages (which previously had a custom local header).

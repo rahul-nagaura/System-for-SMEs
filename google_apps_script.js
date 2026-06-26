@@ -207,12 +207,53 @@ function doGet(e) {
       }
     }
     
+    // 5. Read BlockedSlots
+    var blockedSlotsSheet = sheet.getSheetByName('BlockedSlots');
+    var blockedSlots = [];
+    if (blockedSlotsSheet) {
+      var blockedRows = blockedSlotsSheet.getDataRange().getValues();
+      for (var i = 1; i < blockedRows.length; i++) {
+        var dateVal = blockedRows[i][0];
+        var slotVal = blockedRows[i][1];
+        if (dateVal) {
+          var dateString = "";
+          if (dateVal instanceof Date) {
+            dateString = Utilities.formatDate(dateVal, "GMT+5:30", "yyyy-MM-dd");
+          } else {
+            var str = String(dateVal).trim();
+            var match = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (match) {
+              dateString = str;
+            } else {
+              try {
+                var parsed = new Date(str);
+                if (!isNaN(parsed.getTime())) {
+                  dateString = Utilities.formatDate(parsed, "GMT+5:30", "yyyy-MM-dd");
+                } else {
+                  dateString = str;
+                }
+              } catch (e) {
+                dateString = str;
+              }
+            }
+          }
+          if (dateString) {
+            blockedSlots.push({
+              date: dateString,
+              slot: slotVal ? String(slotVal).trim() : 'All'
+            });
+          }
+        }
+      }
+    }
+    
     var response = {
       success: true,
       settings: settings,
       faqs: faqs,
       reviews: reviews,
-      vault: vault
+      vault: vault,
+      blockedSlots: blockedSlots
     };
     
     return ContentService.createTextOutput(JSON.stringify(response))

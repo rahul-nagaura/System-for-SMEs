@@ -119,6 +119,21 @@ The website appends these **14 columns**, in this exact order:
 | `Preferred Date` | The date the user picked for the call (one of the next 7 days). | String (e.g. `Mon, 16 Jun`) |
 | `Preferred Time Slot` | The time slot the user picked. | String: `2:00–3:00 PM`, `10:00–11:00 PM`, or `11:00 PM–12:00 AM` |
 
+
+---
+
+## Tab 7 — BlockedSlots
+* **What it is**: The list of dates and time slots that are frozen/blocked from being booked.
+* **Database Actions**: Manual additions and deletions. Each row represents a blocked slot.
+
+| Column Header | Description / Content | Data Type & Formatting |
+| :--- | :--- | :--- |
+| `Date` | The date you want to block. | Date Cell (e.g. `2026-06-27` or select from date picker) |
+| `TimeSlot` | The specific slot to block. Use **`All`** to freeze the entire day. | String: `All`, `2:00-3:00 PM`, `10:00-11:00 PM`, or `11:00 PM-12:00 AM` |
+
+> [!TIP]
+> **To block an entire week**, add one row for each date and set the `TimeSlot` column to `All` for each.
+
 ---
 
 > [!WARNING]

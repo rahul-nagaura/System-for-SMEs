@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
 import { revenueOptions } from "@/app/bml/bml-data";
@@ -13,8 +13,10 @@ const timeSlots = ["2:00–3:00 PM", "10:00–11:00 PM", "11:00 PM–12:00 AM"];
 const WHATSAPP_NUMBER = "919417149638";
 
 // Build a wa.me link with the chosen date + slot pre-filled into the message.
-const buildWhatsAppUrl = (date: string, slot: string) => {
-  const message = `Hi. I want to book a Systems Strategy Session. I have selected the following slot
+const buildWhatsAppUrl = (date: string, slot: string, isWaitlist?: boolean) => {
+  const message = isWaitlist
+    ? `Hi. I want to book a Systems Strategy Session. All standard calendar slots were booked, so I'd like to discuss a custom slot. Please share the payment credentials.`
+    : `Hi. I want to book a Systems Strategy Session. I have selected the following slot
 Time: ${slot}
 Date: ${date}
 
@@ -58,6 +60,19 @@ export default function BookingPage() {
   const [form, setForm] = useState<FormData>(initialFormState);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [blockedSlots, setBlockedSlots] = useState<{ date: string; slot: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/content-feed")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.blockedSlots) {
+          setBlockedSlots(data.blockedSlots);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch blocked slots:", err));
+  }, []);
+
   // Next 7 days as selectable date labels. Computed in IST so server-rendered
   // and client-hydrated labels match. Past days never appear and the list
   // rolls forward automatically each day.
@@ -66,21 +81,66 @@ export default function BookingPage() {
       Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
         d.setDate(d.getDate() + i);
-        return d.toLocaleDateString("en-IN", {
+        
+        const label = d.toLocaleDateString("en-IN", {
           weekday: "short",
           day: "numeric",
           month: "short",
           timeZone: "Asia/Kolkata",
         });
+
+        const formatter = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+        const isoString = formatter.format(d);
+
+        return { label, isoString };
       }),
     []
   );
+
+  const isDateBlocked = (isoString: string) => {
+    return blockedSlots.some(
+      (slot) => slot.date === isoString && slot.slot.toLowerCase().trim() === "all"
+    );
+  };
+
+  const cleanSlotName = (s: string) => {
+    return s.replace(/[\u2013\u2014]/g, "-").replace(/\s+/g, "").toLowerCase();
+  };
+
+  const isSlotBlocked = (isoString: string, slotName: string) => {
+    if (!isoString) return false;
+    return blockedSlots.some((slot) => {
+      if (slot.date !== isoString) return false;
+      const sType = slot.slot.toLowerCase().trim();
+      if (sType === "all") return true;
+      return cleanSlotName(sType) === cleanSlotName(slotName);
+    });
+  };
+
+  const allDatesBlocked = useMemo(() => {
+    if (blockedSlots.length === 0) return false;
+    return dateOptions.every((date) => isDateBlocked(date.isoString));
+  }, [dateOptions, blockedSlots]);
 
   const handleTextChange = (k: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [k]: e.target.value });
   };
 
   const selectRadio = (k: keyof FormData, val: string) => {
+    if (k === "bookingDate") {
+      const newDateOption = dateOptions.find((d) => d.label === val);
+      const newDateIso = newDateOption ? newDateOption.isoString : "";
+      
+      if (form.slot && isSlotBlocked(newDateIso, form.slot)) {
+        setForm({ ...form, bookingDate: val, slot: "" });
+        return;
+      }
+    }
     setForm({ ...form, [k]: val });
   };
 
@@ -121,13 +181,20 @@ export default function BookingPage() {
       alert("Please select your decision-making authority in Section 04.");
       return;
     }
-    if (!form.bookingDate) {
-      alert("Please pick a preferred date in Section 05.");
-      return;
-    }
-    if (!form.slot) {
-      alert("Please pick a preferred time slot in Section 05.");
-      return;
+
+    let submissionForm = { ...form };
+    if (allDatesBlocked) {
+      submissionForm.bookingDate = "WhatsApp / Waitlist";
+      submissionForm.slot = "WhatsApp / Waitlist";
+    } else {
+      if (!form.bookingDate) {
+        alert("Please pick a preferred date in Section 05.");
+        return;
+      }
+      if (!form.slot) {
+        alert("Please pick a preferred time slot in Section 05.");
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -138,17 +205,18 @@ export default function BookingPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(submissionForm),
       });
     } catch (err) {
       console.error("Failed to submit booking session to database: ", err);
     } finally {
       setIsSubmitting(false);
-      // Show the confirmation screen (fallback) and redirect to WhatsApp so the
-      // user can confirm timing + get the payment link. The chosen date + slot
-      // are already saved to the Results sheet above.
       setSubmitted(true);
-      window.location.href = buildWhatsAppUrl(form.bookingDate, form.slot);
+      window.location.href = buildWhatsAppUrl(
+        submissionForm.bookingDate,
+        submissionForm.slot,
+        allDatesBlocked
+      );
     }
   };
 
@@ -166,7 +234,7 @@ export default function BookingPage() {
           </p>
           <div className="pt-6 flex flex-col sm:flex-row gap-3">
             <a
-              href={buildWhatsAppUrl(form.bookingDate, form.slot)}
+              href={buildWhatsAppUrl(form.bookingDate || "WhatsApp / Waitlist", form.slot || "WhatsApp / Waitlist", allDatesBlocked)}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[#edb605] text-[#201b11] font-bold py-4 px-8 border-2 border-[#725b22] uppercase tracking-wider hover:brightness-105 active:scale-95 transition-all inline-flex items-center justify-center gap-2"
@@ -448,46 +516,74 @@ export default function BookingPage() {
               <div className="h-[1px] flex-grow bg-[#725b22]/20"></div>
             </div>
 
-            <div className="space-y-3">
-              <p className="text-[17px] font-bold">Pick your preferred date *</p>
-              <p className="text-xs text-[#4f4633]/70">We&apos;ll confirm the final date with you on WhatsApp.</p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
-                {dateOptions.map((date) => (
-                  <button
-                    key={date}
-                    type="button"
-                    onClick={() => selectRadio("bookingDate", date)}
-                    className={`border-2 p-3 text-center text-xs font-bold transition-all duration-200 ${
-                      form.bookingDate === date
-                        ? "border-[#edb605] bg-[#fcdc95]"
-                        : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
-                    }`}
-                  >
-                    {date}
-                  </button>
-                ))}
+            {allDatesBlocked ? (
+              <div className="bg-[#fcdc95]/30 border-2 border-[#725b22] p-6 md:p-8 space-y-4 rounded-none text-left">
+                <div className="flex items-center gap-3 text-[#775a00] font-bold text-lg">
+                  <span className="material-symbols-outlined text-2xl">warning</span>
+                  <span>All Standard Slots are Booked!</span>
+                </div>
+                <p className="text-sm text-[#4f4633] leading-relaxed font-medium">
+                  Agle 7 din ke saare strategy session slots booked hain. Lekin aap niche button par click karke direct WhatsApp par custom timing coordinate kar sakte hain. Onboarding details tab tak save ho jayengi.
+                </p>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  <p className="text-[17px] font-bold">Pick your preferred date *</p>
+                  <p className="text-xs text-[#4f4633]/70">We&apos;ll confirm the final date with you on WhatsApp.</p>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                    {dateOptions.map((date) => {
+                      const blocked = isDateBlocked(date.isoString);
+                      return (
+                        <button
+                          key={date.label}
+                          type="button"
+                          disabled={blocked}
+                          onClick={() => selectRadio("bookingDate", date.label)}
+                          className={`border-2 p-3 text-center text-xs font-bold transition-all duration-200 ${
+                            blocked
+                              ? "border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed opacity-50"
+                              : form.bookingDate === date.label
+                              ? "border-[#edb605] bg-[#fcdc95]"
+                              : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
+                          }`}
+                        >
+                          {date.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-            <div className="space-y-3 pt-4">
-              <p className="text-[17px] font-bold">Pick your preferred time slot *</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {timeSlots.map((slot) => (
-                  <button
-                    key={slot}
-                    type="button"
-                    onClick={() => selectRadio("slot", slot)}
-                    className={`border-2 p-4 text-center text-sm font-bold transition-all duration-200 ${
-                      form.slot === slot
-                        ? "border-[#edb605] bg-[#fcdc95]"
-                        : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
-                    }`}
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
-            </div>
+                <div className="space-y-3 pt-4">
+                  <p className="text-[17px] font-bold">Pick your preferred time slot *</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {timeSlots.map((slot) => {
+                      const selectedDateOption = dateOptions.find((d) => d.label === form.bookingDate);
+                      const selectedDateIso = selectedDateOption ? selectedDateOption.isoString : "";
+                      const blocked = isSlotBlocked(selectedDateIso, slot);
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          disabled={blocked || !form.bookingDate}
+                          onClick={() => selectRadio("slot", slot)}
+                          className={`border-2 p-4 text-center text-sm font-bold transition-all duration-200 ${
+                            blocked || !form.bookingDate
+                              ? "border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed opacity-50"
+                              : form.slot === slot
+                              ? "border-[#edb605] bg-[#fcdc95]"
+                              : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
+                          }`}
+                        >
+                          {slot}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
           </section>
 
           {/* Submit */}
@@ -499,6 +595,11 @@ export default function BookingPage() {
             >
               {isSubmitting ? (
                 <>Securing Connection...</>
+              ) : allDatesBlocked ? (
+                <>
+                  Submit &amp; Chat on WhatsApp to Schedule
+                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                </>
               ) : (
                 <>
                   Book My Session
