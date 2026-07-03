@@ -215,6 +215,7 @@ function doGet(e) {
       for (var i = 1; i < blockedRows.length; i++) {
         var dateVal = blockedRows[i][0];
         var slotVal = blockedRows[i][1];
+        var actionVal = blockedRows[i][2];
         if (dateVal) {
           var dateString = "";
           if (dateVal instanceof Date) {
@@ -240,7 +241,8 @@ function doGet(e) {
           if (dateString) {
             blockedSlots.push({
               date: dateString,
-              slot: slotVal ? String(slotVal).trim() : 'All'
+              slot: slotVal ? String(slotVal).trim() : 'All',
+              action: actionVal ? String(actionVal).trim().toLowerCase() : 'block'
             });
           }
         }

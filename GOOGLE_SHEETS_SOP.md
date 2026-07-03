@@ -122,17 +122,30 @@ The website appends these **14 columns**, in this exact order:
 
 ---
 
-## Tab 7 — BlockedSlots
-* **What it is**: The list of dates and time slots that are frozen/blocked from being booked.
-* **Database Actions**: Manual additions and deletions. Each row represents a blocked slot.
+## Tab 7 — BlockedSlots (availability overrides)
+* **What it is**: One-time **overrides** to the booking calendar — used to **block** (close) or **open** specific dates/slots.
+* **How the calendar normally works**: Your usual weekly schedule is **automatic** (set in code): **Sat & Sun** all 4 slots open, **Friday** 9–10 PM & 10–11 PM open, and **Mon–Thu** shown as "Booked". **You do NOT maintain the normal schedule here.**
+* **Database Actions**: **You only add a row when you want to change the usual pattern for a specific date.** A normal week = this tab can be empty. Each row is one override.
 
 | Column Header | Description / Content | Data Type & Formatting |
 | :--- | :--- | :--- |
-| `Date` | The date you want to block. | Date Cell (e.g. `2026-06-27` or select from date picker) |
-| `TimeSlot` | The specific slot to block. Use **`All`** to freeze the entire day. | String: `All`, `2:00-3:00 PM`, `10:00-11:00 PM`, or `11:00 PM-12:00 AM` |
+| `Date` | The date you want to override. | Date Cell (e.g. `2026-06-27`) |
+| `TimeSlot` | The specific slot, or **`All`** for the whole day. | String: `All`, `2:00-3:00 PM`, `3:00-4:00 PM`, `9:00-10:00 PM`, or `10:00-11:00 PM` |
+| `Action` | **`block`** = close this slot, **`open`** = open a normally-closed slot. Blank = `block`. | String: `block` or `open` |
+
+**Examples:**
+
+| Date | TimeSlot | Action | Effect |
+| :--- | :--- | :--- | :--- |
+| `2026-07-11` | `All` | `block` | Away that Saturday → freeze the whole day |
+| `2026-07-12` | `2:00-3:00 PM` | `block` | Freeze just one weekend slot |
+| `2026-07-15` | `9:00-10:00 PM` | `open` | Free that Wednesday night → open a normally-closed weekday slot |
+| `2026-07-16` | `All` | `open` | Whole Thursday free → open all 4 slots that day |
 
 > [!TIP]
-> **To block an entire week**, add one row for each date and set the `TimeSlot` column to `All` for each.
+> * **Block wins:** if a slot has both a `block` and an `open` row, it stays blocked (safer).
+> * **No cleanup needed:** the form only looks at the next 7 days, so rows with past dates are ignored automatically. Delete them occasionally just to stay tidy.
+> * **To change your *permanent* weekly pattern** (e.g. "Thursdays are always open now"), that's a small code change — ask your developer; it's not done from this sheet.
 
 ---
 

@@ -5,8 +5,18 @@ import Link from "next/link";
 import Nav from "@/app/components/Nav";
 import { revenueOptions } from "@/app/bml/bml-data";
 
-// Available call slots (Raghav confirms the exact one over WhatsApp).
-const timeSlots = ["2:00–3:00 PM", "10:00–11:00 PM", "11:00 PM–12:00 AM"];
+// Bookable call slots (Raghav confirms the exact one over WhatsApp).
+const timeSlots = ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"];
+
+// Recurring weekly availability (IST weekday: 0=Sun … 6=Sat).
+// Any slot NOT listed for a weekday renders as "Booked". Weekdays absent from
+// this map (Mon–Thu) are fully booked. One-off blocks from the BlockedSlots
+// sheet still apply on top of this.
+const WEEKLY_AVAILABILITY: Record<number, string[]> = {
+  0: ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"], // Sunday
+  6: ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"], // Saturday
+  5: ["9:00–10:00 PM", "10:00–11:00 PM"],                                  // Friday (nights only)
+};
 
 // Raghav's WhatsApp number (country code + number, digits only) for the
 // click-to-chat link built on submit.
@@ -60,7 +70,7 @@ export default function BookingPage() {
   const [form, setForm] = useState<FormData>(initialFormState);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [blockedSlots, setBlockedSlots] = useState<{ date: string; slot: string }[]>([]);
+  const [blockedSlots, setBlockedSlots] = useState<{ date: string; slot: string; action?: string }[]>([]);
 
   useEffect(() => {
     fetch("/api/content-feed")
@@ -96,36 +106,59 @@ export default function BookingPage() {
           day: "2-digit",
         });
         const isoString = formatter.format(d);
+        const weekday = new Date(isoString + "T00:00:00Z").getUTCDay();
 
-        return { label, isoString };
+        return { label, isoString, weekday };
       }),
     []
   );
 
-  const isDateBlocked = (isoString: string) => {
-    return blockedSlots.some(
-      (slot) => slot.date === isoString && slot.slot.toLowerCase().trim() === "all"
-    );
+  const cleanSlotName = (s: string) =>
+    s.replace(/[\u2013\u2014]/g, "-").replace(/\s+/g, "").toLowerCase();
+
+  // Look up a manual override for a date+slot from the BlockedSlots sheet.
+  // Each row: { date: "YYYY-MM-DD", slot: "<slot>" | "all", action: "block" | "open" }.
+  // A slot of "all" affects every slot that day. If both block and open exist for
+  // the same slot, BLOCK wins (safer \u2014 never get booked when you're unavailable).
+  const getOverride = (isoString: string, slotName: string): "block" | "open" | null => {
+    if (!isoString) return null;
+    let result: "block" | "open" | null = null;
+    for (const row of blockedSlots) {
+      if (row.date !== isoString) continue;
+      const rowSlot = row.slot.toLowerCase().trim();
+      const matches = rowSlot === "all" || cleanSlotName(rowSlot) === cleanSlotName(slotName);
+      if (!matches) continue;
+      const action = (row.action || "block").toLowerCase().trim() === "open" ? "open" : "block";
+      if (action === "block") return "block"; // block wins immediately
+      result = "open";
+    }
+    return result;
   };
 
-  const cleanSlotName = (s: string) => {
-    return s.replace(/[\u2013\u2014]/g, "-").replace(/\s+/g, "").toLowerCase();
+  // Slots offered on a given weekday by the recurring rule (empty = fully booked).
+  const availableSlotsForWeekday = (weekday: number) => WEEKLY_AVAILABILITY[weekday] ?? [];
+
+  // A slot is bookable = the weekly default, then flipped by any sheet override.
+  const isSlotAvailable = (
+    dateOption: { isoString: string; weekday: number } | undefined,
+    slotName: string
+  ) => {
+    if (!dateOption) return false;
+    const override = getOverride(dateOption.isoString, slotName);
+    if (override === "block") return false;
+    if (override === "open") return true;
+    return availableSlotsForWeekday(dateOption.weekday).includes(slotName);
   };
 
-  const isSlotBlocked = (isoString: string, slotName: string) => {
-    if (!isoString) return false;
-    return blockedSlots.some((slot) => {
-      if (slot.date !== isoString) return false;
-      const sType = slot.slot.toLowerCase().trim();
-      if (sType === "all") return true;
-      return cleanSlotName(sType) === cleanSlotName(slotName);
-    });
-  };
+  // A date is fully booked when none of the time slots are bookable.
+  const isDateFullyBooked = (dateOption: { isoString: string; weekday: number }) =>
+    timeSlots.every((slot) => !isSlotAvailable(dateOption, slot));
 
-  const allDatesBlocked = useMemo(() => {
-    if (blockedSlots.length === 0) return false;
-    return dateOptions.every((date) => isDateBlocked(date.isoString));
-  }, [dateOptions, blockedSlots]);
+  const allDatesBlocked = useMemo(
+    () => dateOptions.every((date) => isDateFullyBooked(date)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dateOptions, blockedSlots]
+  );
 
   const handleTextChange = (k: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [k]: e.target.value });
@@ -134,9 +167,7 @@ export default function BookingPage() {
   const selectRadio = (k: keyof FormData, val: string) => {
     if (k === "bookingDate") {
       const newDateOption = dateOptions.find((d) => d.label === val);
-      const newDateIso = newDateOption ? newDateOption.isoString : "";
-      
-      if (form.slot && isSlotBlocked(newDateIso, form.slot)) {
+      if (form.slot && !isSlotAvailable(newDateOption, form.slot)) {
         setForm({ ...form, bookingDate: val, slot: "" });
         return;
       }
@@ -182,7 +213,7 @@ export default function BookingPage() {
       return;
     }
 
-    let submissionForm = { ...form };
+    const submissionForm = { ...form };
     if (allDatesBlocked) {
       submissionForm.bookingDate = "WhatsApp / Waitlist";
       submissionForm.slot = "WhatsApp / Waitlist";
@@ -533,22 +564,25 @@ export default function BookingPage() {
                   <p className="text-xs text-[#4f4633]/70">We&apos;ll confirm the final date with you on WhatsApp.</p>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
                     {dateOptions.map((date) => {
-                      const blocked = isDateBlocked(date.isoString);
+                      const fullyBooked = isDateFullyBooked(date);
                       return (
                         <button
                           key={date.label}
                           type="button"
-                          disabled={blocked}
+                          disabled={fullyBooked}
                           onClick={() => selectRadio("bookingDate", date.label)}
-                          className={`border-2 p-3 text-center text-xs font-bold transition-all duration-200 ${
-                            blocked
-                              ? "border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed opacity-50"
+                          className={`border-2 p-3 text-center text-xs font-bold transition-all duration-200 flex flex-col items-center gap-0.5 ${
+                            fullyBooked
+                              ? "border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed"
                               : form.bookingDate === date.label
                               ? "border-[#edb605] bg-[#fcdc95]"
                               : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
                           }`}
                         >
-                          {date.label}
+                          <span>{date.label}</span>
+                          {fullyBooked && (
+                            <span className="text-[9px] uppercase tracking-wider">Booked</span>
+                          )}
                         </button>
                       );
                     })}
@@ -557,26 +591,31 @@ export default function BookingPage() {
 
                 <div className="space-y-3 pt-4">
                   <p className="text-[17px] font-bold">Pick your preferred time slot *</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {timeSlots.map((slot) => {
                       const selectedDateOption = dateOptions.find((d) => d.label === form.bookingDate);
-                      const selectedDateIso = selectedDateOption ? selectedDateOption.isoString : "";
-                      const blocked = isSlotBlocked(selectedDateIso, slot);
+                      const available = isSlotAvailable(selectedDateOption, slot);
+                      const showBooked = !!form.bookingDate && !available;
                       return (
                         <button
                           key={slot}
                           type="button"
-                          disabled={blocked || !form.bookingDate}
+                          disabled={!available}
                           onClick={() => selectRadio("slot", slot)}
-                          className={`border-2 p-4 text-center text-sm font-bold transition-all duration-200 ${
-                            blocked || !form.bookingDate
+                          className={`border-2 p-4 text-center text-sm font-bold transition-all duration-200 flex flex-col items-center gap-0.5 ${
+                            !form.bookingDate
                               ? "border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed opacity-50"
+                              : !available
+                              ? "border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed"
                               : form.slot === slot
                               ? "border-[#edb605] bg-[#fcdc95]"
                               : "border-[#725b22]/20 bg-transparent hover:bg-[#725b22]/5"
                           }`}
                         >
-                          {slot}
+                          <span>{slot}</span>
+                          {showBooked && (
+                            <span className="text-[9px] uppercase tracking-wider">Booked</span>
+                          )}
                         </button>
                       );
                     })}

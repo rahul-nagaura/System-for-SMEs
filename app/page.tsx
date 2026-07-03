@@ -45,7 +45,7 @@ const defaultFAQs = [
 export default async function LandingPage() {
   let content = {
     settings: {
-      pricing_amount: "2499",
+      pricing_amount: "2999",
       owner_photo_url: "/raghav.jpg"
     },
     faqs: defaultFAQs,
@@ -64,7 +64,7 @@ export default async function LandingPage() {
         if (data && data.success) {
           content = {
             settings: {
-              pricing_amount: data.settings?.pricing_amount || "2499",
+              pricing_amount: data.settings?.pricing_amount || "2999",
               owner_photo_url: data.settings?.owner_photo_url || "/raghav.jpg"
             },
             faqs: data.faqs && data.faqs.length > 0 ? data.faqs : defaultFAQs,

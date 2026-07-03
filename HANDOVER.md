@@ -47,7 +47,7 @@ missing.
 - `google_apps_script.js`
 - Docs: `README.md`, `ARCHITECTURE.md`, `GOOGLE_SHEETS_SOP.md`, `GOOGLE_SHEET_SETUP.md`
 
-**Now orphaned (no longer imported):** `app/components/BookingNav.tsx` — safe to delete.
+**Removed:** `app/components/BookingNav.tsx` — was orphaned after the nav was unified onto `Nav`.
 
 ---
 
@@ -83,16 +83,18 @@ UI.
 ### D. Booking form: revenue + call-slot booking + WhatsApp handoff
 - Added a **monthly revenue** question (same options as the BML quiz, imported from `bml-data.ts`).
 - Added **"05. Book Your Slot"**: a **date picker** (next 7 days, auto-generated in IST so past days
-  never show) + **3 time slots** (2–3 PM, 10–11 PM, 11 PM–12 AM).
+  never show) + **4 time slots** (2–3 PM, 3–4 PM, 9–10 PM, 10–11 PM). Availability is governed by a
+  recurring **weekly rule** in `booking-client.tsx` (`WEEKLY_AVAILABILITY`): Sat/Sun all 4 open,
+  Friday 9–10 PM & 10–11 PM only, Mon–Thu shown as **"Booked"**.
 - **On submit:** the form (incl. date + slot) saves to the `Results` sheet, then the user is
   **redirected to WhatsApp** via a `wa.me` link with a **pre-filled message** that includes the
   chosen date + slot ("…Please share the payment credentials."). A confirmation screen with a "Continue on
   WhatsApp" button is the desktop fallback. Number is in `WHATSAPP_NUMBER` in `booking-client.tsx`.
 - **Double-booking** is intentionally handled manually (slots are labels, not live availability);
   Raghav confirms + takes payment, first-to-pay wins. See the discussion in git history if needed.
-- **Slot Freezing (June 26, 2026):** Implemented dynamic slot freezing. The booking form fetches blocked dates/slots from a new `BlockedSlots` sheet tab on mount, and disables matching date or time slot buttons in the UI automatically.
+- **Slot overrides via the `BlockedSlots` sheet:** the form fetches the sheet on mount and applies per-date/slot **overrides on top of the weekly rule**. Columns: `Date`, `TimeSlot` (a slot or `All`), `Action` (`block` = close, `open` = open a normally-closed slot; blank = `block`). Conflict rule: **block wins**. Only exceptions go in the sheet — a normal week leaves it empty; past-date rows are ignored automatically. Full guide in `GOOGLE_SHEETS_SOP.md` Tab 7.
 - **Sheet impact:** `Results` tab went from **11 → 14 columns** (added Monthly Revenue, Preferred
-  Date, Preferred Time Slot), and a new `BlockedSlots` tab was added to power calendar freezing.
+  Date, Preferred Time Slot), and the `BlockedSlots` tab has 3 columns (`Date`, `TimeSlot`, `Action`).
 
 ### E. Navigation unified
 - The main `Nav` (`app/components/Nav.tsx`) is now used on **every** page, including BML, booking (which previously used a separate `BookingNav`), and Vault detail pages (which previously had a custom local header).
