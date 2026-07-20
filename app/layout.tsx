@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import ConditionalLayout from "./components/ConditionalLayout";
 import Nav from "./components/Nav";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
         <ConditionalLayout nav={<Nav />} footer={<SiteFooter />}>
           {children}
         </ConditionalLayout>
+        <Analytics />
       </body>
     </html>
   );
