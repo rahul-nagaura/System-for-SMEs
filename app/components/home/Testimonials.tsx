@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { GOLD } from "./theme";
 
 export type Review = {
@@ -8,21 +11,38 @@ export type Review = {
 };
 
 export default function Testimonials({ reviews }: { reviews: Review[] }) {
+  const [active, setActive] = useState(0);
+  const r = reviews[active] ?? reviews[0];
+
   return (
-    <section className="max-w-[640px] mx-auto px-5 py-16 md:py-24">
-      <h2 className="text-3xl md:text-4xl font-black text-center tracking-tight">Testimonials</h2>
-      <div className="mt-10 flex flex-col gap-5">
-        {reviews.map((r, i) => (
-          <div key={i} className="rounded-2xl border border-black/10 p-6 bg-white shadow-sm text-center">
-            <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center font-black text-lg text-[#0E0E0E]" style={{ backgroundColor: GOLD }}>
-              {String(r.name || "?").charAt(0).toUpperCase()}
+    <section className="bg-white py-16 md:py-24 px-5">
+      <div className="max-w-[640px] mx-auto">
+        <h2 className="text-4xl font-bold text-center tracking-tight text-[#0E0E0E]">Testimonials</h2>
+
+        <div className="mt-10 rounded-[20px] border border-black/10 bg-white p-6 md:p-7 shadow-sm">
+          <div className="flex items-center gap-4">
+            <span className="w-14 h-14 rounded-full flex-shrink-0" style={{ backgroundColor: "#D9D9D9" }} />
+            <div>
+              <div className="text-lg font-bold text-[#0E0E0E] leading-tight">{r.name}</div>
+              <div className="mt-0.5 text-[13px] font-medium text-[#0E0E0E]/45">{r.role}</div>
             </div>
-            <div className="mt-3 font-extrabold">{r.name}</div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#0E0E0E]/50">{r.role}</div>
-            <div className="mt-2 text-lg" style={{ color: GOLD }}>{"★".repeat(r.rating || 5)}</div>
-            <p className="mt-3 text-[15px] leading-relaxed text-[#0E0E0E]/80">&ldquo;{r.text}&rdquo;</p>
           </div>
-        ))}
+          <p className="mt-5 text-[14px] leading-relaxed text-justify text-[#0E0E0E]/65">{r.text}</p>
+        </div>
+
+        {reviews.length > 1 && (
+          <div className="mt-6 flex justify-center gap-2">
+            {reviews.map((rev, i) => (
+              <button
+                key={`${rev.name}-${i}`}
+                onClick={() => setActive(i)}
+                aria-label={`Show testimonial ${i + 1}`}
+                className="w-2 h-2 rounded-full transition-colors"
+                style={{ backgroundColor: i === active ? GOLD : "rgba(14,14,14,0.2)" }}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
