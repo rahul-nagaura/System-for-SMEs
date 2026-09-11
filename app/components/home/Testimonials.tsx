@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { GOLD } from "./theme";
 
 export type Review = {
@@ -12,14 +12,37 @@ export type Review = {
 
 export default function Testimonials({ reviews }: { reviews: Review[] }) {
   const [active, setActive] = useState(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const r = reviews[active] ?? reviews[0];
+
+  const swipe = (dir: number) => setActive((a) => (a + dir + reviews.length) % reviews.length);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
+    swipe(dx < 0 ? 1 : -1);
+  };
 
   return (
     <section className="bg-white py-16 md:py-24 px-5">
       <div className="max-w-[640px] mx-auto">
         <h2 className="text-4xl font-bold text-center tracking-tight text-[#0E0E0E]">Testimonials</h2>
 
-        <div className="mt-10 rounded-[20px] border border-black/10 bg-white p-6 md:p-7 shadow-sm">
+        <div
+          className="mt-10 rounded-[20px] border border-black/10 bg-white p-6 md:p-7 shadow-sm select-none"
+          style={{ touchAction: "pan-y" }}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           <div className="flex items-center gap-4">
             <span className="w-14 h-14 rounded-full flex-shrink-0" style={{ backgroundColor: "#D9D9D9" }} />
             <div>
