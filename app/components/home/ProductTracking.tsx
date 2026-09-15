@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { GOLD } from "./theme";
 
@@ -56,18 +56,47 @@ const CASES: CaseStudy[] = [
   },
 ];
 
+// How long each card stays up before auto-advancing to the next one.
+const AUTO_ADVANCE_MS = 4000;
+
 export default function ProductTracking() {
   const [active, setActive] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [zoomSrc, setZoomSrc] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [autoTick, setAutoTick] = useState(0); // bumped on manual nav to restart the timer
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const c = CASES[active];
 
   const goTo = (i: number) => {
     setActive((i + CASES.length) % CASES.length);
     setExpanded(false);
+    setAutoTick((t) => t + 1); // manual navigation gets a fresh full interval
   };
+
+  // Only auto-play while the carousel is on screen, so it's already moving
+  // by the time a scrolling user reaches it (and doesn't run in the background).
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
+      threshold: 0.4,
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Auto-advance to the next case study. Paused while off-screen, while a
+  // card is expanded (someone's reading), or while the zoom lightbox is open.
+  useEffect(() => {
+    if (!isVisible || expanded || zoomSrc) return;
+    const id = setInterval(() => {
+      setActive((a) => (a + 1) % CASES.length);
+    }, AUTO_ADVANCE_MS);
+    return () => clearInterval(id);
+  }, [isVisible, expanded, zoomSrc, autoTick]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     const t = e.touches[0];
@@ -86,7 +115,7 @@ export default function ProductTracking() {
   };
 
   return (
-    <section className="bg-white py-16 md:py-24 px-5">
+    <section ref={sectionRef} className="bg-white py-16 md:py-24 px-5">
       <div className="max-w-[640px] mx-auto">
         <div
           className="rounded-[28px] overflow-hidden shadow-sm select-none"
