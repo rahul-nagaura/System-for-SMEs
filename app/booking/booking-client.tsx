@@ -9,13 +9,16 @@ import { revenueOptions } from "@/app/bml/bml-data";
 const timeSlots = ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"];
 
 // Recurring weekly availability (IST weekday: 0=Sun … 6=Sat).
-// Any slot NOT listed for a weekday renders as "Booked". Weekdays absent from
-// this map (Mon–Thu) are fully booked. One-off blocks from the BlockedSlots
-// sheet still apply on top of this.
+// Any slot NOT listed for a weekday renders as "Booked". One-off blocks from
+// the BlockedSlots sheet still apply on top of this.
 const WEEKLY_AVAILABILITY: Record<number, string[]> = {
   0: ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"], // Sunday
-  6: ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"], // Saturday
+  1: ["9:00–10:00 PM", "10:00–11:00 PM"],                                  // Monday (nights only)
+  2: ["9:00–10:00 PM", "10:00–11:00 PM"],                                  // Tuesday (nights only)
+  3: ["9:00–10:00 PM", "10:00–11:00 PM"],                                  // Wednesday (nights only)
+  4: ["9:00–10:00 PM", "10:00–11:00 PM"],                                  // Thursday (nights only)
   5: ["9:00–10:00 PM", "10:00–11:00 PM"],                                  // Friday (nights only)
+  6: ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"], // Saturday
 };
 
 // Raghav's WhatsApp number (country code + number, digits only) for the
