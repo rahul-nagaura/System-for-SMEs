@@ -57,7 +57,7 @@ const CASES: CaseStudy[] = [
 ];
 
 // How long each card stays up before auto-advancing to the next one.
-const AUTO_ADVANCE_MS = 4000;
+const AUTO_ADVANCE_MS = 2000;
 
 export default function ProductTracking() {
   const [active, setActive] = useState(0);
