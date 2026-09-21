@@ -13,10 +13,11 @@ import {
   investmentOptions,
   cardThemes,
   levels,
-  gapCopy,
 } from "./bml-data";
 import { getRingGeometry, getBandColor, computeDimensions } from "./bml-scoring";
 import { downloadResultCard } from "./bml-card";
+import { bmlText } from "./bml-i18n";
+import { LanguageSwitcher, useBmlLanguage } from "./language-switcher";
 
 export default function BMLCalculator() {
   const [step, setStep] = useState<number>(0); // 0 = Intro, 1-5 = Q1-Q5, 6 = Lead Capture, 7 = Result
@@ -40,6 +41,12 @@ export default function BMLCalculator() {
   const [showScoreRing, setShowScoreRing] = useState<boolean>(true);
   const [showLevel, setShowLevel] = useState<boolean>(true);
   const [showDimensions, setShowDimensions] = useState<boolean>(true);
+
+  // Display language. Only affects what is SHOWN — answers, scoring and the
+  // submitted payload always use the original values from bml-data.ts.
+  const [lang, setLang] = useBmlLanguage();
+  const text = bmlText[lang];
+  const t = text.ui;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -74,7 +81,9 @@ export default function BMLCalculator() {
     { name: "Digital Maturity", value: digMat }
   ];
 
-  const currentCopy = gapCopy[weakestDim as keyof typeof gapCopy] || gapCopy["Operational Efficiency"];
+  // Translated result copy for the weakest dimension + the current level's line.
+  const currentCopy = text.gaps[weakestDim] ?? text.gaps["Operational Efficiency"];
+  const levelLine = text.levelLines[currentLevelIndex - 1] ?? currentLevel.line;
 
   // Render + download the shareable result card (see bml-card.ts).
   const downloadPNG = () => {
@@ -87,7 +96,7 @@ export default function BMLCalculator() {
       averagePercentage,
       currentLevelIndex,
       stageNameOnly,
-      currentLevelLine: currentLevel.line,
+      currentLevelLine: levelLine,
       ringGeometry,
       dimensionsList,
       weakestDim,
@@ -97,25 +106,25 @@ export default function BMLCalculator() {
   const handleNext = () => {
     if (step === 0) {
       if (!name.trim()) {
-        alert("Please enter your name");
+        alert(t.alerts.name);
         return;
       }
       if (!businessName.trim()) {
-        alert("Please enter your business name");
+        alert(t.alerts.businessName);
         return;
       }
       if (selectedProblems.length === 0) {
-        alert("Please select at least one problem");
+        alert(t.alerts.problem);
         return;
       }
       if (!revenue) {
-        alert("Please select your average monthly revenue");
+        alert(t.alerts.revenue);
         return;
       }
       setStep(1);
     } else if (step >= 1 && step <= 5) {
       if (answers[step] === undefined) {
-        alert("Please select an option");
+        alert(t.alerts.option);
         return;
       }
       // If "Other" option is selected (typically Option D), we could check if details are provided
@@ -132,32 +141,32 @@ export default function BMLCalculator() {
   const handleShowResult = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      alert("Please enter your email address");
+      alert(t.alerts.email);
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert("Please enter a valid email address");
+      alert(t.alerts.emailInvalid);
       return;
     }
     if (!whatsapp.trim() || whatsapp.replace(/[\s\-+]/g, "").length < 10) {
-      alert("Please enter a valid phone number");
+      alert(t.alerts.phone);
       return;
     }
     if (!typeOfBusiness) {
-      alert("Please select your type of business");
+      alert(t.alerts.businessType);
       return;
     }
     if (!businessDescription.trim()) {
-      alert("Please explain your business in brief");
+      alert(t.alerts.description);
       return;
     }
     if (!cityState.trim()) {
-      alert("Please enter your city and state");
+      alert(t.alerts.city);
       return;
     }
     if (!investmentReadiness) {
-      alert("Please tell us if you are ready to invest");
+      alert(t.alerts.invest);
       return;
     }
 
@@ -227,10 +236,15 @@ export default function BMLCalculator() {
 
 
   return (
-    <div className={`min-h-screen ${
+    <div lang={lang === "hinglish" ? "hi-Latn" : "en"} className={`min-h-screen ${
       step === 7 ? "bg-[#F7F7F5] text-[#0E0E0E]" : "bg-[#fff8f2] text-[#2b3040]"
     } font-sans flex flex-col relative overflow-x-hidden transition-colors duration-300`}>
-      <Nav />
+      <Nav
+        showLogo
+        languageSwitcher={
+          <LanguageSwitcher lang={lang} onChange={setLang} label={t.languageToggleLabel} />
+        }
+      />
 
       {/* Main Content Area */}
       <main className={`flex-grow pt-24 px-6 ${step < 6 ? "pb-32" : "pb-10"} ${
@@ -262,8 +276,8 @@ export default function BMLCalculator() {
             {step > 0 && (
               <div className="space-y-2">
                 <div className="flex justify-between items-end text-xs font-bold uppercase tracking-wider text-[#2b3040]/60">
-                  <span>Question 0{step} of 05</span>
-                  <span>{step * 20}% Complete</span>
+                  <span>{t.questionProgress(step)}</span>
+                  <span>{t.percentComplete(step * 20)}</span>
                 </div>
                 <div className="h-2 w-full bg-[#2b3040]/10 rounded-full overflow-hidden">
                   <div
@@ -280,10 +294,16 @@ export default function BMLCalculator() {
               <div className="space-y-6 pt-6">
                 <div className="text-center space-y-2">
                   <h1 className="text-3xl md:text-4xl font-extrabold text-[#2b3040] tracking-tight">
-                    Business Maturity Calculator
+                    {t.introTitle}
                   </h1>
                   <p className="text-[#2b3040]/70 font-medium">
-                    Discover if your business is <span className="text-[#edb605] font-bold">Chaotic</span>, <span className="text-[#0058ed] font-bold">Stable</span>, or <span className="text-emerald-600 font-bold">Ready to Scale</span>. Takes 30 seconds.
+                    {t.introSubtitle.pre}
+                    <span className="text-[#edb605] font-bold">{t.introSubtitle.chaotic}</span>
+                    {t.introSubtitle.sep1}
+                    <span className="text-[#0058ed] font-bold">{t.introSubtitle.stable}</span>
+                    {t.introSubtitle.sep2}
+                    <span className="text-emerald-600 font-bold">{t.introSubtitle.ready}</span>
+                    {t.introSubtitle.post}
                   </p>
                 </div>
 
@@ -291,21 +311,21 @@ export default function BMLCalculator() {
                   {/* Identification info */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#2b3040]/60">Your Name *</label>
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#2b3040]/60">{t.yourName}</label>
                       <input
                         type="text"
                         className="w-full bg-[#fff8f2]/50 border-b-2 border-[#2b3040]/20 focus:border-[#edb605] text-base py-2 px-1 focus:ring-0 outline-none transition-colors"
-                        placeholder="e.g. Rajesh Kumar"
+                        placeholder={t.yourNamePlaceholder}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#2b3040]/60">Business Name *</label>
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#2b3040]/60">{t.businessName}</label>
                       <input
                         type="text"
                         className="w-full bg-[#fff8f2]/50 border-b-2 border-[#2b3040]/20 focus:border-[#edb605] text-base py-2 px-1 focus:ring-0 outline-none transition-colors"
-                        placeholder="e.g. Apex Manufacturing"
+                        placeholder={t.businessNamePlaceholder}
                         value={businessName}
                         onChange={(e) => setBusinessName(e.target.value)}
                       />
@@ -315,9 +335,9 @@ export default function BMLCalculator() {
                   {/* Problem selection */}
                   <div className="space-y-4 pt-4 border-t border-[#2b3040]/10">
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#edb605]">Pain Point Analysis</span>
-                      <h3 className="text-xl font-bold text-[#2b3040] mt-1">What do you feel are the biggest problems that you face? *</h3>
-                      <p className="text-xs text-[#2b3040]/50 font-medium mt-1">Select all that apply.</p>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#edb605]">{t.painTag}</span>
+                      <h3 className="text-xl font-bold text-[#2b3040] mt-1">{t.painHeading}</h3>
+                      <p className="text-xs text-[#2b3040]/50 font-medium mt-1">{t.selectAll}</p>
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                       {biggestProblems.map((prob) => {
@@ -340,7 +360,7 @@ export default function BMLCalculator() {
                                 isChecked ? "scale-100" : "scale-0"
                               }`}>check</span>
                             </div>
-                            <span className="text-sm text-[#2b3040]">{prob.text}</span>
+                            <span className="text-sm text-[#2b3040]">{text.biggestProblems[prob.label] ?? prob.text}</span>
                           </button>
                         );
                       })}
@@ -350,8 +370,8 @@ export default function BMLCalculator() {
                   {/* Revenue selection */}
                   <div className="space-y-4 pt-6 border-t border-[#2b3040]/10">
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#edb605]">Revenue Scale</span>
-                      <h3 className="text-xl font-bold text-[#2b3040] mt-1">What is your average monthly revenue? *</h3>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#edb605]">{t.revenueTag}</span>
+                      <h3 className="text-xl font-bold text-[#2b3040] mt-1">{t.revenueHeading}</h3>
                     </div>
                     <div className="grid grid-cols-1 gap-3">
                       {revenueOptions.map((opt) => (
@@ -372,7 +392,7 @@ export default function BMLCalculator() {
                               revenue === opt.text ? "scale-100" : "scale-0"
                             }`}></div>
                           </div>
-                          <span className="text-sm text-[#2b3040]">{opt.text}</span>
+                          <span className="text-sm text-[#2b3040]">{text.revenue[opt.label] ?? opt.text}</span>
                         </button>
                       ))}
                     </div>
@@ -385,10 +405,10 @@ export default function BMLCalculator() {
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#edb605]/10 text-[#edb605] border border-[#edb605]/20">
                     <span className="material-symbols-outlined text-xs font-bold">star</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider">{questions[step - 1].qLabel}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider">{text.questions[step - 1].qLabel}</span>
                   </div>
                   <h2 className="text-2xl font-bold text-[#2b3040] leading-snug">
-                    {questions[step - 1].question}
+                    {text.questions[step - 1].question}
                   </h2>
                 </div>
 
@@ -421,7 +441,7 @@ export default function BMLCalculator() {
                             }`}></div>
                           </div>
                           <div className="w-full">
-                            <p className="text-[15px] text-[#2b3040] font-medium">{opt.text}</p>
+                            <p className="text-[15px] text-[#2b3040] font-medium">{text.questions[step - 1].options[optIdx] ?? opt.text}</p>
                             
                             {/* Inline specify field for Other option */}
                             {isOther && isSelected && (
@@ -432,7 +452,7 @@ export default function BMLCalculator() {
                                 <input
                                   type="text"
                                   className="w-full bg-[#fff8f2]/50 border-b-2 border-[#edb605] text-sm py-2 px-1 focus:ring-0 outline-none"
-                                  placeholder="Apna problem details likhein..."
+                                  placeholder={t.otherPlaceholder}
                                   value={tempOther}
                                   onChange={(e) => {
                                     setTempOther(e.target.value);
@@ -456,7 +476,7 @@ export default function BMLCalculator() {
             {/* Progress Tracker */}
             <div className="space-y-2">
               <div className="flex justify-between items-end">
-                <span className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] uppercase">Assessment Complete</span>
+                <span className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] uppercase">{t.assessmentComplete}</span>
                 <span className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#edb605] uppercase">100%</span>
               </div>
               <div className="h-1.5 w-full bg-[#f4ede6] rounded-full overflow-hidden">
@@ -467,10 +487,10 @@ export default function BMLCalculator() {
             {/* Heading Section */}
             <div className="text-center space-y-3">
               <h1 className="text-[32px] md:text-[48px] leading-[40px] md:leading-[56px] tracking-[-0.02em] font-bold text-[#1a1a1a] font-sans leading-tight">
-                Aapka result ready hai!
+                {t.leadHeading}
               </h1>
               <p className="text-[18px] leading-[28px] text-[#666666] max-w-xs mx-auto">
-                Apna personalized Business Maturity breakdown kahan bhejein?
+                {t.leadSub}
               </p>
             </div>
 
@@ -479,7 +499,7 @@ export default function BMLCalculator() {
               <form className="space-y-6" onSubmit={handleShowResult}>
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="email">Email Address (Required)</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="email">{t.emailLabel}</label>
                   <div className="relative group">
                     <input
                       className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all"
@@ -492,11 +512,11 @@ export default function BMLCalculator() {
                     />
                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#666666] opacity-40 group-focus-within:text-[#edb605] transition-colors">mail</span>
                   </div>
-                  <p className="text-[11px] text-[#666666]/70 ml-1">Business email is preferred.</p>
+                  <p className="text-[11px] text-[#666666]/70 ml-1">{t.emailHint}</p>
                 </div>
                 {/* Phone Field */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="whatsapp">Phone Number *</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="whatsapp">{t.phoneLabel}</label>
                   <div className="relative group">
                     <input
                       className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all"
@@ -509,11 +529,11 @@ export default function BMLCalculator() {
                     />
                     <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#666666] opacity-40 group-focus-within:text-[#edb605] transition-colors">phone_iphone</span>
                   </div>
-                  <p className="text-[11px] text-[#666666]/70 ml-1">Personal or business contact.</p>
+                  <p className="text-[11px] text-[#666666]/70 ml-1">{t.phoneHint}</p>
                 </div>
                 {/* Type of Business */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase">Type of Business *</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase">{t.businessTypeLabel}</label>
                   <div className="grid grid-cols-1 gap-2">
                     {businessTypes.map((opt) => (
                       <button
@@ -533,41 +553,41 @@ export default function BMLCalculator() {
                             typeOfBusiness === opt.text ? "scale-100" : "scale-0"
                           }`}></div>
                         </div>
-                        {opt.text}
+                        {text.businessTypes[opt.label] ?? opt.text}
                       </button>
                     ))}
                   </div>
                 </div>
                 {/* Business Brief */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="bml-description">Explain Your Business in Brief *</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="bml-description">{t.descriptionLabel}</label>
                   <textarea
                     className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all resize-none"
                     id="bml-description"
                     rows={3}
                     required
-                    placeholder="What does your business do?"
+                    placeholder={t.descriptionPlaceholder}
                     value={businessDescription}
                     onChange={(e) => setBusinessDescription(e.target.value)}
                   />
                 </div>
                 {/* City / State */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="city-state">City / State *</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase" htmlFor="city-state">{t.cityLabel}</label>
                   <input
                     className="w-full bg-[#f4ede6] border border-[#e0d8d0] rounded-xl px-4 py-4 text-[#1a1a1a] placeholder:text-[#666666]/40 focus:outline-none focus:border-[#edb605] focus:ring-1 focus:ring-[#edb605] transition-all"
                     id="city-state"
                     type="text"
                     required
-                    placeholder="e.g. Jaipur, Rajasthan"
+                    placeholder={t.cityPlaceholder}
                     value={cityState}
                     onChange={(e) => setCityState(e.target.value)}
                   />
-                  <p className="text-[11px] text-[#666666]/70 ml-1">Please enter city and state.</p>
+                  <p className="text-[11px] text-[#666666]/70 ml-1">{t.cityHint}</p>
                 </div>
                 {/* Investment Readiness */}
                 <div className="space-y-2">
-                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase">Are You Ready to Invest to Solve Your Business Problems? *</label>
+                  <label className="text-[12px] leading-[16px] tracking-[0.05em] font-semibold text-[#666666] block ml-1 uppercase">{t.investLabel}</label>
                   <div className="grid grid-cols-1 gap-2">
                     {investmentOptions.map((opt) => (
                       <button
@@ -587,7 +607,7 @@ export default function BMLCalculator() {
                             investmentReadiness === opt.text ? "scale-100" : "scale-0"
                           }`}></div>
                         </div>
-                        {opt.text}
+                        {text.investment[opt.label] ?? opt.text}
                       </button>
                     ))}
                   </div>
@@ -600,14 +620,14 @@ export default function BMLCalculator() {
                     type="submit"
                   >
                     <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                    Generating Breakdown...
+                    {t.generating}
                   </button>
                 ) : (
                   <button
                     className="w-full bg-[#edb605] text-black font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-[0_10px_25px_-5px_rgba(237,182,5,0.3)] group"
                     type="submit"
                   >
-                    Show My Result
+                    {t.showResult}
                     <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                   </button>
                 )}
@@ -616,18 +636,18 @@ export default function BMLCalculator() {
               <div className="flex flex-wrap justify-center gap-2 pt-2">
                 <span className="bg-[#e8e0d9] text-[#4a4a4a] px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span> 
-                  Industry Benchmarks
+                  {t.chipBenchmarks}
                 </span>
                 <span className="bg-[#f0f7f4] text-[#005236] px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                  AI-Powered Analysis
+                  {t.chipAi}
                 </span>
               </div>
             </div>
 
             {/* Footer Small Print */}
             <p className="text-center text-[#666666] text-sm opacity-80 pt-6">
-              Don&apos;t worry, we value your focus. <span className="font-semibold text-[#1a1a1a]">No spam. Sirf useful insights.</span>
+              {t.noSpamPre}<span className="font-semibold text-[#1a1a1a]">{t.noSpamBold}</span>
             </p>
 
             {/* Decorative Visual Lock */}
@@ -646,7 +666,7 @@ export default function BMLCalculator() {
           <div className="w-full pt-6 space-y-12 animate-in fade-in duration-500 max-w-[1120px] mx-auto pb-2">
             <section className="pt-[54px] pb-[18px]">
               <h1 className="font-['Archivo'] font-extrabold text-[30px] sm:text-[42px] md:text-[52px] leading-[1.02] tracking-tight max-w-[680px] text-[#0E0E0E]">
-                Hey <span className="font-extrabold">{name || "Founder"}</span>, your business is <em style={{ fontStyle: "normal", background: "linear-gradient(transparent 62%, #FCD12A 62%)" }}>{stageNameOnly}.</em>
+                Hey <span className="font-extrabold">{name || "Founder"}</span>{t.heroMid}<em style={{ fontStyle: "normal", background: "linear-gradient(transparent 62%, #FCD12A 62%)" }}>{stageNameOnly}{t.heroStageSuffix}</em>{t.heroPost}
               </h1>
             </section>
 
@@ -675,10 +695,10 @@ export default function BMLCalculator() {
                       Level {currentLevelIndex}: {currentLevel.name}
                     </span>
                     <div className="font-['Archivo'] font-bold text-[22px] leading-[1.18] tracking-tight text-[#0E0E0E]">
-                      {currentLevel.line}
+                      {levelLine}
                     </div>
                     <div className="mt-4 pt-3.5 border-t border-dashed border-[#E4E4DE] text-[13px] text-[#6B6B66]">
-                      Most family businesses get stuck between <b>6&ndash;8</b> &mdash; the danger zone where growth stalls.
+                      {t.dangerPre}<b>6&ndash;8</b>{t.dangerPost}
                     </div>
                   </div>
                 </div>
@@ -686,7 +706,7 @@ export default function BMLCalculator() {
                 {/* Dimensions Card */}
                 <div className="bg-white border border-[#1C1C1C] p-[26px] rounded-none">
                   <div className="text-[11px] tracking-[0.14em] uppercase text-[#6B6B66] font-semibold mb-2.5">
-                    The four systems of your business
+                    {t.fourSystems}
                   </div>
                   <div className="flex flex-col gap-4">
                     {dimensionsList.map((dim) => {
@@ -698,7 +718,7 @@ export default function BMLCalculator() {
                               {dim.name}
                               {isWeak && (
                                 <span className="text-[9px] tracking-[0.1em] bg-[#E5484D] text-white px-1.5 py-0.5 ml-2 align-middle font-bold">
-                                  WEAKEST
+                                  {t.weakestBadge}
                                 </span>
                               )}
                             </span>
@@ -724,7 +744,7 @@ export default function BMLCalculator() {
                 {/* Ladder Card */}
                 <div className="bg-white border border-[#1C1C1C] p-[26px] rounded-none">
                   <div className="text-[11px] tracking-[0.14em] uppercase text-[#6B6B66] font-semibold mb-2.5">
-                    Your climb &mdash; maturity ladder
+                    {t.ladderTitle}
                   </div>
                   <div className="display flex gap-2">
                     {levels.map((l, i) => {
@@ -753,13 +773,13 @@ export default function BMLCalculator() {
                 {/* Gap Block */}
                 <div className="border-l-4 border-[#FCD12A] pl-[18px] py-1 text-left">
                   <div className="text-[11px] tracking-[0.14em] uppercase text-[#6B6B66] font-semibold mb-2.5">
-                    Your biggest gap
+                    {t.biggestGapTitle}
                   </div>
                   <div className="font-['Archivo'] font-black text-2xl tracking-tight text-[#0E0E0E] my-0.5 uppercase">
                     {weakestDim}
                   </div>
                   <p className="text-sm text-[#6B6B66] max-w-[380px] font-medium leading-relaxed mt-2">
-                    This is costing you <u className="text-[#0E0E0E] font-bold" style={{ textDecorationColor: "#FCD12A", textDecorationThickness: "2px" }}>{currentCopy.cost}</u> {currentCopy.line}
+                    {currentCopy.costPre}<u className="text-[#0E0E0E] font-bold" style={{ textDecorationColor: "#FCD12A", textDecorationThickness: "2px" }}>{currentCopy.cost}</u>{currentCopy.costPost}
                   </p>
                 </div>
 
@@ -773,7 +793,7 @@ export default function BMLCalculator() {
                   className="flex items-center justify-center gap-2 border border-[#1C1C1C] bg-white p-3.5 text-xs tracking-[0.08em] uppercase font-bold cursor-pointer w-full text-[#0E0E0E] hover:bg-[#0E0E0E] hover:text-white transition-colors rounded-none max-w-[280px]"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[15px] h-[15px]"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
-                  Download your result
+                  {t.downloadResult}
                 </button>
               </div>
 
@@ -782,7 +802,7 @@ export default function BMLCalculator() {
                 {/* Next Steps */}
                 <div className="bg-[#0E0E0E] text-white p-[26px] rounded-none">
                   <h3 className="font-['Archivo'] font-extrabold text-[18px] tracking-[0.02em] mb-[18px] text-white">
-                    YOUR NEXT STEPS
+                    {t.nextSteps}
                   </h3>
                   <div className="flex flex-col gap-4">
                     {currentCopy.steps.map((stepItem, idx) => (
@@ -801,7 +821,7 @@ export default function BMLCalculator() {
                 {/* Risk Block */}
                 <div className="border border-[#E5484D] bg-white p-[26px] rounded-none">
                   <div className="text-[11px] tracking-[0.14em] uppercase text-[#E5484D] font-semibold mb-2.5 flex items-center gap-1.5">
-                    <span>⚠</span> What happens if you don't fix this
+                    <span>⚠</span> {t.riskTitle}
                   </div>
                   <p className="text-[13.5px] text-[#54544F] leading-[1.55] font-medium">
                     {/* Render HTML markup since staging risk has <b> tags */}
@@ -815,7 +835,7 @@ export default function BMLCalculator() {
                   className="flex items-center justify-center gap-2 border border-[#1C1C1C] bg-white p-3.5 text-xs tracking-[0.08em] uppercase font-bold cursor-pointer w-full text-[#0E0E0E] hover:bg-[#0E0E0E] hover:text-white transition-colors rounded-none"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[15px] h-[15px]"><path d="M3 7h7l2 2h9v11H3z"/></svg>
-                  Vault &mdash; free resources
+                  {t.vaultLink}
                 </Link>
               </div>
 
@@ -825,10 +845,10 @@ export default function BMLCalculator() {
                   href="/"
                   className="w-full bg-[#FCD12A] border-none border-b-[5px] border-[#0E0E0E] text-[#0E0E0E] font-['Archivo'] font-black text-lg sm:text-[22px] md:text-[28px] tracking-[0.01em] p-[30px] cursor-pointer flex items-center justify-center gap-4 transition-transform hover:-translate-y-0.5 rounded-none text-center block"
                 >
-                  GET YOUR CUSTOM SYSTEMS ROADMAP <span className="text-xl sm:text-2xl">&rarr;</span>
+                  {t.roadmapCta} <span className="text-xl sm:text-2xl">&rarr;</span>
                 </Link>
                 <div className="text-center text-xs text-[#6B6B66] mt-3.5 tracking-[0.02em] font-medium">
-                  <b>1-on-1 Strategy Session</b> &middot; A customized systems blueprint for your business &middot; <b>Step-by-step plan</b>
+                  <b>{t.roadmapBold1}</b>{t.roadmapMid}<b>{t.roadmapBold2}</b>
                 </div>
               </div>
             </div>
@@ -856,15 +876,15 @@ export default function BMLCalculator() {
                             onClick={() => setIsDownloadOpen(false)}
                             className="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1 select-none border-none bg-transparent"
                           >
-                            ✕ Close
+                            ✕ {t.close}
                           </button>
                         </div>
-                        <h2 className="font-['Archivo'] font-black text-base uppercase tracking-tight text-white mt-1">Customize and download Your result</h2>
+                        <h2 className="font-['Archivo'] font-black text-base uppercase tracking-tight text-white mt-1">{t.modalTitle}</h2>
                       </div>
 
                       {/* Your Name */}
                       <div className="space-y-2">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">Your Name</label>
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">{t.exportNameLabel}</label>
                         <input
                           type="text"
                           className="w-full bg-[#141414] border border-zinc-800 focus:border-[#FCD12A] focus:ring-1 focus:ring-[#FCD12A] outline-none transition-all rounded-none font-bold text-white py-3 px-4"
@@ -876,7 +896,7 @@ export default function BMLCalculator() {
 
                       {/* Card Style */}
                       <div className="space-y-2.5">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">Accent Theme Color</label>
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">{t.themeColor}</label>
                         <div className="flex flex-wrap gap-3.5">
                           {cardThemes.map((theme) => {
                             const isSelected = theme.id === themeId;
@@ -903,21 +923,21 @@ export default function BMLCalculator() {
 
                       {/* What to Show */}
                       <div className="space-y-3">
-                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">What to show</label>
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">{t.whatToShow}</label>
                         
                         <div className="flex flex-col gap-2">
                           <CustomToggle
-                            label={`Score ring (${averagePercentage}%)`}
+                            label={t.toggleScore(averagePercentage)}
                             checked={showScoreRing}
                             onChange={setShowScoreRing}
                           />
                           <CustomToggle
-                            label="Maturity level & stage"
+                            label={t.toggleLevel}
                             checked={showLevel}
                             onChange={setShowLevel}
                           />
                           <CustomToggle
-                            label="4-dimension breakdown"
+                            label={t.toggleDimensions}
                             checked={showDimensions}
                             onChange={setShowDimensions}
                           />
@@ -931,7 +951,7 @@ export default function BMLCalculator() {
                         onClick={downloadPNG}
                         className="w-full bg-[#FCD12A] text-black border border-black hover:bg-white hover:text-black py-4 text-sm font-black uppercase tracking-widest transition-all rounded-none cursor-pointer text-center block"
                       >
-                        Download your result
+                        {t.downloadResult}
                       </button>
                     </div>
                   </div>
@@ -999,7 +1019,7 @@ export default function BMLCalculator() {
                             {showLevel && (
                               <div className="text-center">
                                 <p className="text-[12.5px] font-bold leading-relaxed opacity-90 max-w-[280px] mx-auto" style={{ color: currentTheme.id === 'light' ? '#54544F' : '#D7D7D2' }}>
-                                  {currentLevel.line}
+                                  {levelLine}
                                 </p>
                               </div>
                             )}
@@ -1074,13 +1094,13 @@ export default function BMLCalculator() {
               }`}
             >
               <span className="material-symbols-outlined text-lg">arrow_back</span>
-              Back
+              {t.back}
             </button>
             <button
               onClick={handleNext}
               className="flex items-center justify-center gap-2 bg-[#edb605] text-[#2b3040] font-extrabold text-[13px] tracking-widest uppercase rounded-full px-8 py-4 shadow-md hover:brightness-105 active:scale-95 transition-all"
             >
-              {step === 5 ? "Check my score" : "Next"}
+              {step === 5 ? t.checkScore : t.next}
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
             </button>
           </div>
