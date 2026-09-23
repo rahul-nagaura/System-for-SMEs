@@ -183,20 +183,22 @@ function trimmedNumber(n: number, decimals: number): string {
   return n.toFixed(decimals).replace(/\.?0+$/, "");
 }
 
-/** Format a ₹ Crore figure as Lakh (< 1 Cr) or Crore, Indian-style. */
+/** Format a ₹ Crore figure as Lakh (< 1 Cr) or Crore, Indian-style, with
+ *  no space before the unit — e.g. "₹1L", "₹1.2Cr" (matches the final design). */
 export function formatInrCr(cr: number): string {
   if (cr <= 0) return "₹0";
   if (cr < 1) {
     const lakh = Math.round(cr * 100 * 10) / 10;
-    return `₹${trimmedNumber(lakh, 1)} L`;
+    return `₹${trimmedNumber(lakh, 1)}L`;
   }
   const rounded = Math.round(cr * 100) / 100;
-  return `₹${trimmedNumber(rounded, 2)} Cr`;
+  return `₹${trimmedNumber(rounded, 2)}Cr`;
 }
 
+/** "₹1L – ₹10L" for a bracket; "~₹1.2Cr" for the open-ended 100 Cr+ bracket. */
 export function formatCostRange(cost: CostOfInaction): string {
-  if (cost.isFixed) return `around ${formatInrCr(cost.upperCr)}`;
-  return `${formatInrCr(cost.lowerCr)} to ${formatInrCr(cost.upperCr)}`;
+  if (cost.isFixed) return `~${formatInrCr(cost.upperCr)}`;
+  return `${formatInrCr(cost.lowerCr)} – ${formatInrCr(cost.upperCr)}`;
 }
 
 /* ── One-shot result ─────────────────────────────────────────── */

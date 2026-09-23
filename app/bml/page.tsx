@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
+import { Montserrat } from "next/font/google";
+
+// Montserrat on every step of the calculator (per the final design: white
+// background + Montserrat "all places"). Applied on a wrapper so the nav,
+// quiz, lead form and results all inherit it.
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
 
 const BMLCalculatorClient = dynamic(() => import("./bml-client"), {
   loading: () => (
-    <div className="min-h-screen bg-[#fff8f2] flex items-center justify-center font-sans">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-center space-y-4">
         <div className="w-12 h-12 border-4 border-[#ffd21f] border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-[#201b11] font-bold uppercase tracking-widest text-xs">Loading Protocol...</p>
+        <p className="text-[#111111] font-bold uppercase tracking-widest text-xs">Loading...</p>
       </div>
     </div>
   ),
@@ -46,5 +56,9 @@ export default async function BMLPage() {
     }
   }
 
-  return <BMLCalculatorClient pricingAmount={pricingAmount} />;
+  return (
+    <div className={montserrat.className}>
+      <BMLCalculatorClient pricingAmount={pricingAmount} />
+    </div>
+  );
 }

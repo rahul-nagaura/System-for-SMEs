@@ -20,10 +20,11 @@
        is the literal spec copy, even though the VSL notes two sections
        later explicitly warn against implying a score moves in an hour.
        Kept as specified — flagged for Rahul to reconcile.
-     - Block 8 (proof / FAQ): the reference design shows specific client
-       names, companies and before/after scores. Not reproduced here —
-       not confirmed as real, permissioned data. Renders a placeholder
-       instead; FAQ entries are generic/safe, not attributed to anyone.
+     - Below the CTA: the FINAL design (shared 2026-09-23) shows a
+       Testimonials section + the site footer instead of the earlier
+       proof-cards / FAQ / vault-link blocks, so those were removed. The
+       testimonial itself is a single real quote taken from that design,
+       kept in English in both languages (a quote is not translated).
      - The tie-break RULE (Data Visibility first) is implemented exactly as
        stated, even though both the spec's Block 3 example AND the
        reference design mark Human Capital as weakest in an identical tie
@@ -56,11 +57,6 @@ export interface QuestionText {
 /** A short fragment per option (0/1/2), written to slot into
  *  `answerSentence(clauseA, clauseB)` — NOT full standalone sentences. */
 type ClausePair = [[string, string, string], [string, string, string]];
-
-export interface FaqItem {
-  q: string;
-  a: string;
-}
 
 export interface UiText {
   languageToggleLabel: string;
@@ -154,12 +150,12 @@ export interface UiText {
   ctaGuarantee: string;
   ctaButton: string;
 
-  // Block 8 — below the CTA
-  proofHeading: string;
-  proofPlaceholder: string;
-  faqHeading: string;
-  faqItems: FaqItem[];
-  vaultLink: string;
+  // Below the CTA — testimonials + footer labels
+  testimonialsHeading: string;
+  footerServices: string;
+  footerCalculator: string;
+  footerSession: string;
+  footerConnect: string;
 }
 
 export interface BilText {
@@ -238,28 +234,28 @@ const en: BilText = {
           ? `You are in the bottom ${percentile.value}% of the 3,000+ businesses that have taken this.`
           : `You scored higher than ${percentile.value}% of the 3,000+ businesses that have taken this.`;
       if (branch === "below") {
-        return `${opening} The average ${categoryLabel} business scores ${categoryAvg}. You are below your own industry. Most owners here assume the problem is staff quality. It usually isn't.`;
+        return `${opening} The average ${categoryLabel} business scores ${categoryAvg}. **You are below your own industry.** Most owners here assume the problem is staff quality. It usually isn't.`;
       }
       if (branch === "within") {
-        return `${opening} That puts you right at the industry average. That is not a compliment. In our data, 94% of businesses land at Level 2. The average business in your industry cannot run without its owner.`;
+        return `${opening} That puts you right at the industry average. **That is not a compliment.** In our data, **94% of businesses land at Level 2.** The average business in your industry cannot run without its owner.`;
       }
-      return `${opening} That's above the average for ${categoryLabel}. The gap between you and Level 4 is smaller than you think, and it is usually one system, not four.`;
+      return `${opening} That's above the average for ${categoryLabel}. The gap between you and Level 4 is smaller than you think, and it is **usually one system, not four.**`;
     },
 
-    fourSystemsHeading: "The four systems",
+    fourSystemsHeading: "The four pillars",
     weakestCaption: "Weakest system",
 
     bottleneckHeading: "Your #1 constraint",
     answerSentence: (clauseA, clauseB) => `You answered that ${clauseA} — and that ${clauseB}.`,
-    bottleneckFooter: "This is fixable. But not until we find the root cause of why it keeps happening, and that needs a closer look than an 8-question form can give.",
+    bottleneckFooter: "This is fixable. See the 60s video below.",
 
-    costHeading: "The cost of doing nothing",
+    costHeading: "Cost of doing nothing",
     costIntro: "Across 3,000+ SMEs we found the same pattern: a business without systems quietly loses at least 1% of its revenue every year.",
     costLeadIn: "At your revenue level, that is:",
     costStatSuffix: "every year",
     costFragment: "Dead stock. Manual calculations. Hot leads forgotten — because there was no system to catch it.",
 
-    openLoopHeading: "What this score cannot see",
+    openLoopHeading: "What this score can't see",
     openLoopItems: (pillarLabel) => [
       "Which process to fix first. Fix the wrong one and you lose three months.",
       `Whether your ${pillarLabel} problem is really a ${pillarLabel} problem — or a symptom of something upstream.`,
@@ -282,32 +278,15 @@ const en: BilText = {
       "30 days of daily WhatsApp reports — what happened, what looks wrong, what to do",
     ],
     ctaPrice: (amount) => `₹${amount}`,
-    perSessionLabel: "per session",
+    perSessionLabel: "one session",
     ctaGuarantee: "Full refund if your first daily report does not reach your WhatsApp within 48 hours of the session.",
     ctaButton: "Book your session",
 
-    proofHeading: "Owners who did this",
-    proofPlaceholder: "Client results coming soon.",
-    faqHeading: "Common questions",
-    faqItems: [
-      {
-        q: "Is this just consulting advice?",
-        a: "No. You leave the session with a written roadmap and two checkpoints already installed and reporting in your business — not a slide deck of generic suggestions.",
-      },
-      {
-        q: "What if my business doesn't fit neatly into one category?",
-        a: "Most don't. The category you pick just decides which two diagnostic questions you see — the audit itself looks at your actual business, not the category label.",
-      },
-      {
-        q: "I'm not very technical. Will I be able to use what you install?",
-        a: "Yes. The checkpoints are QR-based for your staff to scan and log — nothing for you to configure, and the daily report just arrives on WhatsApp.",
-      },
-      {
-        q: "What if I'm not ready to book yet?",
-        a: "That's fine — the free resource vault below has guides you can start with on your own, no commitment needed.",
-      },
-    ],
-    vaultLink: "Not ready yet? Get the free resource vault",
+    testimonialsHeading: "Testimonials",
+    footerServices: "Our Services",
+    footerCalculator: "Business Independence Level Calculator",
+    footerSession: "Systems Strategy Session",
+    footerConnect: "Connect with us",
   },
 
   categories: {
@@ -610,20 +589,20 @@ const hinglish: BilText = {
           ? `Aap 3,000+ businesses mein se bottom ${percentile.value}% mein hain, jinhone yeh test diya hai.`
           : `Aapne 3,000+ businesses mein se ${percentile.value}% se zyada score kiya hai, jinhone yeh test diya hai.`;
       if (branch === "below") {
-        return `${opening} Average ${categoryLabel} business ka score hai ${categoryAvg}. Aap apni hi industry se peeche hain. Zyadatar owners yahan sochte hain ki problem staff ki quality hai. Aksar aisa nahi hota.`;
+        return `${opening} Average ${categoryLabel} business ka score hai ${categoryAvg}. **Aap apni hi industry se peeche hain.** Zyadatar owners yahan sochte hain ki problem staff ki quality hai. Aksar aisa nahi hota.`;
       }
       if (branch === "within") {
-        return `${opening} Isse aap seedha industry average par aa jate hain. Yeh koi tareef nahi hai. Hamare data mein, 94% businesses Level 2 par atke hue hain. Is industry ka average business apne owner ke bina nahi chal sakta.`;
+        return `${opening} Isse aap seedha industry average par aa jate hain. **Yeh koi tareef nahi hai.** Hamare data mein, **94% businesses Level 2 par atke hue hain.** Is industry ka average business apne owner ke bina nahi chal sakta.`;
       }
-      return `${opening} Yeh ${categoryLabel} ke average se zyada hai. Aapke aur Level 4 ke beech ka gap jitna aap sochte hain usse chhota hai, aur aksar ek hi system hota hai, chaar nahi.`;
+      return `${opening} Yeh ${categoryLabel} ke average se zyada hai. Aapke aur Level 4 ke beech ka gap jitna aap sochte hain usse chhota hai, aur **aksar ek hi system hota hai, chaar nahi.**`;
     },
 
-    fourSystemsHeading: "Chaar systems",
+    fourSystemsHeading: "Chaar pillars",
     weakestCaption: "Sabse kamzor system",
 
     bottleneckHeading: "Aapki #1 rukawat",
     answerSentence: (clauseA, clauseB) => `Aapne bataya ki ${clauseA} — aur ki ${clauseB}.`,
-    bottleneckFooter: "Yeh theek ho sakta hai. Lekin tab tak nahi jab tak hum iski asli wajah tak nahi pahunchte, aur uske liye ek 8-sawaal ke form se zyada gehri nazar chahiye.",
+    bottleneckFooter: "Yeh theek ho sakta hai. Neeche 60 second ka video dekhein.",
 
     costHeading: "Kuch na karne ki keemat",
     costIntro: "3,000+ SMEs mein humein ek hi pattern mila: bina system ke business chupchap apni revenue ka kam se kam 1% har saal khota hai.",
@@ -654,32 +633,15 @@ const hinglish: BilText = {
       "30 din ke daily WhatsApp reports — kya hua, kya galat lag raha hai, kya karna hai",
     ],
     ctaPrice: (amount) => `₹${amount}`,
-    perSessionLabel: "prati session",
+    perSessionLabel: "ek session",
     ctaGuarantee: "Agar session ke 48 ghante ke andar aapka pehla daily report WhatsApp par nahi aata, to poora refund milega.",
     ctaButton: "Apna session book karein",
 
-    proofHeading: "Doosre owners ne kya paaya",
-    proofPlaceholder: "Client results jald aa rahe hain.",
-    faqHeading: "Aksar poochhe jaane wale sawaal",
-    faqItems: [
-      {
-        q: "Kya yeh sirf consulting advice hai?",
-        a: "Nahi. Session ke baad aapke paas ek likha hua roadmap hoga, aur aapke business mein pehle se hi do checkpoints install aur report kar rahe honge — sirf generic suggestions ki slide deck nahi.",
-      },
-      {
-        q: "Agar mera business kisi ek category mein theek se fit nahi hota to?",
-        a: "Zyadatar businesses aise hi hain. Aap jo category choose karte hain, woh sirf yeh decide karti hai ki aapko kaunse do diagnostic sawaal dikhenge — audit khud aapke asli business ko dekhta hai, category label ko nahi.",
-      },
-      {
-        q: "Main zyada technical nahi hoon. Kya main jo install hoga usse use kar paunga?",
-        a: "Haan. Checkpoints QR-based hain, staff bas scan karke log karta hai — aapko kuch configure nahi karna, aur daily report seedha WhatsApp par aa jaati hai.",
-      },
-      {
-        q: "Agar main abhi book karne ke liye ready nahi hoon to?",
-        a: "Koi baat nahi — neeche free resource vault mein guides hain jinse aap khud shuru kar sakte hain, koi commitment nahi chahiye.",
-      },
-    ],
-    vaultLink: "Abhi ready nahi hain? Free resource vault lein",
+    testimonialsHeading: "Testimonials",
+    footerServices: "Hamari Services",
+    footerCalculator: "Business Independence Level Calculator",
+    footerSession: "Systems Strategy Session",
+    footerConnect: "Humse judein",
   },
 
   categories: {
