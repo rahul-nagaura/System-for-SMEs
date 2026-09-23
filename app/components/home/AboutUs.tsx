@@ -3,7 +3,7 @@ import { GOLD } from "./theme";
 
 export default function AboutUs() {
   return (
-    <section id="about" className="text-white py-16 md:py-24 px-5" style={{ backgroundColor: "#000000" }}>
+    <section id="about" className="text-white py-16 md:py-24 px-5" style={{ backgroundColor: "#111111" }}>
       <div className="max-w-[900px] mx-auto text-center">
         <p className="text-2xl md:text-3xl font-black leading-snug">
           &ldquo;We make your business ready to run <span style={{ backgroundColor: GOLD }} className="px-1 text-[#0E0E0E]">without you</span> being there all the time — by creating the essential operational systems&rdquo;

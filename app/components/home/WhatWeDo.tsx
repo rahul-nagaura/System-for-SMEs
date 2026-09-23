@@ -43,7 +43,7 @@ export default function WhatWeDo() {
   }, []);
 
   return (
-    <section id="what-we-do" className="text-white py-16 md:py-24" style={{ backgroundColor: "#000000" }}>
+    <section id="what-we-do" className="text-white py-16 md:py-24" style={{ backgroundColor: "#111111" }}>
       <div className="max-w-[1100px] mx-auto px-5">
         <div className="flex justify-center mb-6">
           <Image src="/logo-mark.png" alt="" width={56} height={56} />
