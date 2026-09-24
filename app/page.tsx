@@ -46,7 +46,7 @@ export default async function LandingPage() {
   let content = {
     settings: {
       pricing_amount: "2999",
-      owner_photo_url: "/raghav.jpg"
+      owner_photo_url: "/raghav.webp"
     },
     faqs: defaultFAQs,
     reviews: defaultReviews,
@@ -65,7 +65,7 @@ export default async function LandingPage() {
           content = {
             settings: {
               pricing_amount: data.settings?.pricing_amount || "2999",
-              owner_photo_url: data.settings?.owner_photo_url || "/raghav.jpg"
+              owner_photo_url: data.settings?.owner_photo_url || "/raghav.webp"
             },
             faqs: data.faqs && data.faqs.length > 0 ? data.faqs : defaultFAQs,
             reviews: data.reviews && data.reviews.length > 0 ? data.reviews : defaultReviews,

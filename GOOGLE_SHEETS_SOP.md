@@ -13,7 +13,7 @@ This Standard Operating Procedure (SOP) defines the structure, column definition
 | Key | Value (Example) | What it controls (Description) |
 | :--- | :--- | :--- |
 | `pricing_amount` | `2499` | The numeric checkout price shown on the landing page. The site automatically prefixes `₹` if you don't include it (e.g. `2499` → ₹2,499). |
-| `owner_photo_url` | `/raghav.jpg` | The image path or external URL for Raghav's profile photo. |
+| `owner_photo_url` | `/raghav.webp` | The image path or external URL for Raghav's profile photo. |
 
 ---
 

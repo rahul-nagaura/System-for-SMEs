@@ -31,7 +31,7 @@ Acts as a key-value store for global configurations.
 * **Headers**: `Key`, `Value`
 * **Purpose**:
   * `Key`: The variable name. The website reads `pricing_amount`, `owner_photo_url`, and `bil_pricing_amount` (the BIL Calculator's ₹4,999 audit price — a separate key from `pricing_amount` since it's a different offer). Any other key you add here is also passed through automatically — the script has no fixed list.
-  * `Value`: The actual value (e.g. `2499`, `/raghav.jpg`).
+  * `Value`: The actual value (e.g. `2499`, `/raghav.webp`).
 
 ### 2. `FAQs` Tab
 Stores dynamic questions and answers shown on the landing page FAQ section.
@@ -106,7 +106,7 @@ Copy and paste this sample row data into your spreadsheet to verify the connecti
 | Key | Value |
 | :--- | :--- |
 | `pricing_amount` | `2499` |
-| `owner_photo_url` | `/raghav.jpg` |
+| `owner_photo_url` | `/raghav.webp` |
 | `bil_pricing_amount` | `4,999` |
 
 ### `FAQs` Tab Sample
