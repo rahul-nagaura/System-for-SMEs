@@ -243,7 +243,7 @@ export default function BMLCalculator() {
               <div className="relative w-full rounded-2xl overflow-hidden border border-[#2b3040]/10 shadow-md bg-white">
                 <div className="relative h-48 w-full bg-[#141414]">
                   <Image
-                    src="/factory_banner.png"
+                    src="/factory_banner.webp"
                     alt="Factory Banner"
                     fill
                     sizes="(max-width: 768px) 100vw, 720px"

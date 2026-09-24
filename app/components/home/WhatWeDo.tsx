@@ -51,7 +51,7 @@ export default function WhatWeDo() {
         <h2 className="text-4xl font-medium text-center">What we do?</h2>
       </div>
       <div className="relative w-full max-w-[640px] mx-auto aspect-[1200/1030] mt-4">
-        <Image src="/pyramid.png" alt="The 4 layers of a self-running business" fill sizes="(max-width:768px) 100vw, 640px" className="object-contain" />
+        <Image src="/pyramid.webp" alt="The 4 layers of a self-running business" fill sizes="(max-width:768px) 100vw, 640px" className="object-contain" />
       </div>
       <div className="max-w-[1100px] mx-auto px-5">
         {/* Big statement — words light up white one by one as you scroll */}
