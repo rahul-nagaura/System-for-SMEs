@@ -278,7 +278,7 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
           {/* Block 2 — Benchmark */}
           <section className="py-9 border-t border-[#EFEFEF] space-y-3.5">
             <SectionLabel icon={<BarChartIcon />}>{t.benchmarkHeading}</SectionLabel>
-            <div className="flex items-baseline gap-3">
+            <div className="flex items-center gap-3">
               <span className="font-medium text-[50px] leading-none">{benchmarkStat.value}%</span>
               <span className="text-[12.5px] text-[#6B6B6B] font-medium max-w-[130px] leading-tight">{benchmarkStat.caption}</span>
             </div>
