@@ -48,7 +48,7 @@ export default function LandingPage({ content }: { content: any }) {
     ? (String(content.settings.pricing_amount).startsWith("₹") ? content.settings.pricing_amount : `₹${content.settings.pricing_amount}`) 
     : "₹1,499";
 
-  const ownerPhoto = content.settings.owner_photo_url || "/raghav.jpg";
+  const ownerPhoto = content.settings.owner_photo_url || "/raghav.webp";
   const reviewsList = content.reviews && content.reviews.length > 0 ? content.reviews : defaultReviews;
   const faqsList = content.faqs && content.faqs.length > 0 ? content.faqs : defaultFAQs;
 

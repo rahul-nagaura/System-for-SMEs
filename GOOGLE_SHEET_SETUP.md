@@ -31,7 +31,7 @@ Acts as a key-value store for global configurations.
 * **Headers**: `Key`, `Value`
 * **Purpose**:
   * `Key`: The variable name. The website only reads `pricing_amount` and `owner_photo_url`.
-  * `Value`: The actual value (e.g. `2499`, `/raghav.jpg`).
+  * `Value`: The actual value (e.g. `2499`, `/raghav.webp`).
 
 ### 2. `FAQs` Tab
 Stores dynamic questions and answers shown on the landing page FAQ section.
@@ -106,7 +106,7 @@ Copy and paste this sample row data into your spreadsheet to verify the connecti
 | Key | Value |
 | :--- | :--- |
 | `pricing_amount` | `2499` |
-| `owner_photo_url` | `/raghav.jpg` |
+| `owner_photo_url` | `/raghav.webp` |
 
 ### `FAQs` Tab Sample
 | Question | Answer |
