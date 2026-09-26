@@ -21,7 +21,7 @@ export default function Nav() {
           Vault
         </Link>
         <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
-          BML Calculator
+          BIL Calculator
         </Link>
       </nav>
 
@@ -63,7 +63,7 @@ export default function Nav() {
             className="text-[#080808] hover:text-[#ffd21f] font-bold text-sm uppercase tracking-wider py-2 border-b border-zinc-100"
             href="/bml"
           >
-            BML Calculator
+            BIL Calculator
           </Link>
           <Link
             onClick={() => setIsOpen(false)}

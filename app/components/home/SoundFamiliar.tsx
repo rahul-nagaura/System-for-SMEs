@@ -16,13 +16,13 @@ export default function SoundFamiliar() {
             <div className="relative w-[108px] h-[108px] flex-shrink-0 rounded-xl overflow-hidden">
               <Image src={c.img} alt={c.label} fill sizes="108px" className="object-cover" />
             </div>
-            <p className="font-medium text-[25px] leading-tight text-[#0E0E0E]">{c.label}</p>
+            <p className="font-medium text-[25px] leading-tight text-[#111111]">{c.label}</p>
           </div>
         ))}
       </div>
       <blockquote className="mt-12 max-w-md mx-auto text-center">
-        <p className="text-[28px] font-medium leading-tight text-[#0E0E0E]/40">
-          &ldquo;If your business can&apos;t run for <span className="font-bold text-[#0E0E0E]">two weeks</span> without you, you don&apos;t own a business, <span className="font-bold text-[#0E0E0E]">you own a job</span>&rdquo;
+        <p className="text-[28px] font-medium leading-tight text-[#111111]/40">
+          &ldquo;If your business can&apos;t run for <span className="font-bold text-[#111111]">two weeks</span> without you, you don&apos;t own a business, <span className="font-bold text-[#111111]">you own a job</span>&rdquo;
         </p>
       </blockquote>
     </section>

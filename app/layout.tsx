@@ -64,7 +64,7 @@ function SiteFooter() {
         {/* Right Links */}
         <div className="flex flex-wrap gap-x-8 gap-y-4 text-xs md:text-sm font-medium text-white">
           <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
-            BML Calculator
+            BIL Calculator
           </Link>
           <Link href="/vault" className="hover:text-[#ffd21f] transition-colors">
             Vault

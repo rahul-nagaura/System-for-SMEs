@@ -280,10 +280,10 @@ export default function BMLCalculator() {
               <div className="space-y-6 pt-6">
                 <div className="text-center space-y-2">
                   <h1 className="text-3xl md:text-4xl font-extrabold text-[#2b3040] tracking-tight">
-                    Business Maturity Calculator
+                    Business Independence Level Calculator
                   </h1>
                   <p className="text-[#2b3040]/70 font-medium">
-                    Discover if your business is <span className="text-[#edb605] font-bold">Chaotic</span>, <span className="text-[#0058ed] font-bold">Stable</span>, or <span className="text-emerald-600 font-bold">Ready to Scale</span>. Takes 30 seconds.
+                    Discover if your business is <span className="text-[#edb605] font-bold">Chaotic</span>, <span className="text-[#0058ed] font-bold">Stable</span>, or <span className="text-emerald-600 font-bold">Ready to Scale</span>. Takes 2 minutes.
                   </p>
                 </div>
 
@@ -470,7 +470,7 @@ export default function BMLCalculator() {
                 Aapka result ready hai!
               </h1>
               <p className="text-[18px] leading-[28px] text-[#666666] max-w-xs mx-auto">
-                Apna personalized Business Maturity breakdown kahan bhejein?
+                Apna personalized Business Independence breakdown kahan bhejein?
               </p>
             </div>
 
@@ -724,7 +724,7 @@ export default function BMLCalculator() {
                 {/* Ladder Card */}
                 <div className="bg-white border border-[#1C1C1C] p-[26px] rounded-none">
                   <div className="text-[11px] tracking-[0.14em] uppercase text-[#6B6B66] font-semibold mb-2.5">
-                    Your climb &mdash; maturity ladder
+                    Your climb &mdash; independence ladder
                   </div>
                   <div className="display flex gap-2">
                     {levels.map((l, i) => {
@@ -912,7 +912,7 @@ export default function BMLCalculator() {
                             onChange={setShowScoreRing}
                           />
                           <CustomToggle
-                            label="Maturity level & stage"
+                            label="Independence level & stage"
                             checked={showLevel}
                             onChange={setShowLevel}
                           />
@@ -955,7 +955,7 @@ export default function BMLCalculator() {
                           <div className="flex flex-col gap-1 border-b pb-3 flex-shrink-0" style={{ borderColor: currentTheme.border }}>
                             <div className="flex justify-between items-baseline">
                               <span className="font-['Archivo'] font-black tracking-[0.06em] text-[12px] uppercase">SYSTEMS FOR SME</span>
-                              <span className="text-[9px] tracking-[0.1em] font-extrabold text-[#9A9A93] uppercase">BML DIAGNOSTIC</span>
+                              <span className="text-[9px] tracking-[0.1em] font-extrabold text-[#9A9A93] uppercase">BIL DIAGNOSTIC</span>
                             </div>
                           </div>
 

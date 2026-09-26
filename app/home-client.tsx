@@ -15,7 +15,7 @@ import { Montserrat } from "next/font/google";
 // The redesign's brand font (from Figma).
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
@@ -50,7 +50,9 @@ export default function LandingPage({ content }: { content: { reviews?: Review[]
     content.reviews && content.reviews.length > 0 ? content.reviews : defaultReviews;
 
   return (
-    <div className={`${montserrat.className} bg-white text-[#0E0E0E] overflow-x-hidden`}>
+    // overflow-x-clip (not -hidden): "hidden" turns this wrapper into a scroll
+    // container, which silently breaks the sticky nav inside it.
+    <div className={`${montserrat.className} bg-white text-[#111111] overflow-x-clip`}>
       <HomeNav />
       <Hero />
       <SoundFamiliar />

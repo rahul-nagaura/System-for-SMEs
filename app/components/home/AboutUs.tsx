@@ -1,22 +1,34 @@
 import Image from "next/image";
 import { GOLD } from "./theme";
 
+/* About Us — follows the Figma:
+   - heading: Montserrat Medium 36 (same as the other section titles)
+   - quote:   Montserrat ExtraLight 28 / line-height 32 / letter-spacing 0, 291px wide,
+              bold quote marks
+   - copy:    Montserrat Regular 16 / letter-spacing 3% / white, 351px wide, justified
+   - sign-off: #535353, right-aligned */
 export default function AboutUs() {
   return (
-    <section id="about" className="text-white py-16 md:py-24 px-5" style={{ backgroundColor: "#111111" }}>
+    <section id="about" className="scroll-mt-16 text-white py-16 md:py-24 px-5" style={{ backgroundColor: "#111111" }}>
       <div className="max-w-[900px] mx-auto text-center">
-        <p className="text-2xl md:text-3xl font-black leading-snug">
-          &ldquo;We make your business ready to run <span style={{ backgroundColor: GOLD }} className="px-1 text-[#0E0E0E]">without you</span> being there all the time — by creating the essential operational systems&rdquo;
+        <h2 className="text-4xl font-medium">About Us</h2>
+
+        <p className="mt-[52px] mx-auto max-w-[291px] md:max-w-3xl text-[28px] md:text-3xl leading-[32px] md:leading-snug font-thin">
+          <span className="font-bold">&ldquo;</span> We make your business ready to run without you being there all the time, by creating the essential operational systems. <span className="font-bold">&rdquo;</span>
         </p>
-        <div className="mt-10 flex flex-col items-center gap-4">
-          <span className="inline-flex items-center justify-center bg-white rounded-2xl p-3">
-            <Image src="/iit-dhanbad.png" alt="IIT (ISM) Dhanbad" width={64} height={73} className="object-contain" />
-          </span>
-          <p className="text-base md:text-lg font-semibold text-white/70 max-w-xl">
-            We are a team of <b>IIT (ISM) Dhanbad</b>{" "}graduated engineers with a deep understanding of Indian SME &amp; family-business culture. Our goal is to make Indian SME businesses attractive to global talent and investors — by fixing the core operational systems they run on.
+
+        <Image src="/iit-dhanbad.png" alt="IIT (ISM) Dhanbad" width={92} height={105} className="mx-auto mt-14 object-contain" />
+
+        <div className="mx-auto mt-8 max-w-[351px] text-justify text-base font-light leading-5 tracking-[0.03em] text-white">
+          <p>
+            We are a team of <b className="font-bold" style={{ color: GOLD }}>IIT Dhanbad</b> graduated engineers with understanding of Indian SME culture. We started this by fixing a family business and realized the need across entire India.
           </p>
-          <p className="mt-2 text-sm font-bold uppercase tracking-widest text-white/50">— Team, Systems for SME</p>
+          <p className="mt-5">
+            <b className="font-bold">Our goal</b> is to make Indian Lala businesses attractive to Global Talent and Investors. <i>All that needs is fixing the core operations systems clubbed with decent marketing.</i>
+          </p>
         </div>
+
+        <p className="mx-auto mt-8 max-w-[351px] text-right text-sm font-medium text-[#535353]">- Team, Systems For SME</p>
       </div>
     </section>
   );

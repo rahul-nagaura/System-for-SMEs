@@ -32,7 +32,7 @@ export default function HomeFooter() {
         <h3 className="text-lg font-semibold">Our Services</h3>
         <ul className="mt-5 space-y-3 text-[15px] text-white/55">
           <li>
-            <Link href="/bml" className="hover:text-white transition-colors">Business Maturity Level Calculator</Link>
+            <Link href="/bml" className="hover:text-white transition-colors">Business Independence Level Calculator</Link>
           </li>
           <li>
             <Link href="/booking" className="hover:text-white transition-colors">Systems Strategy Session</Link>

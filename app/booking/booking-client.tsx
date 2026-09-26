@@ -658,7 +658,7 @@ export default function BookingPage() {
         <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="font-extrabold text-sm uppercase text-[#201b11]">Systems for SME</div>
           <div className="flex gap-8 text-xs font-bold uppercase tracking-wider">
-            <Link href="/bml" className="text-[#4f4633] hover:text-[#775a00] transition-colors">BML Calculator</Link>
+            <Link href="/bml" className="text-[#4f4633] hover:text-[#775a00] transition-colors">BIL Calculator</Link>
             <Link href="/vault" className="text-[#4f4633] hover:text-[#775a00] transition-colors">Vault</Link>
           </div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-[#725b22]/70">© 2026 Systems for SME. All rights reserved.</p>

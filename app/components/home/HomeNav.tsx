@@ -7,7 +7,7 @@ import BmlButton from "./BmlButton";
 export default function HomeNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-50 bg-[#0E0E0E] border-b border-white/10">
+    <header className="sticky top-0 z-50 bg-[#111111]">
       <div className="max-w-[1200px] mx-auto flex items-center justify-between px-5 h-16">
         <Link href="/" className="flex items-center gap-2.5">
           <Image src="/logo-mark.png" alt="Systems for SME" width={38} height={38} />
@@ -27,7 +27,7 @@ export default function HomeNav() {
         </button>
       </div>
       {menuOpen && (
-        <div className="md:hidden border-t border-white/10 bg-[#0E0E0E] px-5 py-4 flex flex-col gap-4 text-sm font-bold uppercase tracking-wider text-white">
+        <div className="md:hidden border-t border-white/10 bg-[#111111] px-5 py-4 flex flex-col gap-4 text-sm font-bold uppercase tracking-wider text-white">
           <a href="#what-we-do" onClick={() => setMenuOpen(false)}>What we do</a>
           <a href="#how" onClick={() => setMenuOpen(false)}>How it works</a>
           <a href="#about" onClick={() => setMenuOpen(false)}>About</a>

@@ -79,7 +79,7 @@ export function downloadResultCard(data: CardData): void {
   ctx.fillStyle = "#9A9A93";
   ctx.font = "bold 14px Inter, sans-serif";
   ctx.textAlign = "right";
-  ctx.fillText("BML DIAGNOSTIC", 660, 90);
+  ctx.fillText("BIL DIAGNOSTIC", 660, 90);
 
   // Divider Line
   ctx.strokeStyle = currentTheme.border;
@@ -290,7 +290,7 @@ export function downloadResultCard(data: CardData): void {
 
   // Download flow
   const link = document.createElement("a");
-  link.download = `${exportName.trim().replace(/\s+/g, "_")}_BML_Score.png`;
+  link.download = `${exportName.trim().replace(/\s+/g, "_")}_BIL_Score.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
 }

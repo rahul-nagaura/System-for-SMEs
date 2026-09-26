@@ -57,13 +57,13 @@ export default function WhatWeDo() {
         {/* Big statement — words light up white one by one as you scroll */}
         <p
           ref={textRef}
-          className="mt-28 md:mt-40 text-center text-[32px] md:text-[44px] font-semibold max-w-2xl mx-auto leading-[1.35] md:leading-[1.3]"
+          className="mt-28 md:mt-40 text-center text-[28px] md:text-[44px] font-semibold max-w-[313px] md:max-w-2xl mx-auto leading-[32px] md:leading-[1.3]"
         >
           {words.map((word, i) => {
             const threshold = i / words.length;
             const active = progress >= threshold;
             return (
-              <span key={i} className={`transition-colors duration-300 ${active ? "text-white" : "text-white/25"}`}>
+              <span key={i} className={`transition-colors duration-300 ${active ? "text-white" : "text-[#565656]"}`}>
                 {word}{" "}
               </span>
             );

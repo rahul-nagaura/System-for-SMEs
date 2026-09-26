@@ -13,8 +13,8 @@ const BMLCalculatorClient = dynamic(() => import("./bml-client"), {
 });
 
 export const metadata: Metadata = {
-  title: "Business Maturity Level (BML) Calculator | Systems for SME",
-  description: "Take the free 5-minute BML Calculator to find out how dependent your business is on you — and get a specific systems roadmap to fix it.",
+  title: "Business Independence Level (BIL) Calculator | Systems for SME",
+  description: "Take the free 2-minute BIL Calculator to find out how dependent your business is on you — and get a specific systems roadmap to fix it.",
 };
 
 export default function BMLPage() {
