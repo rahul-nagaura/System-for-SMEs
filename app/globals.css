@@ -181,3 +181,13 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #ffd21f;
 }
+
+/* Hindi (Devanagari) — applies wherever a parent has lang="hi" (the BIL calculator).
+   Wide letter-spacing pulls Devanagari conjuncts and vowel signs apart, and the tight
+   Latin line-heights collide with its tall matras, so both are relaxed. */
+:lang(hi) * {
+  letter-spacing: normal !important;
+}
+:lang(hi) :is(h1, h2, h3) {
+  line-height: 1.4 !important;
+}

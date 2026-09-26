@@ -42,11 +42,12 @@
 import type { CategoryId, PillarId } from "./bml-data";
 import type { BenchmarkBranch } from "./bml-scoring";
 
-export type Lang = "en" | "hinglish";
+export type Lang = "en" | "hi";
 
+/** `short` is what the navbar pill shows for the CURRENT language. */
 export const LANGS: { id: Lang; short: string; label: string }[] = [
   { id: "en", short: "En", label: "English" },
-  { id: "hinglish", short: "Hi", label: "Hinglish" },
+  { id: "hi", short: "हिं", label: "हिन्दी" },
 ];
 
 export interface QuestionText {
@@ -163,6 +164,7 @@ export interface BilText {
   categories: Record<CategoryId, string>;
   revenue: Record<string, string>;
   pillarLabels: Record<PillarId, string>;
+  levelNames: Record<string, string>; // canonical level name -> the name shown to the user
   levelTaglines: Record<string, string>; // keyed by canonical level name
   generalQuestions: QuestionText[]; // index-aligned with data.generalQuestions
   categoryQuestions: Record<CategoryId, [QuestionText, QuestionText]>;
@@ -204,8 +206,8 @@ const en: BilText = {
       emailInvalid: "Please enter a valid email address",
     },
 
-    leadHeading: "Your result is almost ready",
-    leadSub: "Just a few more details:",
+    leadHeading: "Your BIL Score is ready",
+    leadSub: "Just one last step:",
     nameLabel: "What is your name *",
     namePlaceholder: "e.g. Rajesh Kumar",
     businessNameLabel: "What is your business / firm name *",
@@ -217,7 +219,7 @@ const en: BilText = {
     generating: "Calculating your score...",
     showResult: "Show my result",
 
-    resultEyebrow: "Your Result",
+    resultEyebrow: "Your Score",
     heroHeadline: (name, levelName) => `${name}, your business is ${levelName}.`,
     ringCaption: "Out of 100",
     levelOfTotal: (index, name) => `Level ${index} of 4 · ${name}`,
@@ -245,7 +247,7 @@ const en: BilText = {
     fourSystemsHeading: "The four pillars",
     weakestCaption: "Weakest system",
 
-    bottleneckHeading: "Your #1 constraint",
+    bottleneckHeading: "Your **#1** constraint",
     answerSentence: (clauseA, clauseB) => `You answered that ${clauseA} — and that ${clauseB}.`,
     bottleneckFooter: "This is fixable. See the 60s video below.",
 
@@ -307,6 +309,12 @@ const en: BilText = {
     humanCapital: "Human Capital",
     customerAcquisition: "Customer Acquisition",
     dataVisibility: "Data Visibility",
+  },
+  levelNames: {
+    "Owner-Trapped": "Owner-Trapped",
+    "Owner-Dependent": "Owner-Dependent",
+    "Team-Run": "Team-Run",
+    "Owner-Independent": "Owner-Independent",
   },
   levelTaglines: {
     "Owner-Trapped": "The business stops when you stop.",
@@ -531,192 +539,198 @@ const en: BilText = {
   },
 };
 
-/* ══════════════════════════ HINGLISH ═════════════════════════ */
+/* ═════════════════════════ HINDI (देवनागरी) ═════════════════════════ */
 
-const hinglish: BilText = {
+const hi: BilText = {
   ui: {
-    languageToggleLabel: "Bhasha badlein",
+    languageToggleLabel: "भाषा बदलें",
 
-    introEyebrow: "3,000+ SME owners apna score check kar chuke hain",
-    introTitle: "Business Independence Level Calculator",
-    introSub: "Apna sabse kamzor system, uski wajah, aur uski cost jaaniye — 2 minute se kam mein.",
-    categoryHeading: "Apna business category select karein *",
-    revenueHeading: "Apna annual revenue / turnover range select karein *",
+    introEyebrow: "3,000+ SME मालिक अपना स्कोर चेक कर चुके हैं",
+    introTitle: "बिज़नेस इंडिपेंडेंस लेवल कैलकुलेटर",
+    introSub: "जानिए आपका सबसे कमज़ोर सिस्टम कौन-सा है, उसकी वजह क्या है, और वह आपको कितना महँगा पड़ रहा है — 2 मिनट से भी कम में।",
+    categoryHeading: "अपने बिज़नेस की कैटेगरी चुनें *",
+    revenueHeading: "अपना सालाना रेवेन्यू / टर्नओवर रेंज चुनें *",
 
-    questionProgress: (n) => `Sawaal 0${n} / 08`,
-    percentComplete: (pct) => `${pct}% Poora`,
-    back: "Wapas",
-    next: "Aage",
-    checkScore: "Mera score dekhein",
+    questionProgress: (n) => `सवाल 0${n} / 08`,
+    percentComplete: (pct) => `${pct}% पूरा`,
+    back: "वापस",
+    next: "आगे",
+    checkScore: "मेरा स्कोर देखें",
 
     alerts: {
-      category: "Please apna business category select karein",
-      revenue: "Please apna annual revenue range select karein",
-      option: "Please ek option select karein",
-      name: "Please apna naam likhein",
-      businessName: "Please apne business / firm ka naam likhein",
-      whatsapp: "Please sahi WhatsApp number likhein",
-      emailInvalid: "Please sahi email address likhein",
+      category: "कृपया अपने बिज़नेस की कैटेगरी चुनें",
+      revenue: "कृपया अपना सालाना रेवेन्यू रेंज चुनें",
+      option: "कृपया एक विकल्प चुनें",
+      name: "कृपया अपना नाम लिखें",
+      businessName: "कृपया अपने बिज़नेस / फ़र्म का नाम लिखें",
+      whatsapp: "कृपया सही WhatsApp नंबर लिखें",
+      emailInvalid: "कृपया सही ईमेल पता लिखें",
     },
 
-    leadHeading: "Aapka result bas ready hone wala hai",
-    leadSub: "Bas kuch aur details chahiye:",
-    nameLabel: "Aapka naam kya hai *",
-    namePlaceholder: "jaise: Rajesh Kumar",
-    businessNameLabel: "Aapke business / firm ka naam kya hai *",
-    businessNamePlaceholder: "jaise: Apex Manufacturing",
-    whatsappLabel: "Aapka business contact number (WhatsApp) *",
-    whatsappHint: "Aapki detailed breakdown yahan bhejenge.",
-    emailLabel: "Email ID (optional)",
-    emailHint: "Sirf tab bharein agar email par bhi copy chahiye.",
-    generating: "Aapka score calculate ho raha hai...",
-    showResult: "Mera result dikhayein",
+    leadHeading: "आपका BIL स्कोर तैयार है",
+    leadSub: "बस एक आख़िरी कदम:",
+    nameLabel: "आपका नाम क्या है *",
+    namePlaceholder: "जैसे: राजेश कुमार",
+    businessNameLabel: "आपके बिज़नेस / फ़र्म का नाम क्या है *",
+    businessNamePlaceholder: "जैसे: एपेक्स मैन्युफैक्चरिंग",
+    whatsappLabel: "आपका बिज़नेस संपर्क नंबर (WhatsApp) *",
+    whatsappHint: "आपकी विस्तृत रिपोर्ट हम यहीं भेजेंगे।",
+    emailLabel: "ईमेल ID (वैकल्पिक)",
+    emailHint: "सिर्फ़ तब भरें जब आप ईमेल पर भी कॉपी चाहते हों।",
+    generating: "आपका स्कोर निकाला जा रहा है...",
+    showResult: "मेरा रिज़ल्ट दिखाएँ",
 
-    resultEyebrow: "Aapka Result",
-    heroHeadline: (name, levelName) => `${name}, aapka business ${levelName} hai.`,
-    ringCaption: "100 mein se",
-    levelOfTotal: (index, name) => `Level ${index} / 4 · ${name}`,
-    scrollPrompt: "Iska 60-second explanation is page mein neeche hai.",
+    resultEyebrow: "आपका स्कोर",
+    heroHeadline: (name, levelName) => `${name}, आपका बिज़नेस ${levelName} है।`,
+    ringCaption: "100 में से",
+    levelOfTotal: (index, name) => `लेवल ${index} / 4 · ${name}`,
+    scrollPrompt: "इसका 60 सेकंड का स्पष्टीकरण इसी पेज पर नीचे है।",
 
-    benchmarkHeading: "Benchmark",
+    benchmarkHeading: "बेंचमार्क",
     benchmarkStat: (percentile) =>
       percentile.kind === "bottom"
-        ? { value: 100 - percentile.value, caption: "businesses aapse zyada score karte hain" }
-        : { value: percentile.value, caption: "businesses aapse kam score karte hain" },
+        ? { value: 100 - percentile.value, caption: "बिज़नेस आपसे ज़्यादा स्कोर करते हैं" }
+        : { value: percentile.value, caption: "बिज़नेस आपसे कम स्कोर करते हैं" },
     benchmarkCopy: (branch, percentile, categoryLabel, categoryAvg) => {
       const opening =
         percentile.kind === "bottom"
-          ? `Aap 3,000+ businesses mein se bottom ${percentile.value}% mein hain, jinhone yeh test diya hai.`
-          : `Aapne 3,000+ businesses mein se ${percentile.value}% se zyada score kiya hai, jinhone yeh test diya hai.`;
+          ? `आप यह टेस्ट देने वाले 3,000+ बिज़नेस में से सबसे नीचे के ${percentile.value}% में हैं।`
+          : `आपने यह टेस्ट देने वाले 3,000+ बिज़नेस में से ${percentile.value}% से ज़्यादा स्कोर किया है।`;
       if (branch === "below") {
-        return `${opening} Average ${categoryLabel} business ka score hai ${categoryAvg}. **Aap apni hi industry se peeche hain.** Zyadatar owners yahan sochte hain ki problem staff ki quality hai. Aksar aisa nahi hota.`;
+        return `${opening} औसत ${categoryLabel} बिज़नेस का स्कोर ${categoryAvg} है। **आप अपनी ही इंडस्ट्री से पीछे हैं।** यहाँ ज़्यादातर मालिक सोचते हैं कि समस्या स्टाफ़ की क्वालिटी की है। अक्सर ऐसा नहीं होता।`;
       }
       if (branch === "within") {
-        return `${opening} Isse aap seedha industry average par aa jate hain. **Yeh koi tareef nahi hai.** Hamare data mein, **94% businesses Level 2 par atke hue hain.** Is industry ka average business apne owner ke bina nahi chal sakta.`;
+        return `${opening} यानी आप ठीक इंडस्ट्री के औसत पर हैं। **यह कोई तारीफ़ की बात नहीं है।** हमारे डेटा में **94% बिज़नेस लेवल 2 पर अटके हुए हैं।** आपकी इंडस्ट्री का औसत बिज़नेस अपने मालिक के बिना नहीं चल सकता।`;
       }
-      return `${opening} Yeh ${categoryLabel} ke average se zyada hai. Aapke aur Level 4 ke beech ka gap jitna aap sochte hain usse chhota hai, aur **aksar ek hi system hota hai, chaar nahi.**`;
+      return `${opening} यह ${categoryLabel} के औसत से ज़्यादा है। आपके और लेवल 4 के बीच का फ़ासला आपकी सोच से छोटा है, और **अक्सर वह एक ही सिस्टम होता है, चार नहीं।**`;
     },
 
-    fourSystemsHeading: "Chaar pillars",
-    weakestCaption: "Sabse kamzor system",
+    fourSystemsHeading: "चार स्तंभ",
+    weakestCaption: "सबसे कमज़ोर सिस्टम",
 
-    bottleneckHeading: "Aapki #1 rukawat",
-    answerSentence: (clauseA, clauseB) => `Aapne bataya ki ${clauseA} — aur ki ${clauseB}.`,
-    bottleneckFooter: "Yeh theek ho sakta hai. Neeche 60 second ka video dekhein.",
+    bottleneckHeading: "आपकी **#1** रुकावट",
+    answerSentence: (clauseA, clauseB) => `आपने बताया कि ${clauseA} — और यह भी कि ${clauseB}।`,
+    bottleneckFooter: "यह ठीक हो सकता है। नीचे 60 सेकंड का वीडियो देखें।",
 
-    costHeading: "Kuch na karne ki keemat",
-    costIntro: "3,000+ SMEs mein humein ek hi pattern mila: bina system ke business chupchap apni revenue ka kam se kam 1% har saal khota hai.",
-    costLeadIn: "Aapke revenue level par, yeh hai:",
-    costStatSuffix: "har saal",
-    costFragment: "Dead stock. Manual calculations. Bhoole hue hot leads — kyunki inhe pakadne ke liye koi system nahi tha.",
+    costHeading: "कुछ न करने की कीमत",
+    costIntro: "3,000+ SME में हमें एक ही पैटर्न मिला: बिना सिस्टम के बिज़नेस चुपचाप अपने रेवेन्यू का कम से कम 1% हर साल खो देता है।",
+    costLeadIn: "आपके रेवेन्यू लेवल पर, यह है:",
+    costStatSuffix: "हर साल",
+    costFragment: "डेड स्टॉक। हाथ से किए गए हिसाब। भूले हुए हॉट लीड — क्योंकि इन्हें पकड़ने के लिए कोई सिस्टम था ही नहीं।",
 
-    openLoopHeading: "Yeh score kya nahi dikha sakta",
+    openLoopHeading: "यह स्कोर क्या नहीं दिखा सकता",
     openLoopItems: (pillarLabel) => [
-      "Sabse pehle kaunsa process fix karna hai. Galat process fix kiya to teen mahine barbaad honge.",
-      `Kya aapki ${pillarLabel} ki problem sach mein ${pillarLabel} ki hai — ya kisi aur badi problem ka lakshan hai.`,
-      "Aapke business ko exactly kya chahiye, uske muqaable mein jo ek form bata sakta hai.",
+      "सबसे पहले कौन-सा प्रोसेस ठीक करना है। गलत प्रोसेस ठीक किया तो तीन महीने बर्बाद होंगे।",
+      `क्या आपकी ${pillarLabel} की समस्या सच में ${pillarLabel} की ही है — या किसी और बड़ी समस्या का लक्षण है।`,
+      "आपके बिज़नेस को असल में क्या चाहिए — बनाम वह जो एक फ़ॉर्म से अंदाज़ा लगाया जा सकता है।",
     ],
-    openLoopFooter: "Inke liye kisi ko aapke asli business ko dekhna hoga.",
+    openLoopFooter: "इनके लिए किसी को आपके असली बिज़नेस को देखना होगा।",
 
-    vslPlaceholder: "VSL placeholder",
-    vslCaption: "60 sec · muted autoplay · burned-in captions",
-    vslHint: "( yahan asli video aayega )",
+    vslPlaceholder: "VSL प्लेसहोल्डर",
+    vslCaption: "60 सेकंड · म्यूट ऑटोप्ले · बर्न-इन कैप्शन",
+    vslHint: "( यहाँ असली वीडियो आएगा )",
 
-    nextStepEyebrow: "Agla step",
-    ctaHeadline: "60 minute mein apna Independence Score badhayein.",
-    ctaSub: "Aapke business par ek live working audit — koi generic advice nahi.",
+    nextStepEyebrow: "अगला कदम",
+    ctaHeadline: "60 मिनट में अपना इंडिपेंडेंस स्कोर बढ़ाएँ।",
+    ctaSub: "आपके बिज़नेस पर एक लाइव वर्किंग ऑडिट — कोई सामान्य सलाह नहीं।",
     ctaBullets: [
-      "Systems kaise kaam karte hain iski clear samajh, taaki business owner-independent bane",
-      "Aapki asli rukawat identify hogi, usse fix karne ke system ke saath",
-      "Ek page ka 90-din ka independence roadmap",
-      "Aapke business mein install kiye gaye do QR-based checkpoints — staff isi hafte se report karna shuru karega",
-      "30 din ke daily WhatsApp reports — kya hua, kya galat lag raha hai, kya karna hai",
+      "सिस्टम कैसे काम करते हैं, इसकी साफ़ समझ — ताकि बिज़नेस मालिक पर निर्भर न रहे",
+      "आपकी असली रुकावट की पहचान, और उसे ठीक करने वाला सिस्टम",
+      "एक पेज का 90 दिन का इंडिपेंडेंस रोडमैप",
+      "आपके बिज़नेस में लगाए गए दो QR-आधारित चेकपॉइंट — आपका स्टाफ़ इसी हफ़्ते से रिपोर्ट करना शुरू करेगा",
+      "30 दिन की रोज़ाना WhatsApp रिपोर्ट — क्या हुआ, क्या गड़बड़ लग रहा है, क्या करना है",
     ],
     ctaPrice: (amount) => `₹${amount}`,
-    perSessionLabel: "ek session",
-    ctaGuarantee: "Agar session ke 48 ghante ke andar aapka pehla daily report WhatsApp par nahi aata, to poora refund milega.",
-    ctaButton: "Apna session book karein",
+    perSessionLabel: "एक सेशन",
+    ctaGuarantee: "अगर सेशन के 48 घंटे के अंदर आपकी पहली रोज़ाना रिपोर्ट WhatsApp पर नहीं पहुँचती, तो पूरा रिफ़ंड मिलेगा।",
+    ctaButton: "अपना सेशन बुक करें",
 
-    testimonialsHeading: "Testimonials",
-    footerServices: "Hamari Services",
-    footerCalculator: "Business Independence Level Calculator",
-    footerSession: "Systems Strategy Session",
-    footerConnect: "Humse judein",
+    testimonialsHeading: "ग्राहकों की राय",
+    footerServices: "हमारी सेवाएँ",
+    footerCalculator: "बिज़नेस इंडिपेंडेंस लेवल कैलकुलेटर",
+    footerSession: "सिस्टम्स स्ट्रैटेजी सेशन",
+    footerConnect: "हमसे जुड़ें",
   },
 
   categories: {
-    A: "Manufacturing",
-    B: "Wholesale ya Trading",
-    C: "Showroom Businesses (Jewellery, Clothing Retail, Hardware & Sanitary, etc.)",
-    D: "Services / QSR / Retail",
+    A: "मैन्युफैक्चरिंग",
+    B: "होलसेल या ट्रेडिंग",
+    C: "शोरूम बिज़नेस (ज्वेलरी, कपड़ों की रिटेल, हार्डवेयर और सैनिटरी आदि)",
+    D: "सर्विसेज़ / QSR / रिटेल",
   },
   revenue: {
-    a: "1 Cr se kam",
-    b: "1 – 10 Cr",
-    c: "10 – 50 Cr",
-    d: "50 – 100 Cr",
-    e: "100 Cr +",
+    a: "1 करोड़ से कम",
+    b: "1 – 10 करोड़",
+    c: "10 – 50 करोड़",
+    d: "50 – 100 करोड़",
+    e: "100 करोड़ +",
   },
   pillarLabels: {
-    operationalEfficiency: "Operational Efficiency",
-    humanCapital: "Human Capital",
-    customerAcquisition: "Customer Acquisition",
-    dataVisibility: "Data Visibility",
+    operationalEfficiency: "ऑपरेशनल एफ़िशिएंसी",
+    humanCapital: "ह्यूमन कैपिटल",
+    customerAcquisition: "कस्टमर एक्विज़िशन",
+    dataVisibility: "डेटा विज़िबिलिटी",
+  },
+  levelNames: {
+    "Owner-Trapped": "मालिक में फँसा हुआ",
+    "Owner-Dependent": "मालिक पर निर्भर",
+    "Team-Run": "टीम-संचालित",
+    "Owner-Independent": "मालिक से स्वतंत्र",
   },
   levelTaglines: {
-    "Owner-Trapped": "Jab aap rukte hain, business bhi ruk jaata hai.",
-    "Owner-Dependent": "Aapka business tabhi chalta hai jab aap dekh rahe hote hain. Nazar hati, business ruka.",
-    "Team-Run": "Aapki team din ka zyada kaam sambhalti hai. Aap sirf exceptions handle karte hain.",
-    "Owner-Independent": "Daily operations ke liye aap optional hain. Ab scale karne ka time hai.",
+    "Owner-Trapped": "जब आप रुकते हैं, बिज़नेस भी रुक जाता है।",
+    "Owner-Dependent": "आपका बिज़नेस तभी चलता है जब आप देख रहे होते हैं। नज़र हटी, बिज़नेस रुका।",
+    "Team-Run": "आपकी टीम दिन का ज़्यादातर काम संभालती है। आप सिर्फ़ अपवाद वाले मामले संभालते हैं।",
+    "Owner-Independent": "रोज़मर्रा के कामकाज के लिए आप ज़रूरी नहीं हैं। अब बिज़नेस बढ़ाने का समय है।",
   },
 
   generalQuestions: [
     {
-      question: "Socho aap 10 din ke liye family trip par jaate hain aur phone silent rakhte hain. Aapke business ka kya hoga?",
+      question: "सोचिए आप 10 दिन के फ़ैमिली ट्रिप पर जाते हैं और फ़ोन साइलेंट रखते हैं। आपके बिज़नेस का क्या होगा?",
       options: [
-        "Mere bina kuch nahi chalta",
-        "Kuch kaam ho jaata hai, lekin mere na hone par problems jama ho jaati hain",
-        "Sab smoothly chalta hai — mere paas proper team aur procedures hain, sirf kabhi-kabhi koi exception mere paas aata hai",
+        "मेरे बिना कुछ नहीं चलता",
+        "कुछ काम हो जाता है, लेकिन मेरी गैरहाज़िरी में समस्याएँ जमा हो जाती हैं",
+        "सब बिना रुकावट चलता है — मेरे पास सही टीम और प्रोसीजर हैं, बस कभी-कभार कोई अपवाद मेरे पास आता है",
       ],
     },
     {
-      question: "Aapke kuch standards hain jo follow karne hote hain — quality, ethics, values. Yeh follow ho rahe hain, kaise pata chalta hai?",
+      question: "आपके कुछ स्टैंडर्ड हैं जिनका पालन होना चाहिए — क्वालिटी, ईमानदारी, मूल्य। यह कौन सुनिश्चित करता है कि इनका पालन हो रहा है?",
       options: [
-        "Main khud dekhta hoon aur staff ko theek karne ko kehta hoon",
-        "Main maan leta hoon ki staff wahi karega jo maine sikhaya — pata tab chalta hai jab kuch galat ho jaata hai",
-        "Roz check hota hai — mujhe ek summary milti hai ki kya galat hua, kisi manager ya record se",
+        "मैं खुद देखता हूँ और स्टाफ़ को सुधारने के लिए कहता हूँ",
+        "मैं मान लेता हूँ कि स्टाफ़ वही करेगा जो मैंने सिखाया है — पता तब चलता है जब कुछ गड़बड़ हो जाती है",
+        "रोज़ जाँच होती है — मुझे किसी मैनेजर या रिकॉर्ड से एक सारांश मिलता है कि क्या गड़बड़ हुई",
       ],
     },
     {
-      question: "Aap ek naya employee hire karte hain. Usse train karne ki zimmedari kiski hai?",
+      question: "आप एक नया कर्मचारी रखते हैं। उसे ट्रेनिंग देने की ज़िम्मेदारी किसकी है?",
       options: [
-        "Woh khud kaam karte-karte seekh leta hai",
-        "Main khud sabko train karta hoon",
-        "Training material aur progress tracking hai, isliye onboarding mere bina bhi chalta hai",
+        "वह काम करते-करते खुद सीख लेता है",
+        "मैं सबको खुद ट्रेनिंग देता हूँ",
+        "ट्रेनिंग मटीरियल और प्रोग्रेस ट्रैकिंग मौजूद है, इसलिए ऑनबोर्डिंग मेरे बिना भी चलती है",
       ],
     },
     {
-      question: "Aapka sabse experienced employee kal bata deta hai ki woh 30 din mein chhod raha hai. Kya hoga?",
+      question: "आपका सबसे अनुभवी कर्मचारी कल बता देता है कि वह 30 दिन में नौकरी छोड़ रहा है। क्या होगा?",
       options: [
-        "Main mushkil mein hoon — bahut sara kaam sirf uske dimaag mein hai",
-        "Hum manage kar lenge, lekin mujhe kuch mahine ke liye uska kaam sambhalna padega",
-        "Uska kaam documented hai, aur kisi ko ek tay time-frame mein us kaam ke liye train kiya ja sakta hai",
+        "मैं मुश्किल में हूँ — बहुत सारा काम सिर्फ़ उसके दिमाग़ में है",
+        "हम संभाल लेंगे, लेकिन मुझे कुछ महीनों तक उसका काम खुद संभालना पड़ेगा",
+        "उसका काम लिखित रूप में दर्ज है, और किसी को तय समय-सीमा में उस काम के लिए तैयार किया जा सकता है",
       ],
     },
     {
-      question: "Aapke last 10 naye customers ko aapke business ke baare mein kaise pata chala?",
+      question: "आपके पिछले 10 नए ग्राहकों को आपके बिज़नेस के बारे में कैसे पता चला?",
       options: [
-        "Main khud involved tha — call karna, follow-up karna, sale close karna",
-        "Sales team ya staff ne ek tested pitch ya script use karke unhe call kiya",
-        "Advertising aur marketing se — digital, social media, website leads",
+        "मैं खुद शामिल था — कॉल करना, फ़ॉलो-अप करना, बिक्री पक्की करना",
+        "सेल्स टीम या स्टाफ़ ने एक आज़माए हुए पिच या स्क्रिप्ट से उन्हें कॉल किया",
+        "विज्ञापन और मार्केटिंग से — डिजिटल, सोशल मीडिया, वेबसाइट लीड",
       ],
     },
     {
-      question: "Pichle mahine jo enquiries aayi thi aur nahi khareeda — unmein se kitno ka follow-up hua?",
+      question: "पिछले महीने जो इन्क्वायरी आईं और जिन्होंने खरीदा नहीं — उनमें से कितनों का फ़ॉलो-अप हुआ?",
       options: [
-        "Koi record nahi hai",
-        "Staff kabhi-kabhi follow-up karte hain, ya main khud bade wale chase karta hoon",
-        "Har enquiry ek follow-up date ke saath log hoti hai",
+        "कोई रिकॉर्ड नहीं है",
+        "स्टाफ़ कभी-कभी फ़ॉलो-अप करता है, या बड़ी वाली इन्क्वायरी को मैं खुद पकड़ता हूँ",
+        "हर इन्क्वायरी फ़ॉलो-अप की तारीख़ के साथ दर्ज होती है",
       ],
     },
   ],
@@ -724,73 +738,73 @@ const hinglish: BilText = {
   categoryQuestions: {
     A: [
       {
-        question: "Ek customer call karke order status poochta hai. Sahi jawab dene mein aapko kitna time lagta hai?",
+        question: "एक ग्राहक फ़ोन करके ऑर्डर का स्टेटस पूछता है। उसे सही जवाब देने में आपको कितना समय लगता है?",
         options: [
-          "Main memory se ek estimate deta hoon",
-          "Main workers ko call karta hoon, registers aur finished goods log check karta hoon",
-          "Main production schedule check karta hoon — status aur expected completion date pehle se calculate hai",
+          "मैं याददाश्त से अंदाज़ा बता देता हूँ",
+          "मैं वर्करों को फ़ोन करता हूँ, रजिस्टर और तैयार माल का लॉग देखता हूँ",
+          "मैं प्रोडक्शन शेड्यूल देखता हूँ — स्टेटस और पूरा होने की संभावित तारीख़ पहले से निकली हुई है",
         ],
       },
       {
-        question: "Pichle 3 mahine ka production aur rejection percentage — abhi bata sakte hain?",
+        question: "पिछले 3 महीने का प्रोडक्शन और रिजेक्शन प्रतिशत — क्या आप अभी बता सकते हैं?",
         options: [
-          "Koi proper record nahi hai",
-          "Mujhe roughly pata hai, accurate nahi",
-          "Haan — bina kisi se poochhe, ek report mein dekh leta hoon",
+          "कोई सही रिकॉर्ड नहीं है",
+          "मुझे मोटा-मोटा पता है, सटीक नहीं",
+          "हाँ — मैं किसी से पूछे बिना रिपोर्ट में देख लेता हूँ",
         ],
       },
     ],
     B: [
       {
-        question: "Abhi aapke godown mein jo stock pada hai, usmein se kitna 6 mahine se move nahi hua?",
+        question: "अभी आपके गोदाम में जो स्टॉक पड़ा है, उसमें से कितना 6 महीने से हिला नहीं है?",
         options: [
-          "Koi idea nahi — physically check karna padega",
-          "Mujhe roughly pata hai kaunse items slow hain, memory se",
-          "Mujhe ek ageing report milti hai — mujhe exact pata hai kitni value slow-moving stock mein phansi hai",
+          "कोई अंदाज़ा नहीं — खुद जाकर देखना पड़ेगा",
+          "मुझे याददाश्त से मोटा-मोटा पता है कि कौन-से आइटम धीमे बिक रहे हैं",
+          "मुझे एजिंग रिपोर्ट मिलती है — मुझे ठीक-ठीक पता है कि धीमे बिकने वाले स्टॉक में कितनी रकम फँसी है",
         ],
       },
       {
-        question: "Abhi aapka kitna paisa market mein pada hai, aur usmein se kitna aapke credit terms se overdue hai?",
+        question: "अभी आपका कितना पैसा मार्केट में पड़ा है, और उसमें से कितना आपकी क्रेडिट शर्तों से ज़्यादा लेट हो चुका है?",
         options: [
-          "Mujhe rough total pata hai",
-          "Agar main kahoon to accountant bata sakta hai",
-          "Bina kisi se poochhe, outstanding aur ageing dekh leta hoon",
+          "मुझे मोटा कुल आँकड़ा पता है",
+          "अगर मैं कहूँ तो मेरा अकाउंटेंट बता सकता है",
+          "मैं किसी से पूछे बिना आउटस्टैंडिंग और एजिंग देख लेता हूँ",
         ],
       },
     ],
     C: [
       {
-        question: "Kal kitne log walk-in hue, aur kitno ne khareeda?",
+        question: "कल कितने लोग शोरूम में आए, और कितनों ने खरीदारी की?",
         options: [
-          "Koi proper idea nahi — kuch record nahi hai",
-          "Mere paas ek estimate hai dimaag mein",
-          "Yeh properly track hota hai, mujhe ek clear trend dikhta hai",
+          "कोई सही अंदाज़ा नहीं — कुछ दर्ज नहीं है",
+          "मेरे दिमाग़ में एक अंदाज़ा है",
+          "यह ठीक से ट्रैक होता है, और मुझे एक साफ़ ट्रेंड दिखता है",
         ],
       },
       {
-        question: "Kal ek customer ne kuch maanga jo aapke paas stock mein nahi tha. Yeh kahan record hota hai?",
+        question: "कल एक ग्राहक ने कुछ माँगा जो आपके पास स्टॉक में नहीं था। यह कहाँ दर्ज होता है?",
         options: [
-          "Kahin nahi — usse mana kar diya aur woh chala gaya",
-          "Agar aisa baar-baar ho to staff mujhe verbally bata dete hain",
-          "Lost-sale ki wajahein record hoti hain aur main unhe review karta hoon",
+          "कहीं नहीं — उसे मना कर दिया और वह चला गया",
+          "अगर ऐसा बार-बार हो तो स्टाफ़ मुझे ज़ुबानी बता देता है",
+          "बिक्री खोने के कारण दर्ज होते हैं और मैं उनकी समीक्षा करता हूँ",
         ],
       },
     ],
     D: [
       {
-        question: "Aap 3 din ke liye shop se door hain. Aaj ki sales aur staff ki attendance ka pata kaise chalta hai?",
+        question: "आप 3 दिन के लिए दुकान से दूर हैं। आज की बिक्री और स्टाफ़ की हाज़िरी का पता आपको कैसे चलता है?",
         options: [
-          "Koi idea nahi — bharosa karna padta hai ki woh sahi se kaam kar rahe honge",
-          "Main apne manager ko call karta hoon aur woh bata deta hai",
-          "Ek proper reporting system hai — mujhe bharosa hai ki mere bina kuch bhi off-system nahi jaata",
+          "कोई अंदाज़ा नहीं — भरोसा करना पड़ता है कि वे ठीक से काम कर रहे होंगे",
+          "मैं अपने मैनेजर को फ़ोन करता हूँ और वह बता देता है",
+          "एक सही रिपोर्टिंग सिस्टम है — मुझे भरोसा है कि मेरी जानकारी के बिना कुछ भी सिस्टम से बाहर नहीं जाता",
         ],
       },
       {
-        question: "Kal ki closing — cash, online, aur jo actually becha gaya. Yeh teeno match karte hain, yeh kaun check karta hai, aur agar nahi match karte to kya hota hai?",
+        question: "कल की क्लोज़िंग — कैश, ऑनलाइन, और जो असल में बिका। ये तीनों आपस में मिलते हैं, यह कौन जाँचता है, और अगर नहीं मिलते तो क्या होता है?",
         options: [
-          "Koi alag se check nahi karta",
-          "Jab main hota hoon, main khud check karta hoon",
-          "Mujhe ek daily tally report milti hai aur koi kami ho to wajah ke saath flag hoti hai",
+          "अलग से कोई नहीं जाँचता",
+          "जब मैं मौजूद होता हूँ, तब मैं खुद जाँचता हूँ",
+          "मुझे रोज़ाना का टैली रिपोर्ट मिलता है और किसी भी कमी को कारण के साथ चिह्नित किया जाता है",
         ],
       },
     ],
@@ -799,87 +813,87 @@ const hinglish: BilText = {
   answerClauses: {
     operationalEfficiency: [
       [
-        "aapke bina business mein kuch nahi hilta, sab aapki nazar se guzarta hai",
-        "aapke bina kuch kaam to hota hai, lekin aapki absence mein problems jaldi jama ho jati hain",
-        "aapki team aur procedures sab smoothly chalate hain, sirf kabhi-kabhi koi exception aap tak pahunchta hai",
+        "आपके बिज़नेस में तब तक कुछ नहीं हिलता जब तक आप खुद उसे न देखें",
+        "आपके बिना कुछ काम तो हो जाता है, लेकिन आपकी गैरहाज़िरी में समस्याएँ तेज़ी से जमा हो जाती हैं",
+        "आपकी टीम और प्रोसीजर सब कुछ बिना रुकावट चलाते हैं, और बस कभी-कभार कोई अपवाद आप तक पहुँचता है",
       ],
       [
-        "aapko khud dekhna aur staff ko theek karne ko kehna padta hai",
-        "aap maan lete hain ki staff wahi karega jo sikhaya gaya — pata tab chalta hai jab kuch galat ho jaata hai",
-        "aapko roz ek summary milti hai ki kya galat hua, manager ya record se",
+        "आपको खुद स्टाफ़ की गलतियाँ पकड़नी और सुधरवानी पड़ती हैं",
+        "आप मान लेते हैं कि स्टाफ़ वही करेगा जो आपने सिखाया है, और पता तभी चलता है जब कुछ गड़बड़ हो जाती है",
+        "आपको रोज़ किसी मैनेजर या रिकॉर्ड से एक सारांश मिलता है कि क्या गड़बड़ हुई",
       ],
     ],
     humanCapital: [
       [
-        "naye log zyadatar khud kaam karte-karte seekhte hain",
-        "aap khud har naye hire ko train karte hain",
-        "training material aur progress tracking ki wajah se onboarding aapke bina bhi chalta hai",
+        "नए लोग ज़्यादातर काम करते-करते खुद ही सीखते हैं",
+        "हर नए कर्मचारी को आप खुद ट्रेनिंग देते हैं",
+        "ट्रेनिंग मटीरियल और प्रोग्रेस ट्रैकिंग की वजह से ऑनबोर्डिंग आपके बिना भी चलती है",
       ],
       [
-        "agar aapka sabse experienced banda chhod de, to business ka bahut sara hissa uske saath chala jayega",
-        "agar woh chhod de to aapko kuch mahine ke liye uska kaam khud sambhalna padega",
-        "uska kaam documented hai, isliye kisi ko ek tay timeline par us kaam ke liye train kiya ja sakta hai",
+        "अगर आपका सबसे अनुभवी व्यक्ति चला जाए, तो बिज़नेस का बहुत बड़ा हिस्सा उसके साथ चला जाएगा",
+        "अगर वह चला जाए तो आपको कुछ महीनों तक उसका काम खुद संभालना पड़ेगा",
+        "उसका काम लिखित रूप में दर्ज है, इसलिए किसी को तय समय-सीमा में उस काम के लिए तैयार किया जा सकता है",
       ],
     ],
     customerAcquisition: [
       [
-        "aap khud involved the apne last 10 customers close karne mein",
-        "aapki sales team ne unhe ek tested pitch ya script se close kiya",
-        "advertising aur marketing khud hi unhe le aayi",
+        "आप अपने पिछले 10 ग्राहकों की बिक्री पक्की करने में खुद शामिल थे",
+        "आपकी सेल्स टीम ने उन्हें एक आज़माए हुए पिच या स्क्रिप्ट से जोड़ा",
+        "विज्ञापन और मार्केटिंग खुद ही उन्हें ले आई",
       ],
       [
-        "jo enquiries convert nahi hui, unka koi record nahi hai",
-        "enquiries ka follow-up kabhi-kabhi hota hai, ya aap khud bade wale chase karte hain",
-        "har enquiry ek follow-up date ke saath log hoti hai",
+        "जिन इन्क्वायरी से बिक्री नहीं हुई, उनका कोई रिकॉर्ड नहीं है",
+        "इन्क्वायरी का फ़ॉलो-अप कभी-कभी होता है, या आप बड़ी वाली को खुद पकड़ते हैं",
+        "हर इन्क्वायरी फ़ॉलो-अप की तारीख़ के साथ दर्ज होती है",
       ],
     ],
     dataVisibility: {
       A: [
         [
-          "order status ke liye aap sirf memory se ek estimate de sakte hain",
-          "order status check karne ke liye workers ko call karna aur registers dekhna padta hai",
-          "aapka production schedule pehle se status aur expected completion dikhata hai",
+          "ऑर्डर के स्टेटस के लिए आप ग्राहक को सिर्फ़ याददाश्त से अंदाज़ा बता सकते हैं",
+          "ऑर्डर का स्टेटस जानने के लिए वर्करों को फ़ोन करना और रजिस्टर देखना पड़ता है",
+          "आपका प्रोडक्शन शेड्यूल स्टेटस और पूरा होने की संभावित तारीख़ पहले से दिखाता है",
         ],
         [
-          "production aur rejection percentage ka koi proper record nahi hai",
-          "aapko production aur rejection numbers sirf roughly pata hain",
-          "bina kisi se poochhe, aap ek report mein yeh dekh lete hain",
+          "प्रोडक्शन और रिजेक्शन प्रतिशत का कोई सही रिकॉर्ड नहीं है",
+          "आपको प्रोडक्शन और रिजेक्शन के आँकड़े सिर्फ़ मोटे तौर पर पता हैं",
+          "आप किसी से पूछे बिना इसे रिपोर्ट में देख लेते हैं",
         ],
       ],
       B: [
         [
-          "6 mahine se na hile stock ke baare mein jaanne ke liye aapko physically check karna padega",
-          "aapko roughly pata hai kaunse items slow-moving hain, memory se",
-          "ek ageing report aapko exactly dikhati hai ki kitni value slow-moving stock mein phansi hai",
+          "6 महीने से न हिले स्टॉक का पता लगाने के लिए आपको खुद जाकर देखना पड़ेगा",
+          "आपको याददाश्त से बस मोटा-मोटा पता है कि कौन-से आइटम धीमे बिक रहे हैं",
+          "एजिंग रिपोर्ट आपको ठीक-ठीक दिखाती है कि धीमे बिकने वाले स्टॉक में कितनी रकम फँसी है",
         ],
         [
-          "market mein pade paise ka aapko sirf rough total pata hai",
-          "agar aap poochein to accountant outstanding dues bata sakta hai",
-          "bina kisi se poochhe, aap outstanding aur ageing dono dekh lete hain",
+          "मार्केट में पड़े पैसे का आपको सिर्फ़ मोटा कुल आँकड़ा पता है",
+          "अगर आप पूछें तो आपका अकाउंटेंट बकाया रकम बता सकता है",
+          "आप किसी से पूछे बिना आउटस्टैंडिंग और एजिंग दोनों देख लेते हैं",
         ],
       ],
       C: [
         [
-          "kal kitne log aaye ya kitno ne khareeda, iska aapko koi proper idea nahi hai",
-          "aapke paas walk-ins aur sales ka sirf ek andaaza hai",
-          "walk-ins aur sales properly track hote hain, aur aapko ek clear trend dikhta hai",
+          "कल कितने लोग आए या कितनों ने खरीदा, इसका आपको कोई सही अंदाज़ा नहीं है",
+          "आपके पास आने वाले ग्राहकों और बिक्री का बस एक अंदाज़ा है",
+          "आने वाले ग्राहक और बिक्री ठीक से ट्रैक होते हैं, और आपको एक साफ़ ट्रेंड दिखता है",
         ],
         [
-          "stock na hone se hui lost sale kahin record nahi hoti",
-          "aisa baar-baar ho to staff aapko verbally bata dete hain",
-          "lost-sale ki wajahein record hoti hain aur aap unhe review karte hain",
+          "स्टॉक न होने से खोई हुई बिक्री कहीं दर्ज नहीं होती",
+          "अगर ऐसा बार-बार हो तो स्टाफ़ आपको ज़ुबानी बता देता है",
+          "बिक्री खोने के कारण दर्ज होते हैं और आप उनकी समीक्षा करते हैं",
         ],
       ],
       D: [
         [
-          "agar aap door hon, to sales aur attendance jaanne ke liye bharosa karna padta hai",
-          "aapka manager call karke sales aur attendance bata deta hai",
-          "ek proper reporting system hai, isliye aapke bina kuch bhi off-system nahi jaata",
+          "अगर आप दूर हों, तो बिक्री और हाज़िरी जानने के लिए आपको भरोसे पर रहना पड़ता है",
+          "आपका मैनेजर फ़ोन करके बिक्री और हाज़िरी बता देता है",
+          "एक सही रिपोर्टिंग सिस्टम है, इसलिए आपकी जानकारी के बिना कुछ भी सिस्टम से बाहर नहीं जाता",
         ],
         [
-          "cash, online aur actual sales match karte hain ya nahi, yeh koi alag se check nahi karta",
-          "jab aap hote hain, tab aap khud check karte hain",
-          "aapko ek daily tally report milti hai, aur koi kami ho to wajah ke saath flag hoti hai",
+          "कैश, ऑनलाइन और असली बिक्री आपस में मिलते हैं या नहीं, यह कोई अलग से नहीं जाँचता",
+          "जब आप मौजूद होते हैं, तब आप खुद जाँचते हैं",
+          "आपको रोज़ाना का टैली रिपोर्ट मिलता है, और किसी भी कमी को कारण के साथ चिह्नित किया जाता है",
         ],
       ],
     },
@@ -887,4 +901,4 @@ const hinglish: BilText = {
 };
 
 /** All BIL content, keyed by language. */
-export const bilText: Record<Lang, BilText> = { en, hinglish };
+export const bilText: Record<Lang, BilText> = { en, hi };

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Noto_Sans_Devanagari } from "next/font/google";
 
 // Montserrat on every step of the calculator (per the final design: white
 // background + Montserrat "all places"). Applied on a wrapper so the nav,
@@ -9,6 +9,16 @@ const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
+});
+
+// Montserrat has no Devanagari letters, so the Hindi version falls back to
+// Noto Sans Devanagari. `preload: false` — it is only downloaded when Hindi
+// text is actually on screen, so English visitors never pay for it.
+const devanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: false,
 });
 
 const BMLCalculatorClient = dynamic(() => import("./bml-client"), {
@@ -57,7 +67,7 @@ export default async function BMLPage() {
   }
 
   return (
-    <div className={montserrat.className}>
+    <div className={montserrat.className} style={{ fontFamily: `${montserrat.style.fontFamily}, ${devanagari.style.fontFamily}` }}>
       <BMLCalculatorClient pricingAmount={pricingAmount} />
     </div>
   );

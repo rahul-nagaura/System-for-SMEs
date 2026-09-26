@@ -8,7 +8,7 @@
                        back to the page. Server render + first client
                        render are always "en", so there is no hydration
                        mismatch; the saved choice is applied right after.
-   LanguageSwitcher  → the globe + "En" / "Hi" pill. It is a plain
+   LanguageSwitcher  → the globe + "En" / "हिं" pill. It is a plain
                        toggle: one tap flips the language, no menu or
                        popup. The label always shows the CURRENT language.
 
@@ -30,7 +30,9 @@ const listeners = new Set<() => void>();
 function readLang(): Lang {
   if (current === null) {
     try {
-      current = window.localStorage.getItem(STORAGE_KEY) === "hinglish" ? "hinglish" : "en";
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      // "hinglish" was the saved value before the Hindi (Devanagari) version existed.
+      current = saved === "hi" || saved === "hinglish" ? "hi" : "en";
     } catch {
       current = "en"; // storage unavailable (private mode etc.) — default to English
     }

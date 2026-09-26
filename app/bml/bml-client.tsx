@@ -16,6 +16,11 @@ const GOLD_DEEP = "#EDB605";
 
 const TOTAL_QUESTIONS = 8;
 
+// Progress shown on the question steps: 0% at Q1 (nothing answered yet) rising to
+// 75% at Q8, so the bar never reads "100%" while the last question is still open.
+// The lead-capture step (after Q8) shows 100%.
+const questionProgressPct = (q: number) => Math.round(((q - 1) / (TOTAL_QUESTIONS - 1)) * 75);
+
 // Question ids (1-8) are fixed regardless of category — only the TEXT of
 // Q7/Q8 varies by branch. Used to pull both of the weakest pillar's raw
 // answers for the Block 4 composite sentence.
@@ -50,6 +55,23 @@ function RichText({ text }: { text: string }) {
         )
       )}
     </>
+  );
+}
+
+// Testimonial profile — the same avatar the redesign home page uses: a pastel
+// circle with a generic person silhouette (not a real photo). Copied here (not
+// imported) so this branch doesn't depend on files that only exist on `redesign`.
+const AVATAR_PALETTE = ["#F4E3C1", "#DCEBE3", "#E6DCF2", "#F2DCE0", "#DCE6F2"];
+
+function Avatar({ index }: { index: number }) {
+  const bg = AVATAR_PALETTE[index % AVATAR_PALETTE.length];
+  return (
+    <span className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: bg }}>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="8" r="4" fill={INK} fillOpacity="0.5" />
+        <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" fill={INK} fillOpacity="0.5" />
+      </svg>
+    </span>
   );
 }
 
@@ -233,14 +255,14 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
     const clauseB = clausePair[1][answers[q2id] ?? 0];
 
     return (
-      <div lang={lang === "hinglish" ? "hi-Latn" : "en"} className="min-h-screen bg-white" style={{ color: INK }}>
+      <div lang={lang === "hi" ? "hi" : "en"} className="min-h-screen bg-white" style={{ color: INK }}>
         <Nav showLogo languageSwitcher={languageSwitcher} />
 
         {/* Block 1 — hero: headline + score ring */}
         <section className="bg-white pt-28 pb-10 px-6">
           <div className="max-w-[560px] mx-auto text-center space-y-5">
             <div className="text-[10.5px] tracking-[0.25em] uppercase text-[#9A9A9A] font-semibold">{t.resultEyebrow}</div>
-            <h1 className="font-bold text-[28px] sm:text-[34px] leading-[1.2] tracking-tight">{t.heroHeadline(name || "Founder", result.levelName)}</h1>
+            <h1 className="font-bold text-[28px] sm:text-[34px] leading-[1.2] tracking-tight">{t.heroHeadline(name || "Founder", text.levelNames[result.levelName] ?? result.levelName)}</h1>
 
             <div className="relative w-[150px] h-[150px] mx-auto my-3 flex items-center justify-center">
               <svg viewBox="0 0 120 120" width="150" height="150" className="absolute inset-0" aria-hidden="true">
@@ -266,7 +288,7 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
                 <span key={n} className="h-[3px] w-9 rounded-full" style={{ backgroundColor: n === result.levelIndex ? GOLD_DEEP : "#E5E5E5" }} />
               ))}
             </div>
-            <div className="text-[11px] tracking-[0.2em] uppercase text-[#6B6B6B] font-semibold">{t.levelOfTotal(result.levelIndex, result.levelName)}</div>
+            <div className="text-[11px] tracking-[0.2em] uppercase text-[#6B6B6B] font-semibold">{t.levelOfTotal(result.levelIndex, text.levelNames[result.levelName] ?? result.levelName)}</div>
 
             <p className="text-[17px] leading-snug text-[#3A3A3A] font-normal">{tagline}</p>
             <p className="text-[12.5px] text-[#9A9A9A] font-medium pt-1">{t.scrollPrompt}</p>
@@ -312,7 +334,7 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
 
           {/* Block 4 — Your #1 constraint */}
           <section className="py-9 border-t border-[#EFEFEF] space-y-3.5">
-            <SectionLabel>{t.bottleneckHeading}</SectionLabel>
+            <SectionLabel><RichText text={t.bottleneckHeading} /></SectionLabel>
             <h2 className="font-semibold text-[26px] leading-tight">{weakestLabel}</h2>
             <p className="text-[14.5px] leading-relaxed text-[#555555]">{t.answerSentence(clauseA, clauseB)}</p>
             <p className="border-l-[3px] pl-3.5 py-0.5 text-[14.5px] leading-relaxed text-[#555555]" style={{ borderColor: GOLD }}>
@@ -357,7 +379,7 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
                 </li>
               ))}
             </ol>
-            <p className="text-[14.5px] font-semibold pt-1">{t.openLoopFooter}</p>
+            <p className="text-[14.5px] font-semibold pt-1 text-center">{t.openLoopFooter}</p>
           </section>
         </main>
 
@@ -375,7 +397,8 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
                 </li>
               ))}
             </ul>
-            <div className="flex items-baseline gap-2 pt-3">
+            <div className="h-px w-full bg-white/10 mt-1" aria-hidden="true" />
+            <div className="flex items-baseline gap-2 pt-4">
               <span className="font-semibold text-[34px] leading-none">{t.ctaPrice(pricingAmount)}</span>
               <span className="text-[12px] text-white/45">{t.perSessionLabel}</span>
             </div>
@@ -395,7 +418,7 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
           <h2 className="text-center font-semibold text-[30px] tracking-tight mb-8">{t.testimonialsHeading}</h2>
           <div className="rounded-[20px] border border-[#E8E8E8] p-6">
             <div className="flex items-center gap-4">
-              <span className="w-14 h-14 rounded-full flex-shrink-0" style={{ backgroundColor: "#D9D9D9" }} />
+              <Avatar index={0} />
               <div>
                 <div className="text-[17px] font-bold leading-tight">{TESTIMONIAL.name}</div>
                 <div className="mt-0.5 text-[12.5px] font-medium text-[#9A9A9A]">{TESTIMONIAL.role}</div>
@@ -419,7 +442,7 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
     `mt-0.5 w-[20px] h-[20px] rounded-full border-[1.5px] flex-shrink-0 flex items-center justify-center bg-white transition-colors ${selected ? "" : "border-[#BDBDBD]"}`;
 
   return (
-    <div lang={lang === "hinglish" ? "hi-Latn" : "en"} className="min-h-screen bg-white flex flex-col relative overflow-x-hidden" style={{ color: INK }}>
+    <div lang={lang === "hi" ? "hi" : "en"} className="min-h-screen bg-white flex flex-col relative overflow-x-hidden" style={{ color: INK }}>
       <Nav showLogo languageSwitcher={languageSwitcher} />
 
       <main className={`flex-grow pt-24 px-6 ${step < 9 ? "pb-32" : "pb-10"} max-w-3xl mx-auto w-full flex flex-col justify-start`}>
@@ -437,10 +460,10 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
               <div className="space-y-2.5">
                 <div className="flex justify-between items-end text-[12px]">
                   <span className="font-bold uppercase tracking-wider" style={{ color: GOLD_DEEP }}>{t.questionProgress(step)}</span>
-                  <span className="font-medium text-[#6B6B6B]">{t.percentComplete(Math.round((step / TOTAL_QUESTIONS) * 100))}</span>
+                  <span className="font-medium text-[#6B6B6B]">{t.percentComplete(questionProgressPct(step))}</span>
                 </div>
                 <div className="h-[6px] w-full bg-[#F0F0F0] rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${(step / TOTAL_QUESTIONS) * 100}%`, backgroundColor: GOLD_DEEP }} />
+                  <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${questionProgressPct(step)}%`, backgroundColor: GOLD_DEEP }} />
                 </div>
               </div>
             )}
@@ -562,14 +585,24 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
                 </div>
               ))}
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60"
-                style={{ backgroundColor: GOLD_DEEP, color: INK }}
-              >
-                {isSubmitting ? t.generating : t.showResult}
-              </button>
+              <div className="space-y-3">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60"
+                  style={{ backgroundColor: GOLD_DEEP, color: INK }}
+                >
+                  {isSubmitting ? t.generating : t.showResult}
+                </button>
+                {/* Back to Q8 — outlined, 12px under the gold button (per the Figma) */}
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="w-full rounded-xl border border-[#ADADAD] py-[13px] text-[15px] font-bold text-[#ADADAD] hover:border-[#8F8F8F] hover:text-[#8F8F8F] active:scale-95 transition-all"
+                >
+                  <span aria-hidden="true">←</span> {t.back}
+                </button>
+              </div>
             </form>
           </div>
         )}
