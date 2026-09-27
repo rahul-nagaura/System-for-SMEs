@@ -3,7 +3,17 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
-import { revenueOptions } from "@/app/bml/bml-data";
+
+// Monthly-revenue choices for this onboarding form. Previously imported from
+// bml-data.ts, but that file now holds the BIL calculator's (unrelated)
+// annual-revenue brackets — moved here verbatim to keep this form decoupled.
+const revenueOptions = [
+  { label: "A", text: "Under ₹5L" },
+  { label: "B", text: "₹5L - ₹20L" },
+  { label: "C", text: "₹20L - ₹50L" },
+  { label: "D", text: "₹50L - ₹5Cr" },
+  { label: "E", text: "Above ₹5Cr" },
+];
 
 // Bookable call slots (Raghav confirms the exact one over WhatsApp).
 const timeSlots = ["2:00–3:00 PM", "3:00–4:00 PM", "9:00–10:00 PM", "10:00–11:00 PM"];
