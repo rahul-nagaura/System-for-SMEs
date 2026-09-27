@@ -4,7 +4,7 @@
    Data only (no React). Holds every piece of text the user READS.
 
    IMPORTANT â€” display vs. stored/scored values
-   Everything that is *scored* lives in BIL-data.ts / BIL-scoring.ts as
+   Everything that is *scored* lives in bml-data.ts / bml-scoring.ts as
    canonical (English) structural data, addressed by id/index â€” never by
    translated text. This file only controls what is *shown*, so switching
    language can never change scoring or the submitted payload.
@@ -28,19 +28,19 @@
      - The tie-break RULE (Data Visibility first) is implemented exactly as
        stated, even though both the spec's Block 3 example AND the
        reference design mark Human Capital as weakest in an identical tie
-       â€” see BIL-scoring.ts. Only affects which pillar is highlighted when
+       â€” see bml-scoring.ts. Only affects which pillar is highlighted when
        two or more are exactly tied for lowest.
 
    Related modules:
-     - BIL-data.ts    â†’ canonical categories/brackets/questions/tables
-     - BIL-scoring.ts â†’ the numbers these strings wrap
+     - bml-data.ts    â†’ canonical categories/brackets/questions/tables
+     - bml-scoring.ts â†’ the numbers these strings wrap
      - language-switcher.tsx â†’ the En/Hi pill + language hook (imports
        `Lang`/`LANGS` from this file)
      - BIL-client.tsx â†’ picks the right text and renders it
    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-import type { CategoryId, PillarId } from "./BIL-data";
-import type { BenchmarkBranch } from "./BIL-scoring";
+import type { CategoryId, PillarId } from "./bml-data";
+import type { BenchmarkBranch } from "./bml-scoring";
 
 export type Lang = "en" | "hi";
 
