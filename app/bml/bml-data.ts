@@ -1,22 +1,22 @@
-﻿/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-   Business Independence Level (BIL) Calculator â€” V2
+/* ─────────────────────────────────────────────────────────────
+   Business Independence Level (BIL) Calculator — V2
    Static content & configuration (no React, no logic)
-   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   ─────────────────────────────────────────────────────────────
    Source spec: Business_Independence_Level_v2.docx (shared 2026-09-22).
    This replaces the old 5-question BIL model entirely. Key changes
    from V1: category branches the two Data-Visibility questions,
    every option scores a fixed 0/1/2 (option index === score, no
    "Other" choice), and the weakest pillar is derived purely from
-   scores â€” there is no separate "biggest problem" picker anymore.
+   scores — there is no separate "biggest problem" picker anymore.
 
    Related modules:
-     - BIL-scoring.ts â†’ turns answers into pillar %, total BIL, level,
+     - bml-scoring.ts → turns answers into pillar %, total BIL, level,
                          percentile, benchmark branch, cost of inaction
-     - BIL-i18n.ts     â†’ English + Hinglish display text for everything
+     - bml-i18n.ts     → English + Hinglish display text for everything
                          here (this file holds only canonical/structural
-                         data â€” ids, scores, numeric ranges)
-     - BIL-client.tsx  â†’ the interactive UI
-   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+                         data — ids, scores, numeric ranges)
+     - bml-client.tsx  → the interactive UI
+   ──────────────────────────────────────────────────────────── */
 
 export type CategoryId = "A" | "B" | "C" | "D";
 export type PillarId = "operationalEfficiency" | "humanCapital" | "customerAcquisition" | "dataVisibility";
@@ -31,9 +31,9 @@ export const categories: { id: CategoryId; label: string }[] = [
 ];
 
 /** Annual revenue / turnover brackets from Section 1, question ii.
- *  `lowerCr`/`upperCr` are in â‚¹ Crore and feed the Block 5 cost-of-inaction
- *  range. The top bracket is open-ended, so the spec fixes a â‚¹120 Cr cap
- *  to use in its place (see BIL-scoring.ts costOfInaction()). */
+ *  `lowerCr`/`upperCr` are in ₹ Crore and feed the Block 5 cost-of-inaction
+ *  range. The top bracket is open-ended, so the spec fixes a ₹120 Cr cap
+ *  to use in its place (see bml-scoring.ts costOfInaction()). */
 export type RevenueBracket = {
   id: "a" | "b" | "c" | "d" | "e";
   label: string;
@@ -46,13 +46,13 @@ export type RevenueBracket = {
 
 export const revenueBrackets: RevenueBracket[] = [
   { id: "a", label: "Less than 1 Cr", midpointCr: 0.5, lowerCr: 0, upperCr: 1 },
-  { id: "b", label: "1 â€“ 10 Cr", midpointCr: 5.5, lowerCr: 1, upperCr: 10 },
-  { id: "c", label: "10 â€“ 50 Cr", midpointCr: 30, lowerCr: 10, upperCr: 50 },
-  { id: "d", label: "50 â€“ 100 Cr", midpointCr: 75, lowerCr: 50, upperCr: 100 },
+  { id: "b", label: "1 – 10 Cr", midpointCr: 5.5, lowerCr: 1, upperCr: 10 },
+  { id: "c", label: "10 – 50 Cr", midpointCr: 30, lowerCr: 10, upperCr: 50 },
+  { id: "d", label: "50 – 100 Cr", midpointCr: 75, lowerCr: 50, upperCr: 100 },
   { id: "e", label: "100 Cr +", midpointCr: 120, lowerCr: 100, upperCr: null, capCr: 120 },
 ];
 
-/** One scored question. `options` is always exactly 3 entries â€” the
+/** One scored question. `options` is always exactly 3 entries — the
  *  option's array INDEX is its score (0, 1 or 2), so no separate score
  *  field is needed anywhere in the app. */
 export type ScoredQuestion = {
@@ -62,9 +62,9 @@ export type ScoredQuestion = {
   options: [string, string, string];
 };
 
-/** Section 2 â€” general questions, shown to every category. 2 per pillar
+/** Section 2 — general questions, shown to every category. 2 per pillar
  *  (Operational Efficiency, Human Capital, Customer Acquisition). Data
- *  Visibility (Q7/Q8) is category-specific â€” see `categoryQuestions`. */
+ *  Visibility (Q7/Q8) is category-specific — see `categoryQuestions`. */
 export const generalQuestions: ScoredQuestion[] = [
   {
     id: 1,
@@ -73,17 +73,17 @@ export const generalQuestions: ScoredQuestion[] = [
     options: [
       "Nothing runs without me",
       "Some work happens, but problems pile up in my absence",
-      "Runs smoothly â€” I have proper teams and procedures, only rare exceptions come to me",
+      "Runs smoothly — I have proper teams and procedures, only rare exceptions come to me",
     ],
   },
   {
     id: 2,
     pillar: "operationalEfficiency",
-    question: "You have standards to be followed â€” quality, ethics, values. Who ensures they are followed?",
+    question: "You have standards to be followed — quality, ethics, values. Who ensures they are followed?",
     options: [
       "I personally notice and tell the staff to correct",
-      "I assume the staff follow what I have taught them â€” find out only when something goes wrong",
-      "Checked daily â€” I get a summary of what broke, from a manager or a record",
+      "I assume the staff follow what I have taught them — find out only when something goes wrong",
+      "Checked daily — I get a summary of what broke, from a manager or a record",
     ],
   },
   {
@@ -101,7 +101,7 @@ export const generalQuestions: ScoredQuestion[] = [
     pillar: "humanCapital",
     question: "Your most experienced employee tells you tomorrow that he is leaving in 30 days. What happens?",
     options: [
-      "I am in trouble â€” a lot of work exists only in his head",
+      "I am in trouble — a lot of work exists only in his head",
       "We will manage, but I will have to step back into his work for a few months",
       "His work is documented, and someone can be trained into it on a defined timeline",
     ],
@@ -111,15 +111,15 @@ export const generalQuestions: ScoredQuestion[] = [
     pillar: "customerAcquisition",
     question: "How did your last 10 new customers find out about your business?",
     options: [
-      "I was personally involved â€” calling, following up, closing the sale",
+      "I was personally involved — calling, following up, closing the sale",
       "Sales team or staff called them using a tested pitch or script",
-      "Advertising and marketing â€” digital, social media, website leads",
+      "Advertising and marketing — digital, social media, website leads",
     ],
   },
   {
     id: 6,
     pillar: "customerAcquisition",
-    question: "Of the enquiries that came in last month and did not buy â€” how many were followed up?",
+    question: "Of the enquiries that came in last month and did not buy — how many were followed up?",
     options: [
       "No record exists",
       "Staff follow up sometimes, or I chase the big ones myself",
@@ -128,7 +128,7 @@ export const generalQuestions: ScoredQuestion[] = [
   },
 ];
 
-/** Section 3 â€” category-specific questions (Q7 & Q8), keyed by category.
+/** Section 3 — category-specific questions (Q7 & Q8), keyed by category.
  *  Both always score into Data Visibility regardless of branch. */
 export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuestion]> = {
   A: [
@@ -139,17 +139,17 @@ export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuesti
       options: [
         "I give him an estimate from memory",
         "I call workers, check registers and the finished goods log",
-        "I check the production schedule â€” status and expected completion date are already calculated",
+        "I check the production schedule — status and expected completion date are already calculated",
       ],
     },
     {
       id: 8,
       pillar: "dataVisibility",
-      question: "Last 3 months' production and rejection percentage â€” can you tell it right now?",
+      question: "Last 3 months' production and rejection percentage — can you tell it right now?",
       options: [
         "No proper record exists",
         "I know it roughly, not accurate",
-        "Yes â€” I see it in a report without asking anyone",
+        "Yes — I see it in a report without asking anyone",
       ],
     },
   ],
@@ -159,9 +159,9 @@ export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuesti
       pillar: "dataVisibility",
       question: "Of the stock sitting in your godown right now, how much has not moved in 6 months?",
       options: [
-        "No idea â€” I would have to physically check",
+        "No idea — I would have to physically check",
         "I roughly know which items are slow, from memory",
-        "I get an ageing report â€” I know the exact value stuck in slow-moving stock",
+        "I get an ageing report — I know the exact value stuck in slow-moving stock",
       ],
     },
     {
@@ -181,7 +181,7 @@ export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuesti
       pillar: "dataVisibility",
       question: "How many people walked in yesterday, and how many bought?",
       options: [
-        "No proper idea â€” nothing recorded",
+        "No proper idea — nothing recorded",
         "I have an estimate in mind",
         "It is properly tracked, with a clear trend I can see",
       ],
@@ -191,7 +191,7 @@ export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuesti
       pillar: "dataVisibility",
       question: "Yesterday a customer asked for something you did not have in stock. Where is that recorded?",
       options: [
-        "Nowhere â€” told him no and he left",
+        "Nowhere — told him no and he left",
         "Staff mention it to me verbally if it happens often",
         "Lost-sale reasons are recorded and I review them",
       ],
@@ -203,15 +203,15 @@ export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuesti
       pillar: "dataVisibility",
       question: "You are away from the shop for 3 days. How do you find out today's sales, and your staff's attendance?",
       options: [
-        "No idea â€” I have to rely on trust and hope they work properly",
+        "No idea — I have to rely on trust and hope they work properly",
         "I call my manager and he tells me",
-        "A proper reporting system â€” I am confident nothing goes off-system without me knowing",
+        "A proper reporting system — I am confident nothing goes off-system without me knowing",
       ],
     },
     {
       id: 8,
       pillar: "dataVisibility",
-      question: "Yesterday's closing â€” cash, online, and what was actually sold. Who checks that those three match, and what happens when they do not?",
+      question: "Yesterday's closing — cash, online, and what was actually sold. Who checks that those three match, and what happens when they do not?",
       options: [
         "Nobody checks it separately",
         "I check it myself when I am around",
@@ -221,7 +221,7 @@ export const categoryQuestions: Record<CategoryId, [ScoredQuestion, ScoredQuesti
   ],
 };
 
-/** Fixed pillar order â€” also the tie-break priority when two or more
+/** Fixed pillar order — also the tie-break priority when two or more
  *  pillars land on the same lowest percentage (first in this list wins). */
 export const PILLAR_ORDER: PillarId[] = ["dataVisibility", "operationalEfficiency", "humanCapital", "customerAcquisition"];
 
@@ -233,7 +233,7 @@ export const PILLAR_LABELS: Record<PillarId, string> = {
 };
 
 /** The 4 maturity bands. `name` is the canonical (English) key used to look
- *  up level-specific copy in BIL-i18n.ts â€” translate the copy, not this key. */
+ *  up level-specific copy in bml-i18n.ts — translate the copy, not this key. */
 export type LevelBand = { min: number; max: number; name: string };
 
 export const levelBands: LevelBand[] = [
@@ -255,7 +255,7 @@ export const categoryAverages: Record<CategoryId, { average: number; n: number }
 
 /** Percentile lookup for the Block 2 headline. Score buckets are inclusive;
  *  the first two use a deliberately blunt "bottom X%" framing, the rest a
- *  positive "higher than X%" framing â€” this split is intentional copy from
+ *  positive "higher than X%" framing — this split is intentional copy from
  *  the spec, not an inconsistency, so keep both kinds distinct. */
 export type PercentileEntry = { maxScore: number; kind: "bottom" | "higher"; value: number };
 

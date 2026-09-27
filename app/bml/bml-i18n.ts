@@ -1,11 +1,11 @@
-﻿/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-   Business Independence Level (BIL) Calculator â€” V2 language content
-   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* ─────────────────────────────────────────────────────────────
+   Business Independence Level (BIL) Calculator — V2 language content
+   ─────────────────────────────────────────────────────────────
    Data only (no React). Holds every piece of text the user READS.
 
-   IMPORTANT â€” display vs. stored/scored values
+   IMPORTANT — display vs. stored/scored values
    Everything that is *scored* lives in bml-data.ts / bml-scoring.ts as
-   canonical (English) structural data, addressed by id/index â€” never by
+   canonical (English) structural data, addressed by id/index — never by
    translated text. This file only controls what is *shown*, so switching
    language can never change scoring or the submitted payload.
 
@@ -14,12 +14,12 @@
        question answers into one flowing sentence (per the reference design
        shared 2026-09-22), via `answerSentence(clauseA, clauseB)` +
        `answerClauses` below. The clauses are short fragments written to
-       slot into that template â€” not verbatim option text, which doesn't
+       slot into that template — not verbatim option text, which doesn't
        read naturally when stitched together.
      - Block 7's headline ("Raise your Independence Score in 60 minutes")
        is the literal spec copy, even though the VSL notes two sections
        later explicitly warn against implying a score moves in an hour.
-       Kept as specified â€” flagged for Rahul to reconcile.
+       Kept as specified — flagged for Rahul to reconcile.
      - Below the CTA: the FINAL design (shared 2026-09-23) shows a
        Testimonials section + the site footer instead of the earlier
        proof-cards / FAQ / vault-link blocks, so those were removed. The
@@ -28,16 +28,16 @@
      - The tie-break RULE (Data Visibility first) is implemented exactly as
        stated, even though both the spec's Block 3 example AND the
        reference design mark Human Capital as weakest in an identical tie
-       â€” see bml-scoring.ts. Only affects which pillar is highlighted when
+       — see bml-scoring.ts. Only affects which pillar is highlighted when
        two or more are exactly tied for lowest.
 
    Related modules:
-     - bml-data.ts    â†’ canonical categories/brackets/questions/tables
-     - bml-scoring.ts â†’ the numbers these strings wrap
-     - language-switcher.tsx â†’ the En/Hi pill + language hook (imports
+     - bml-data.ts    → canonical categories/brackets/questions/tables
+     - bml-scoring.ts → the numbers these strings wrap
+     - language-switcher.tsx → the En/Hi pill + language hook (imports
        `Lang`/`LANGS` from this file)
-     - BIL-client.tsx â†’ picks the right text and renders it
-   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+     - bml-client.tsx → picks the right text and renders it
+   ──────────────────────────────────────────────────────────── */
 
 import type { CategoryId, PillarId } from "./bml-data";
 import type { BenchmarkBranch } from "./bml-scoring";
@@ -47,7 +47,7 @@ export type Lang = "en" | "hi";
 /** `short` is what the navbar pill shows for the CURRENT language. */
 export const LANGS: { id: Lang; short: string; label: string }[] = [
   { id: "en", short: "En", label: "English" },
-  { id: "hi", short: "à¤¹à¤¿à¤‚", label: "à¤¹à¤¿à¤¨à¥à¤¦à¥€" },
+  { id: "hi", short: "हिं", label: "हिन्दी" },
 ];
 
 export interface QuestionText {
@@ -56,13 +56,13 @@ export interface QuestionText {
 }
 
 /** A short fragment per option (0/1/2), written to slot into
- *  `answerSentence(clauseA, clauseB)` â€” NOT full standalone sentences. */
+ *  `answerSentence(clauseA, clauseB)` — NOT full standalone sentences. */
 type ClausePair = [[string, string, string], [string, string, string]];
 
 export interface UiText {
   languageToggleLabel: string;
 
-  // Section 1 â€” intro (not scored)
+  // Section 1 — intro (not scored)
   introEyebrow: string;
   introTitle: string;
   introSub: string;
@@ -86,7 +86,7 @@ export interface UiText {
     emailInvalid: string;
   };
 
-  // Section 4 â€” lead capture
+  // Section 4 — lead capture
   leadHeading: string;
   leadSub: string;
   nameLabel: string;
@@ -100,37 +100,37 @@ export interface UiText {
   generating: string;
   showResult: string;
 
-  // Results â€” Block 1 headline (dark hero + score ring)
+  // Results — Block 1 headline (dark hero + score ring)
   resultEyebrow: string;
   heroHeadline: (name: string, levelName: string) => string;
   ringCaption: string;
   levelOfTotal: (index: number, name: string) => string;
   scrollPrompt: string;
 
-  // Block 2 â€” benchmark
+  // Block 2 — benchmark
   benchmarkHeading: string;
   /** The big stat number + its caption, framed so it always reads as
    *  "how many are below/above you" regardless of bottom/higher framing. */
   benchmarkStat: (percentile: { kind: "bottom" | "higher"; value: number }) => { value: number; caption: string };
   benchmarkCopy: (branch: BenchmarkBranch, percentile: { kind: "bottom" | "higher"; value: number }, categoryLabel: string, categoryAvg: string) => string;
 
-  // Block 3 â€” four systems
+  // Block 3 — four systems
   fourSystemsHeading: string;
   weakestCaption: string;
 
-  // Block 4 â€” bottleneck
+  // Block 4 — bottleneck
   bottleneckHeading: string;
   answerSentence: (clauseA: string, clauseB: string) => string;
   bottleneckFooter: string;
 
-  // Block 5 â€” cost of inaction
+  // Block 5 — cost of inaction
   costHeading: string;
   costIntro: string;
   costLeadIn: string;
   costStatSuffix: string;
   costFragment: string;
 
-  // Block 6 â€” open the loop
+  // Block 6 — open the loop
   openLoopHeading: string;
   openLoopItems: (pillarLabel: string) => [string, string, string];
   openLoopFooter: string;
@@ -140,18 +140,18 @@ export interface UiText {
   vslCaption: string;
   vslHint: string;
 
-  // Block 7 â€” CTA
+  // Block 7 — CTA
   nextStepEyebrow: string;
   ctaHeadline: string;
   ctaSub: string;
   ctaBullets: string[];
-  /** Wraps the price pulled from GlobalSettings (see BIL-client.tsx) â€” never a fixed string. */
+  /** Wraps the price pulled from GlobalSettings (see bml-client.tsx) — never a fixed string. */
   ctaPrice: (amount: string) => string;
   perSessionLabel: string;
   ctaGuarantee: string;
   ctaButton: string;
 
-  // Below the CTA â€” testimonials + footer labels
+  // Below the CTA — testimonials + footer labels
   testimonialsHeading: string;
   footerServices: string;
   footerCalculator: string;
@@ -168,7 +168,7 @@ export interface BilText {
   levelTaglines: Record<string, string>; // keyed by canonical level name
   generalQuestions: QuestionText[]; // index-aligned with data.generalQuestions
   categoryQuestions: Record<CategoryId, [QuestionText, QuestionText]>;
-  /** Block 4 clause fragments â€” see `answerSentence` above. Keyed by pillar;
+  /** Block 4 clause fragments — see `answerSentence` above. Keyed by pillar;
    *  Data Visibility varies by category since its questions do. */
   answerClauses: {
     operationalEfficiency: ClausePair;
@@ -178,7 +178,7 @@ export interface BilText {
   };
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ENGLISH â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ══════════════════════════ ENGLISH ══════════════════════════ */
 
 const en: BilText = {
   ui: {
@@ -186,7 +186,7 @@ const en: BilText = {
 
     introEyebrow: "3,000+ SME owners have checked their score",
     introTitle: "Business Independence Level Calculator",
-    introSub: "Find out your weakest system, the reason behind it, and what it's costing you â€” under 2 minutes.",
+    introSub: "Find out your weakest system, the reason behind it, and what it's costing you — under 2 minutes.",
     categoryHeading: "Select your business category *",
     revenueHeading: "Select your annual revenue / turnover range *",
 
@@ -222,7 +222,7 @@ const en: BilText = {
     resultEyebrow: "Your Score",
     heroHeadline: (name, levelName) => `${name}, your business is ${levelName}.`,
     ringCaption: "Out of 100",
-    levelOfTotal: (index, name) => `Level ${index} of 4 Â· ${name}`,
+    levelOfTotal: (index, name) => `Level ${index} of 4 · ${name}`,
     scrollPrompt: "There is a 60-second explanation further down this page.",
 
     benchmarkHeading: "Benchmark",
@@ -248,38 +248,38 @@ const en: BilText = {
     weakestCaption: "Weakest system",
 
     bottleneckHeading: "Your **#1** constraint",
-    answerSentence: (clauseA, clauseB) => `You answered that ${clauseA} â€” and that ${clauseB}.`,
+    answerSentence: (clauseA, clauseB) => `You answered that ${clauseA} — and that ${clauseB}.`,
     bottleneckFooter: "This is fixable. See the 60s video below.",
 
     costHeading: "Cost of doing nothing",
     costIntro: "Across 3,000+ SMEs we found the same pattern: a business without systems quietly loses at least 1% of its revenue every year.",
     costLeadIn: "At your revenue level, that is:",
     costStatSuffix: "every year",
-    costFragment: "Dead stock. Manual calculations. Hot leads forgotten â€” because there was no system to catch it.",
+    costFragment: "Dead stock. Manual calculations. Hot leads forgotten — because there was no system to catch it.",
 
     openLoopHeading: "What this score can't see",
     openLoopItems: (pillarLabel) => [
       "Which process to fix first. Fix the wrong one and you lose three months.",
-      `Whether your ${pillarLabel} problem is really a ${pillarLabel} problem â€” or a symptom of something upstream.`,
+      `Whether your ${pillarLabel} problem is really a ${pillarLabel} problem — or a symptom of something upstream.`,
       "What your business specifically needs, versus what a form can infer.",
     ],
     openLoopFooter: "These need someone to look at your actual business.",
 
     vslPlaceholder: "VSL placeholder",
-    vslCaption: "60 sec Â· muted autoplay Â· burned-in captions",
+    vslCaption: "60 sec · muted autoplay · burned-in captions",
     vslHint: "( real video appears here )",
 
     nextStepEyebrow: "The next step",
     ctaHeadline: "Raise your Independence Score in 60 minutes.",
-    ctaSub: "A live working audit on your business â€” not generic advice.",
+    ctaSub: "A live working audit on your business — not generic advice.",
     ctaBullets: [
       "A clear understanding of how systems make a business owner-independent",
       "Your real bottleneck identified, with a system to fix it",
       "A one-page 90-day independence roadmap",
-      "Two QR-based checkpoints installed in your business â€” your staff starts reporting this week",
-      "30 days of daily WhatsApp reports â€” what happened, what looks wrong, what to do",
+      "Two QR-based checkpoints installed in your business — your staff starts reporting this week",
+      "30 days of daily WhatsApp reports — what happened, what looks wrong, what to do",
     ],
-    ctaPrice: (amount) => `â‚¹${amount}`,
+    ctaPrice: (amount) => `₹${amount}`,
     perSessionLabel: "one session",
     ctaGuarantee: "Full refund if your first daily report does not reach your WhatsApp within 48 hours of the session.",
     ctaButton: "Book your session",
@@ -299,9 +299,9 @@ const en: BilText = {
   },
   revenue: {
     a: "Less than 1 Cr",
-    b: "1 â€“ 10 Cr",
-    c: "10 â€“ 50 Cr",
-    d: "50 â€“ 100 Cr",
+    b: "1 – 10 Cr",
+    c: "10 – 50 Cr",
+    d: "50 – 100 Cr",
     e: "100 Cr +",
   },
   pillarLabels: {
@@ -329,15 +329,15 @@ const en: BilText = {
       options: [
         "Nothing runs without me",
         "Some work happens, but problems pile up in my absence",
-        "Runs smoothly â€” I have proper teams and procedures, only rare exceptions come to me",
+        "Runs smoothly — I have proper teams and procedures, only rare exceptions come to me",
       ],
     },
     {
-      question: "You have standards to be followed â€” quality, ethics, values. Who ensures they are followed?",
+      question: "You have standards to be followed — quality, ethics, values. Who ensures they are followed?",
       options: [
         "I personally notice and tell the staff to correct",
-        "I assume the staff follow what I have taught them â€” find out only when something goes wrong",
-        "Checked daily â€” I get a summary of what broke, from a manager or a record",
+        "I assume the staff follow what I have taught them — find out only when something goes wrong",
+        "Checked daily — I get a summary of what broke, from a manager or a record",
       ],
     },
     {
@@ -351,7 +351,7 @@ const en: BilText = {
     {
       question: "Your most experienced employee tells you tomorrow that he is leaving in 30 days. What happens?",
       options: [
-        "I am in trouble â€” a lot of work exists only in his head",
+        "I am in trouble — a lot of work exists only in his head",
         "We will manage, but I will have to step back into his work for a few months",
         "His work is documented, and someone can be trained into it on a defined timeline",
       ],
@@ -359,13 +359,13 @@ const en: BilText = {
     {
       question: "How did your last 10 new customers find out about your business?",
       options: [
-        "I was personally involved â€” calling, following up, closing the sale",
+        "I was personally involved — calling, following up, closing the sale",
         "Sales team or staff called them using a tested pitch or script",
-        "Advertising and marketing â€” digital, social media, website leads",
+        "Advertising and marketing — digital, social media, website leads",
       ],
     },
     {
-      question: "Of the enquiries that came in last month and did not buy â€” how many were followed up?",
+      question: "Of the enquiries that came in last month and did not buy — how many were followed up?",
       options: [
         "No record exists",
         "Staff follow up sometimes, or I chase the big ones myself",
@@ -381,15 +381,15 @@ const en: BilText = {
         options: [
           "I give him an estimate from memory",
           "I call workers, check registers and the finished goods log",
-          "I check the production schedule â€” status and expected completion date are already calculated",
+          "I check the production schedule — status and expected completion date are already calculated",
         ],
       },
       {
-        question: "Last 3 months' production and rejection percentage â€” can you tell it right now?",
+        question: "Last 3 months' production and rejection percentage — can you tell it right now?",
         options: [
           "No proper record exists",
           "I know it roughly, not accurate",
-          "Yes â€” I see it in a report without asking anyone",
+          "Yes — I see it in a report without asking anyone",
         ],
       },
     ],
@@ -397,9 +397,9 @@ const en: BilText = {
       {
         question: "Of the stock sitting in your godown right now, how much has not moved in 6 months?",
         options: [
-          "No idea â€” I would have to physically check",
+          "No idea — I would have to physically check",
           "I roughly know which items are slow, from memory",
-          "I get an ageing report â€” I know the exact value stuck in slow-moving stock",
+          "I get an ageing report — I know the exact value stuck in slow-moving stock",
         ],
       },
       {
@@ -415,7 +415,7 @@ const en: BilText = {
       {
         question: "How many people walked in yesterday, and how many bought?",
         options: [
-          "No proper idea â€” nothing recorded",
+          "No proper idea — nothing recorded",
           "I have an estimate in mind",
           "It is properly tracked, with a clear trend I can see",
         ],
@@ -423,7 +423,7 @@ const en: BilText = {
       {
         question: "Yesterday a customer asked for something you did not have in stock. Where is that recorded?",
         options: [
-          "Nowhere â€” told him no and he left",
+          "Nowhere — told him no and he left",
           "Staff mention it to me verbally if it happens often",
           "Lost-sale reasons are recorded and I review them",
         ],
@@ -433,13 +433,13 @@ const en: BilText = {
       {
         question: "You are away from the shop for 3 days. How do you find out today's sales, and your staff's attendance?",
         options: [
-          "No idea â€” I have to rely on trust and hope they work properly",
+          "No idea — I have to rely on trust and hope they work properly",
           "I call my manager and he tells me",
-          "A proper reporting system â€” I am confident nothing goes off-system without me knowing",
+          "A proper reporting system — I am confident nothing goes off-system without me knowing",
         ],
       },
       {
-        question: "Yesterday's closing â€” cash, online, and what was actually sold. Who checks that those three match, and what happens when they do not?",
+        question: "Yesterday's closing — cash, online, and what was actually sold. Who checks that those three match, and what happens when they do not?",
         options: [
           "Nobody checks it separately",
           "I check it myself when I am around",
@@ -539,198 +539,198 @@ const en: BilText = {
   },
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• HINDI (à¤¦à¥‡à¤µà¤¨à¤¾à¤—à¤°à¥€) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═════════════════════════ HINDI (देवनागरी) ═════════════════════════ */
 
 const hi: BilText = {
   ui: {
-    languageToggleLabel: "à¤­à¤¾à¤·à¤¾ à¤¬à¤¦à¤²à¥‡à¤‚",
+    languageToggleLabel: "भाषा बदलें",
 
-    introEyebrow: "3,000+ SME à¤®à¤¾à¤²à¤¿à¤• à¤…à¤ªà¤¨à¤¾ à¤¸à¥à¤•à¥‹à¤° à¤šà¥‡à¤• à¤•à¤° à¤šà¥à¤•à¥‡ à¤¹à¥ˆà¤‚",
-    introTitle: "à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤‡à¤‚à¤¡à¤¿à¤ªà¥‡à¤‚à¤¡à¥‡à¤‚à¤¸ à¤²à¥‡à¤µà¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",
-    introSub: "à¤œà¤¾à¤¨à¤¿à¤ à¤†à¤ªà¤•à¤¾ à¤¸à¤¬à¤¸à¥‡ à¤•à¤®à¤œà¤¼à¥‹à¤° à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤•à¥Œà¤¨-à¤¸à¤¾ à¤¹à¥ˆ, à¤‰à¤¸à¤•à¥€ à¤µà¤œà¤¹ à¤•à¥à¤¯à¤¾ à¤¹à¥ˆ, à¤”à¤° à¤µà¤¹ à¤†à¤ªà¤•à¥‹ à¤•à¤¿à¤¤à¤¨à¤¾ à¤®à¤¹à¤à¤—à¤¾ à¤ªà¤¡à¤¼ à¤°à¤¹à¤¾ à¤¹à¥ˆ â€” 2 à¤®à¤¿à¤¨à¤Ÿ à¤¸à¥‡ à¤­à¥€ à¤•à¤® à¤®à¥‡à¤‚à¥¤",
-    categoryHeading: "à¤…à¤ªà¤¨à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¥€ à¤•à¥ˆà¤Ÿà¥‡à¤—à¤°à¥€ à¤šà¥à¤¨à¥‡à¤‚ *",
-    revenueHeading: "à¤…à¤ªà¤¨à¤¾ à¤¸à¤¾à¤²à¤¾à¤¨à¤¾ à¤°à¥‡à¤µà¥‡à¤¨à¥à¤¯à¥‚ / à¤Ÿà¤°à¥à¤¨à¤“à¤µà¤° à¤°à¥‡à¤‚à¤œ à¤šà¥à¤¨à¥‡à¤‚ *",
+    introEyebrow: "3,000+ SME मालिक अपना स्कोर चेक कर चुके हैं",
+    introTitle: "बिज़नेस इंडिपेंडेंस लेवल कैलकुलेटर",
+    introSub: "जानिए आपका सबसे कमज़ोर सिस्टम कौन-सा है, उसकी वजह क्या है, और वह आपको कितना महँगा पड़ रहा है — 2 मिनट से भी कम में।",
+    categoryHeading: "अपने बिज़नेस की कैटेगरी चुनें *",
+    revenueHeading: "अपना सालाना रेवेन्यू / टर्नओवर रेंज चुनें *",
 
-    questionProgress: (n) => `à¤¸à¤µà¤¾à¤² 0${n} / 08`,
-    percentComplete: (pct) => `${pct}% à¤ªà¥‚à¤°à¤¾`,
-    back: "à¤µà¤¾à¤ªà¤¸",
-    next: "à¤†à¤—à¥‡",
-    checkScore: "à¤®à¥‡à¤°à¤¾ à¤¸à¥à¤•à¥‹à¤° à¤¦à¥‡à¤–à¥‡à¤‚",
+    questionProgress: (n) => `सवाल 0${n} / 08`,
+    percentComplete: (pct) => `${pct}% पूरा`,
+    back: "वापस",
+    next: "आगे",
+    checkScore: "मेरा स्कोर देखें",
 
     alerts: {
-      category: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤…à¤ªà¤¨à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¥€ à¤•à¥ˆà¤Ÿà¥‡à¤—à¤°à¥€ à¤šà¥à¤¨à¥‡à¤‚",
-      revenue: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤…à¤ªà¤¨à¤¾ à¤¸à¤¾à¤²à¤¾à¤¨à¤¾ à¤°à¥‡à¤µà¥‡à¤¨à¥à¤¯à¥‚ à¤°à¥‡à¤‚à¤œ à¤šà¥à¤¨à¥‡à¤‚",
-      option: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤à¤• à¤µà¤¿à¤•à¤²à¥à¤ª à¤šà¥à¤¨à¥‡à¤‚",
-      name: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤…à¤ªà¤¨à¤¾ à¤¨à¤¾à¤® à¤²à¤¿à¤–à¥‡à¤‚",
-      businessName: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤…à¤ªà¤¨à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ / à¤«à¤¼à¤°à¥à¤® à¤•à¤¾ à¤¨à¤¾à¤® à¤²à¤¿à¤–à¥‡à¤‚",
-      whatsapp: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤¸à¤¹à¥€ WhatsApp à¤¨à¤‚à¤¬à¤° à¤²à¤¿à¤–à¥‡à¤‚",
-      emailInvalid: "à¤•à¥ƒà¤ªà¤¯à¤¾ à¤¸à¤¹à¥€ à¤ˆà¤®à¥‡à¤² à¤ªà¤¤à¤¾ à¤²à¤¿à¤–à¥‡à¤‚",
+      category: "कृपया अपने बिज़नेस की कैटेगरी चुनें",
+      revenue: "कृपया अपना सालाना रेवेन्यू रेंज चुनें",
+      option: "कृपया एक विकल्प चुनें",
+      name: "कृपया अपना नाम लिखें",
+      businessName: "कृपया अपने बिज़नेस / फ़र्म का नाम लिखें",
+      whatsapp: "कृपया सही WhatsApp नंबर लिखें",
+      emailInvalid: "कृपया सही ईमेल पता लिखें",
     },
 
-    leadHeading: "à¤†à¤ªà¤•à¤¾ BIL à¤¸à¥à¤•à¥‹à¤° à¤¤à¥ˆà¤¯à¤¾à¤° à¤¹à¥ˆ",
-    leadSub: "à¤¬à¤¸ à¤à¤• à¤†à¤–à¤¼à¤¿à¤°à¥€ à¤•à¤¦à¤®:",
-    nameLabel: "à¤†à¤ªà¤•à¤¾ à¤¨à¤¾à¤® à¤•à¥à¤¯à¤¾ à¤¹à¥ˆ *",
-    namePlaceholder: "à¤œà¥ˆà¤¸à¥‡: à¤°à¤¾à¤œà¥‡à¤¶ à¤•à¥à¤®à¤¾à¤°",
-    businessNameLabel: "à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ / à¤«à¤¼à¤°à¥à¤® à¤•à¤¾ à¤¨à¤¾à¤® à¤•à¥à¤¯à¤¾ à¤¹à¥ˆ *",
-    businessNamePlaceholder: "à¤œà¥ˆà¤¸à¥‡: à¤à¤ªà¥‡à¤•à¥à¤¸ à¤®à¥ˆà¤¨à¥à¤¯à¥à¤«à¥ˆà¤•à¥à¤šà¤°à¤¿à¤‚à¤—",
-    whatsappLabel: "à¤†à¤ªà¤•à¤¾ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤¸à¤‚à¤ªà¤°à¥à¤• à¤¨à¤‚à¤¬à¤° (WhatsApp) *",
-    whatsappHint: "à¤†à¤ªà¤•à¥€ à¤µà¤¿à¤¸à¥à¤¤à¥ƒà¤¤ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤¹à¤® à¤¯à¤¹à¥€à¤‚ à¤­à¥‡à¤œà¥‡à¤‚à¤—à¥‡à¥¤",
-    emailLabel: "à¤ˆà¤®à¥‡à¤² ID (à¤µà¥ˆà¤•à¤²à¥à¤ªà¤¿à¤•)",
-    emailHint: "à¤¸à¤¿à¤°à¥à¤«à¤¼ à¤¤à¤¬ à¤­à¤°à¥‡à¤‚ à¤œà¤¬ à¤†à¤ª à¤ˆà¤®à¥‡à¤² à¤ªà¤° à¤­à¥€ à¤•à¥‰à¤ªà¥€ à¤šà¤¾à¤¹à¤¤à¥‡ à¤¹à¥‹à¤‚à¥¤",
-    generating: "à¤†à¤ªà¤•à¤¾ à¤¸à¥à¤•à¥‹à¤° à¤¨à¤¿à¤•à¤¾à¤²à¤¾ à¤œà¤¾ à¤°à¤¹à¤¾ à¤¹à¥ˆ...",
-    showResult: "à¤®à¥‡à¤°à¤¾ à¤°à¤¿à¤œà¤¼à¤²à¥à¤Ÿ à¤¦à¤¿à¤–à¤¾à¤à¤",
+    leadHeading: "आपका BIL स्कोर तैयार है",
+    leadSub: "बस एक आख़िरी कदम:",
+    nameLabel: "आपका नाम क्या है *",
+    namePlaceholder: "जैसे: राजेश कुमार",
+    businessNameLabel: "आपके बिज़नेस / फ़र्म का नाम क्या है *",
+    businessNamePlaceholder: "जैसे: एपेक्स मैन्युफैक्चरिंग",
+    whatsappLabel: "आपका बिज़नेस संपर्क नंबर (WhatsApp) *",
+    whatsappHint: "आपकी विस्तृत रिपोर्ट हम यहीं भेजेंगे।",
+    emailLabel: "ईमेल ID (वैकल्पिक)",
+    emailHint: "सिर्फ़ तब भरें जब आप ईमेल पर भी कॉपी चाहते हों।",
+    generating: "आपका स्कोर निकाला जा रहा है...",
+    showResult: "मेरा रिज़ल्ट दिखाएँ",
 
-    resultEyebrow: "à¤†à¤ªà¤•à¤¾ à¤¸à¥à¤•à¥‹à¤°",
-    heroHeadline: (name, levelName) => `${name}, à¤†à¤ªà¤•à¤¾ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ ${levelName} à¤¹à¥ˆà¥¤`,
-    ringCaption: "100 à¤®à¥‡à¤‚ à¤¸à¥‡",
-    levelOfTotal: (index, name) => `à¤²à¥‡à¤µà¤² ${index} / 4 Â· ${name}`,
-    scrollPrompt: "à¤‡à¤¸à¤•à¤¾ 60 à¤¸à¥‡à¤•à¤‚à¤¡ à¤•à¤¾ à¤¸à¥à¤ªà¤·à¥à¤Ÿà¥€à¤•à¤°à¤£ à¤‡à¤¸à¥€ à¤ªà¥‡à¤œ à¤ªà¤° à¤¨à¥€à¤šà¥‡ à¤¹à¥ˆà¥¤",
+    resultEyebrow: "आपका स्कोर",
+    heroHeadline: (name, levelName) => `${name}, आपका बिज़नेस ${levelName} है।`,
+    ringCaption: "100 में से",
+    levelOfTotal: (index, name) => `लेवल ${index} / 4 · ${name}`,
+    scrollPrompt: "इसका 60 सेकंड का स्पष्टीकरण इसी पेज पर नीचे है।",
 
-    benchmarkHeading: "à¤¬à¥‡à¤‚à¤šà¤®à¤¾à¤°à¥à¤•",
+    benchmarkHeading: "बेंचमार्क",
     benchmarkStat: (percentile) =>
       percentile.kind === "bottom"
-        ? { value: 100 - percentile.value, caption: "à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤†à¤ªà¤¸à¥‡ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤¸à¥à¤•à¥‹à¤° à¤•à¤°à¤¤à¥‡ à¤¹à¥ˆà¤‚" }
-        : { value: percentile.value, caption: "à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤†à¤ªà¤¸à¥‡ à¤•à¤® à¤¸à¥à¤•à¥‹à¤° à¤•à¤°à¤¤à¥‡ à¤¹à¥ˆà¤‚" },
+        ? { value: 100 - percentile.value, caption: "बिज़नेस आपसे ज़्यादा स्कोर करते हैं" }
+        : { value: percentile.value, caption: "बिज़नेस आपसे कम स्कोर करते हैं" },
     benchmarkCopy: (branch, percentile, categoryLabel, categoryAvg) => {
       const opening =
         percentile.kind === "bottom"
-          ? `à¤†à¤ª à¤¯à¤¹ à¤Ÿà¥‡à¤¸à¥à¤Ÿ à¤¦à¥‡à¤¨à¥‡ à¤µà¤¾à¤²à¥‡ 3,000+ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤®à¥‡à¤‚ à¤¸à¥‡ à¤¸à¤¬à¤¸à¥‡ à¤¨à¥€à¤šà¥‡ à¤•à¥‡ ${percentile.value}% à¤®à¥‡à¤‚ à¤¹à¥ˆà¤‚à¥¤`
-          : `à¤†à¤ªà¤¨à¥‡ à¤¯à¤¹ à¤Ÿà¥‡à¤¸à¥à¤Ÿ à¤¦à¥‡à¤¨à¥‡ à¤µà¤¾à¤²à¥‡ 3,000+ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤®à¥‡à¤‚ à¤¸à¥‡ ${percentile.value}% à¤¸à¥‡ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤¸à¥à¤•à¥‹à¤° à¤•à¤¿à¤¯à¤¾ à¤¹à¥ˆà¥¤`;
+          ? `आप यह टेस्ट देने वाले 3,000+ बिज़नेस में से सबसे नीचे के ${percentile.value}% में हैं।`
+          : `आपने यह टेस्ट देने वाले 3,000+ बिज़नेस में से ${percentile.value}% से ज़्यादा स्कोर किया है।`;
       if (branch === "below") {
-        return `${opening} à¤”à¤¸à¤¤ ${categoryLabel} à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¤¾ à¤¸à¥à¤•à¥‹à¤° ${categoryAvg} à¤¹à¥ˆà¥¤ **à¤†à¤ª à¤…à¤ªà¤¨à¥€ à¤¹à¥€ à¤‡à¤‚à¤¡à¤¸à¥à¤Ÿà¥à¤°à¥€ à¤¸à¥‡ à¤ªà¥€à¤›à¥‡ à¤¹à¥ˆà¤‚à¥¤** à¤¯à¤¹à¤¾à¤ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾à¤¤à¤° à¤®à¤¾à¤²à¤¿à¤• à¤¸à¥‹à¤šà¤¤à¥‡ à¤¹à¥ˆà¤‚ à¤•à¤¿ à¤¸à¤®à¤¸à¥à¤¯à¤¾ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤•à¥€ à¤•à¥à¤µà¤¾à¤²à¤¿à¤Ÿà¥€ à¤•à¥€ à¤¹à¥ˆà¥¤ à¤…à¤•à¥à¤¸à¤° à¤à¤¸à¤¾ à¤¨à¤¹à¥€à¤‚ à¤¹à¥‹à¤¤à¤¾à¥¤`;
+        return `${opening} औसत ${categoryLabel} बिज़नेस का स्कोर ${categoryAvg} है। **आप अपनी ही इंडस्ट्री से पीछे हैं।** यहाँ ज़्यादातर मालिक सोचते हैं कि समस्या स्टाफ़ की क्वालिटी की है। अक्सर ऐसा नहीं होता।`;
       }
       if (branch === "within") {
-        return `${opening} à¤¯à¤¾à¤¨à¥€ à¤†à¤ª à¤ à¥€à¤• à¤‡à¤‚à¤¡à¤¸à¥à¤Ÿà¥à¤°à¥€ à¤•à¥‡ à¤”à¤¸à¤¤ à¤ªà¤° à¤¹à¥ˆà¤‚à¥¤ **à¤¯à¤¹ à¤•à¥‹à¤ˆ à¤¤à¤¾à¤°à¥€à¤«à¤¼ à¤•à¥€ à¤¬à¤¾à¤¤ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆà¥¤** à¤¹à¤®à¤¾à¤°à¥‡ à¤¡à¥‡à¤Ÿà¤¾ à¤®à¥‡à¤‚ **94% à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤²à¥‡à¤µà¤² 2 à¤ªà¤° à¤…à¤Ÿà¤•à¥‡ à¤¹à¥à¤ à¤¹à¥ˆà¤‚à¥¤** à¤†à¤ªà¤•à¥€ à¤‡à¤‚à¤¡à¤¸à¥à¤Ÿà¥à¤°à¥€ à¤•à¤¾ à¤”à¤¸à¤¤ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤…à¤ªà¤¨à¥‡ à¤®à¤¾à¤²à¤¿à¤• à¤•à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤¨à¤¹à¥€à¤‚ à¤šà¤² à¤¸à¤•à¤¤à¤¾à¥¤`;
+        return `${opening} यानी आप ठीक इंडस्ट्री के औसत पर हैं। **यह कोई तारीफ़ की बात नहीं है।** हमारे डेटा में **94% बिज़नेस लेवल 2 पर अटके हुए हैं।** आपकी इंडस्ट्री का औसत बिज़नेस अपने मालिक के बिना नहीं चल सकता।`;
       }
-      return `${opening} à¤¯à¤¹ ${categoryLabel} à¤•à¥‡ à¤”à¤¸à¤¤ à¤¸à¥‡ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤¹à¥ˆà¥¤ à¤†à¤ªà¤•à¥‡ à¤”à¤° à¤²à¥‡à¤µà¤² 4 à¤•à¥‡ à¤¬à¥€à¤š à¤•à¤¾ à¤«à¤¼à¤¾à¤¸à¤²à¤¾ à¤†à¤ªà¤•à¥€ à¤¸à¥‹à¤š à¤¸à¥‡ à¤›à¥‹à¤Ÿà¤¾ à¤¹à¥ˆ, à¤”à¤° **à¤…à¤•à¥à¤¸à¤° à¤µà¤¹ à¤à¤• à¤¹à¥€ à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤¹à¥‹à¤¤à¤¾ à¤¹à¥ˆ, à¤šà¤¾à¤° à¤¨à¤¹à¥€à¤‚à¥¤**`;
+      return `${opening} यह ${categoryLabel} के औसत से ज़्यादा है। आपके और लेवल 4 के बीच का फ़ासला आपकी सोच से छोटा है, और **अक्सर वह एक ही सिस्टम होता है, चार नहीं।**`;
     },
 
-    fourSystemsHeading: "à¤šà¤¾à¤° à¤¸à¥à¤¤à¤‚à¤­",
-    weakestCaption: "à¤¸à¤¬à¤¸à¥‡ à¤•à¤®à¤œà¤¼à¥‹à¤° à¤¸à¤¿à¤¸à¥à¤Ÿà¤®",
+    fourSystemsHeading: "चार स्तंभ",
+    weakestCaption: "सबसे कमज़ोर सिस्टम",
 
-    bottleneckHeading: "à¤†à¤ªà¤•à¥€ **#1** à¤°à¥à¤•à¤¾à¤µà¤Ÿ",
-    answerSentence: (clauseA, clauseB) => `à¤†à¤ªà¤¨à¥‡ à¤¬à¤¤à¤¾à¤¯à¤¾ à¤•à¤¿ ${clauseA} â€” à¤”à¤° à¤¯à¤¹ à¤­à¥€ à¤•à¤¿ ${clauseB}à¥¤`,
-    bottleneckFooter: "à¤¯à¤¹ à¤ à¥€à¤• à¤¹à¥‹ à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆà¥¤ à¤¨à¥€à¤šà¥‡ 60 à¤¸à¥‡à¤•à¤‚à¤¡ à¤•à¤¾ à¤µà¥€à¤¡à¤¿à¤¯à¥‹ à¤¦à¥‡à¤–à¥‡à¤‚à¥¤",
+    bottleneckHeading: "आपकी **#1** रुकावट",
+    answerSentence: (clauseA, clauseB) => `आपने बताया कि ${clauseA} — और यह भी कि ${clauseB}।`,
+    bottleneckFooter: "यह ठीक हो सकता है। नीचे 60 सेकंड का वीडियो देखें।",
 
-    costHeading: "à¤•à¥à¤› à¤¨ à¤•à¤°à¤¨à¥‡ à¤•à¥€ à¤•à¥€à¤®à¤¤",
-    costIntro: "3,000+ SME à¤®à¥‡à¤‚ à¤¹à¤®à¥‡à¤‚ à¤à¤• à¤¹à¥€ à¤ªà¥ˆà¤Ÿà¤°à¥à¤¨ à¤®à¤¿à¤²à¤¾: à¤¬à¤¿à¤¨à¤¾ à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤šà¥à¤ªà¤šà¤¾à¤ª à¤…à¤ªà¤¨à¥‡ à¤°à¥‡à¤µà¥‡à¤¨à¥à¤¯à¥‚ à¤•à¤¾ à¤•à¤® à¤¸à¥‡ à¤•à¤® 1% à¤¹à¤° à¤¸à¤¾à¤² à¤–à¥‹ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥ˆà¥¤",
-    costLeadIn: "à¤†à¤ªà¤•à¥‡ à¤°à¥‡à¤µà¥‡à¤¨à¥à¤¯à¥‚ à¤²à¥‡à¤µà¤² à¤ªà¤°, à¤¯à¤¹ à¤¹à¥ˆ:",
-    costStatSuffix: "à¤¹à¤° à¤¸à¤¾à¤²",
-    costFragment: "à¤¡à¥‡à¤¡ à¤¸à¥à¤Ÿà¥‰à¤•à¥¤ à¤¹à¤¾à¤¥ à¤¸à¥‡ à¤•à¤¿à¤ à¤—à¤ à¤¹à¤¿à¤¸à¤¾à¤¬à¥¤ à¤­à¥‚à¤²à¥‡ à¤¹à¥à¤ à¤¹à¥‰à¤Ÿ à¤²à¥€à¤¡ â€” à¤•à¥à¤¯à¥‹à¤‚à¤•à¤¿ à¤‡à¤¨à¥à¤¹à¥‡à¤‚ à¤ªà¤•à¤¡à¤¼à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤•à¥‹à¤ˆ à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤¥à¤¾ à¤¹à¥€ à¤¨à¤¹à¥€à¤‚à¥¤",
+    costHeading: "कुछ न करने की कीमत",
+    costIntro: "3,000+ SME में हमें एक ही पैटर्न मिला: बिना सिस्टम के बिज़नेस चुपचाप अपने रेवेन्यू का कम से कम 1% हर साल खो देता है।",
+    costLeadIn: "आपके रेवेन्यू लेवल पर, यह है:",
+    costStatSuffix: "हर साल",
+    costFragment: "डेड स्टॉक। हाथ से किए गए हिसाब। भूले हुए हॉट लीड — क्योंकि इन्हें पकड़ने के लिए कोई सिस्टम था ही नहीं।",
 
-    openLoopHeading: "à¤¯à¤¹ à¤¸à¥à¤•à¥‹à¤° à¤•à¥à¤¯à¤¾ à¤¨à¤¹à¥€à¤‚ à¤¦à¤¿à¤–à¤¾ à¤¸à¤•à¤¤à¤¾",
+    openLoopHeading: "यह स्कोर क्या नहीं दिखा सकता",
     openLoopItems: (pillarLabel) => [
-      "à¤¸à¤¬à¤¸à¥‡ à¤ªà¤¹à¤²à¥‡ à¤•à¥Œà¤¨-à¤¸à¤¾ à¤ªà¥à¤°à¥‹à¤¸à¥‡à¤¸ à¤ à¥€à¤• à¤•à¤°à¤¨à¤¾ à¤¹à¥ˆà¥¤ à¤—à¤²à¤¤ à¤ªà¥à¤°à¥‹à¤¸à¥‡à¤¸ à¤ à¥€à¤• à¤•à¤¿à¤¯à¤¾ à¤¤à¥‹ à¤¤à¥€à¤¨ à¤®à¤¹à¥€à¤¨à¥‡ à¤¬à¤°à¥à¤¬à¤¾à¤¦ à¤¹à¥‹à¤‚à¤—à¥‡à¥¤",
-      `à¤•à¥à¤¯à¤¾ à¤†à¤ªà¤•à¥€ ${pillarLabel} à¤•à¥€ à¤¸à¤®à¤¸à¥à¤¯à¤¾ à¤¸à¤š à¤®à¥‡à¤‚ ${pillarLabel} à¤•à¥€ à¤¹à¥€ à¤¹à¥ˆ â€” à¤¯à¤¾ à¤•à¤¿à¤¸à¥€ à¤”à¤° à¤¬à¤¡à¤¼à¥€ à¤¸à¤®à¤¸à¥à¤¯à¤¾ à¤•à¤¾ à¤²à¤•à¥à¤·à¤£ à¤¹à¥ˆà¥¤`,
-      "à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¥‹ à¤…à¤¸à¤² à¤®à¥‡à¤‚ à¤•à¥à¤¯à¤¾ à¤šà¤¾à¤¹à¤¿à¤ â€” à¤¬à¤¨à¤¾à¤® à¤µà¤¹ à¤œà¥‹ à¤à¤• à¤«à¤¼à¥‰à¤°à¥à¤® à¤¸à¥‡ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤²à¤—à¤¾à¤¯à¤¾ à¤œà¤¾ à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆà¥¤",
+      "सबसे पहले कौन-सा प्रोसेस ठीक करना है। गलत प्रोसेस ठीक किया तो तीन महीने बर्बाद होंगे।",
+      `क्या आपकी ${pillarLabel} की समस्या सच में ${pillarLabel} की ही है — या किसी और बड़ी समस्या का लक्षण है।`,
+      "आपके बिज़नेस को असल में क्या चाहिए — बनाम वह जो एक फ़ॉर्म से अंदाज़ा लगाया जा सकता है।",
     ],
-    openLoopFooter: "à¤‡à¤¨à¤•à¥‡ à¤²à¤¿à¤ à¤•à¤¿à¤¸à¥€ à¤•à¥‹ à¤†à¤ªà¤•à¥‡ à¤…à¤¸à¤²à¥€ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¥‹ à¤¦à¥‡à¤–à¤¨à¤¾ à¤¹à¥‹à¤—à¤¾à¥¤",
+    openLoopFooter: "इनके लिए किसी को आपके असली बिज़नेस को देखना होगा।",
 
-    vslPlaceholder: "VSL à¤ªà¥à¤²à¥‡à¤¸à¤¹à¥‹à¤²à¥à¤¡à¤°",
-    vslCaption: "60 à¤¸à¥‡à¤•à¤‚à¤¡ Â· à¤®à¥à¤¯à¥‚à¤Ÿ à¤‘à¤Ÿà¥‹à¤ªà¥à¤²à¥‡ Â· à¤¬à¤°à¥à¤¨-à¤‡à¤¨ à¤•à¥ˆà¤ªà¥à¤¶à¤¨",
-    vslHint: "( à¤¯à¤¹à¤¾à¤ à¤…à¤¸à¤²à¥€ à¤µà¥€à¤¡à¤¿à¤¯à¥‹ à¤†à¤à¤—à¤¾ )",
+    vslPlaceholder: "VSL प्लेसहोल्डर",
+    vslCaption: "60 सेकंड · म्यूट ऑटोप्ले · बर्न-इन कैप्शन",
+    vslHint: "( यहाँ असली वीडियो आएगा )",
 
-    nextStepEyebrow: "à¤…à¤—à¤²à¤¾ à¤•à¤¦à¤®",
-    ctaHeadline: "60 à¤®à¤¿à¤¨à¤Ÿ à¤®à¥‡à¤‚ à¤…à¤ªà¤¨à¤¾ à¤‡à¤‚à¤¡à¤¿à¤ªà¥‡à¤‚à¤¡à¥‡à¤‚à¤¸ à¤¸à¥à¤•à¥‹à¤° à¤¬à¤¢à¤¼à¤¾à¤à¤à¥¤",
-    ctaSub: "à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤ªà¤° à¤à¤• à¤²à¤¾à¤‡à¤µ à¤µà¤°à¥à¤•à¤¿à¤‚à¤— à¤‘à¤¡à¤¿à¤Ÿ â€” à¤•à¥‹à¤ˆ à¤¸à¤¾à¤®à¤¾à¤¨à¥à¤¯ à¤¸à¤²à¤¾à¤¹ à¤¨à¤¹à¥€à¤‚à¥¤",
+    nextStepEyebrow: "अगला कदम",
+    ctaHeadline: "60 मिनट में अपना इंडिपेंडेंस स्कोर बढ़ाएँ।",
+    ctaSub: "आपके बिज़नेस पर एक लाइव वर्किंग ऑडिट — कोई सामान्य सलाह नहीं।",
     ctaBullets: [
-      "à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤•à¥ˆà¤¸à¥‡ à¤•à¤¾à¤® à¤•à¤°à¤¤à¥‡ à¤¹à¥ˆà¤‚, à¤‡à¤¸à¤•à¥€ à¤¸à¤¾à¤«à¤¼ à¤¸à¤®à¤ â€” à¤¤à¤¾à¤•à¤¿ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤®à¤¾à¤²à¤¿à¤• à¤ªà¤° à¤¨à¤¿à¤°à¥à¤­à¤° à¤¨ à¤°à¤¹à¥‡",
-      "à¤†à¤ªà¤•à¥€ à¤…à¤¸à¤²à¥€ à¤°à¥à¤•à¤¾à¤µà¤Ÿ à¤•à¥€ à¤ªà¤¹à¤šà¤¾à¤¨, à¤”à¤° à¤‰à¤¸à¥‡ à¤ à¥€à¤• à¤•à¤°à¤¨à¥‡ à¤µà¤¾à¤²à¤¾ à¤¸à¤¿à¤¸à¥à¤Ÿà¤®",
-      "à¤à¤• à¤ªà¥‡à¤œ à¤•à¤¾ 90 à¤¦à¤¿à¤¨ à¤•à¤¾ à¤‡à¤‚à¤¡à¤¿à¤ªà¥‡à¤‚à¤¡à¥‡à¤‚à¤¸ à¤°à¥‹à¤¡à¤®à¥ˆà¤ª",
-      "à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤®à¥‡à¤‚ à¤²à¤—à¤¾à¤ à¤—à¤ à¤¦à¥‹ QR-à¤†à¤§à¤¾à¤°à¤¿à¤¤ à¤šà¥‡à¤•à¤ªà¥‰à¤‡à¤‚à¤Ÿ â€” à¤†à¤ªà¤•à¤¾ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤‡à¤¸à¥€ à¤¹à¤«à¤¼à¥à¤¤à¥‡ à¤¸à¥‡ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤•à¤°à¤¨à¤¾ à¤¶à¥à¤°à¥‚ à¤•à¤°à¥‡à¤—à¤¾",
-      "30 à¤¦à¤¿à¤¨ à¤•à¥€ à¤°à¥‹à¤œà¤¼à¤¾à¤¨à¤¾ WhatsApp à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ â€” à¤•à¥à¤¯à¤¾ à¤¹à¥à¤†, à¤•à¥à¤¯à¤¾ à¤—à¤¡à¤¼à¤¬à¤¡à¤¼ à¤²à¤— à¤°à¤¹à¤¾ à¤¹à¥ˆ, à¤•à¥à¤¯à¤¾ à¤•à¤°à¤¨à¤¾ à¤¹à¥ˆ",
+      "सिस्टम कैसे काम करते हैं, इसकी साफ़ समझ — ताकि बिज़नेस मालिक पर निर्भर न रहे",
+      "आपकी असली रुकावट की पहचान, और उसे ठीक करने वाला सिस्टम",
+      "एक पेज का 90 दिन का इंडिपेंडेंस रोडमैप",
+      "आपके बिज़नेस में लगाए गए दो QR-आधारित चेकपॉइंट — आपका स्टाफ़ इसी हफ़्ते से रिपोर्ट करना शुरू करेगा",
+      "30 दिन की रोज़ाना WhatsApp रिपोर्ट — क्या हुआ, क्या गड़बड़ लग रहा है, क्या करना है",
     ],
-    ctaPrice: (amount) => `â‚¹${amount}`,
-    perSessionLabel: "à¤à¤• à¤¸à¥‡à¤¶à¤¨",
-    ctaGuarantee: "à¤…à¤—à¤° à¤¸à¥‡à¤¶à¤¨ à¤•à¥‡ 48 à¤˜à¤‚à¤Ÿà¥‡ à¤•à¥‡ à¤…à¤‚à¤¦à¤° à¤†à¤ªà¤•à¥€ à¤ªà¤¹à¤²à¥€ à¤°à¥‹à¤œà¤¼à¤¾à¤¨à¤¾ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ WhatsApp à¤ªà¤° à¤¨à¤¹à¥€à¤‚ à¤ªà¤¹à¥à¤à¤šà¤¤à¥€, à¤¤à¥‹ à¤ªà¥‚à¤°à¤¾ à¤°à¤¿à¤«à¤¼à¤‚à¤¡ à¤®à¤¿à¤²à¥‡à¤—à¤¾à¥¤",
-    ctaButton: "à¤…à¤ªà¤¨à¤¾ à¤¸à¥‡à¤¶à¤¨ à¤¬à¥à¤• à¤•à¤°à¥‡à¤‚",
+    ctaPrice: (amount) => `₹${amount}`,
+    perSessionLabel: "एक सेशन",
+    ctaGuarantee: "अगर सेशन के 48 घंटे के अंदर आपकी पहली रोज़ाना रिपोर्ट WhatsApp पर नहीं पहुँचती, तो पूरा रिफ़ंड मिलेगा।",
+    ctaButton: "अपना सेशन बुक करें",
 
-    testimonialsHeading: "à¤—à¥à¤°à¤¾à¤¹à¤•à¥‹à¤‚ à¤•à¥€ à¤°à¤¾à¤¯",
-    footerServices: "à¤¹à¤®à¤¾à¤°à¥€ à¤¸à¥‡à¤µà¤¾à¤à¤",
-    footerCalculator: "à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤‡à¤‚à¤¡à¤¿à¤ªà¥‡à¤‚à¤¡à¥‡à¤‚à¤¸ à¤²à¥‡à¤µà¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",
-    footerSession: "à¤¸à¤¿à¤¸à¥à¤Ÿà¤®à¥à¤¸ à¤¸à¥à¤Ÿà¥à¤°à¥ˆà¤Ÿà¥‡à¤œà¥€ à¤¸à¥‡à¤¶à¤¨",
-    footerConnect: "à¤¹à¤®à¤¸à¥‡ à¤œà¥à¤¡à¤¼à¥‡à¤‚",
+    testimonialsHeading: "ग्राहकों की राय",
+    footerServices: "हमारी सेवाएँ",
+    footerCalculator: "बिज़नेस इंडिपेंडेंस लेवल कैलकुलेटर",
+    footerSession: "सिस्टम्स स्ट्रैटेजी सेशन",
+    footerConnect: "हमसे जुड़ें",
   },
 
   categories: {
-    A: "à¤®à¥ˆà¤¨à¥à¤¯à¥à¤«à¥ˆà¤•à¥à¤šà¤°à¤¿à¤‚à¤—",
-    B: "à¤¹à¥‹à¤²à¤¸à¥‡à¤² à¤¯à¤¾ à¤Ÿà¥à¤°à¥‡à¤¡à¤¿à¤‚à¤—",
-    C: "à¤¶à¥‹à¤°à¥‚à¤® à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ (à¤œà¥à¤µà¥‡à¤²à¤°à¥€, à¤•à¤ªà¤¡à¤¼à¥‹à¤‚ à¤•à¥€ à¤°à¤¿à¤Ÿà¥‡à¤², à¤¹à¤¾à¤°à¥à¤¡à¤µà¥‡à¤¯à¤° à¤”à¤° à¤¸à¥ˆà¤¨à¤¿à¤Ÿà¤°à¥€ à¤†à¤¦à¤¿)",
-    D: "à¤¸à¤°à¥à¤µà¤¿à¤¸à¥‡à¤œà¤¼ / QSR / à¤°à¤¿à¤Ÿà¥‡à¤²",
+    A: "मैन्युफैक्चरिंग",
+    B: "होलसेल या ट्रेडिंग",
+    C: "शोरूम बिज़नेस (ज्वेलरी, कपड़ों की रिटेल, हार्डवेयर और सैनिटरी आदि)",
+    D: "सर्विसेज़ / QSR / रिटेल",
   },
   revenue: {
-    a: "1 à¤•à¤°à¥‹à¤¡à¤¼ à¤¸à¥‡ à¤•à¤®",
-    b: "1 â€“ 10 à¤•à¤°à¥‹à¤¡à¤¼",
-    c: "10 â€“ 50 à¤•à¤°à¥‹à¤¡à¤¼",
-    d: "50 â€“ 100 à¤•à¤°à¥‹à¤¡à¤¼",
-    e: "100 à¤•à¤°à¥‹à¤¡à¤¼ +",
+    a: "1 करोड़ से कम",
+    b: "1 – 10 करोड़",
+    c: "10 – 50 करोड़",
+    d: "50 – 100 करोड़",
+    e: "100 करोड़ +",
   },
   pillarLabels: {
-    operationalEfficiency: "à¤‘à¤ªà¤°à¥‡à¤¶à¤¨à¤² à¤à¤«à¤¼à¤¿à¤¶à¤¿à¤à¤‚à¤¸à¥€",
-    humanCapital: "à¤¹à¥à¤¯à¥‚à¤®à¤¨ à¤•à¥ˆà¤ªà¤¿à¤Ÿà¤²",
-    customerAcquisition: "à¤•à¤¸à¥à¤Ÿà¤®à¤° à¤à¤•à¥à¤µà¤¿à¤œà¤¼à¤¿à¤¶à¤¨",
-    dataVisibility: "à¤¡à¥‡à¤Ÿà¤¾ à¤µà¤¿à¤œà¤¼à¤¿à¤¬à¤¿à¤²à¤¿à¤Ÿà¥€",
+    operationalEfficiency: "ऑपरेशनल एफ़िशिएंसी",
+    humanCapital: "ह्यूमन कैपिटल",
+    customerAcquisition: "कस्टमर एक्विज़िशन",
+    dataVisibility: "डेटा विज़िबिलिटी",
   },
   levelNames: {
-    "Owner-Trapped": "à¤®à¤¾à¤²à¤¿à¤• à¤®à¥‡à¤‚ à¤«à¤à¤¸à¤¾ à¤¹à¥à¤†",
-    "Owner-Dependent": "à¤®à¤¾à¤²à¤¿à¤• à¤ªà¤° à¤¨à¤¿à¤°à¥à¤­à¤°",
-    "Team-Run": "à¤Ÿà¥€à¤®-à¤¸à¤‚à¤šà¤¾à¤²à¤¿à¤¤",
-    "Owner-Independent": "à¤®à¤¾à¤²à¤¿à¤• à¤¸à¥‡ à¤¸à¥à¤µà¤¤à¤‚à¤¤à¥à¤°",
+    "Owner-Trapped": "मालिक में फँसा हुआ",
+    "Owner-Dependent": "मालिक पर निर्भर",
+    "Team-Run": "टीम-संचालित",
+    "Owner-Independent": "मालिक से स्वतंत्र",
   },
   levelTaglines: {
-    "Owner-Trapped": "à¤œà¤¬ à¤†à¤ª à¤°à¥à¤•à¤¤à¥‡ à¤¹à¥ˆà¤‚, à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤­à¥€ à¤°à¥à¤• à¤œà¤¾à¤¤à¤¾ à¤¹à¥ˆà¥¤",
-    "Owner-Dependent": "à¤†à¤ªà¤•à¤¾ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤¤à¤­à¥€ à¤šà¤²à¤¤à¤¾ à¤¹à¥ˆ à¤œà¤¬ à¤†à¤ª à¤¦à¥‡à¤– à¤°à¤¹à¥‡ à¤¹à¥‹à¤¤à¥‡ à¤¹à¥ˆà¤‚à¥¤ à¤¨à¤œà¤¼à¤° à¤¹à¤Ÿà¥€, à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤°à¥à¤•à¤¾à¥¤",
-    "Team-Run": "à¤†à¤ªà¤•à¥€ à¤Ÿà¥€à¤® à¤¦à¤¿à¤¨ à¤•à¤¾ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾à¤¤à¤° à¤•à¤¾à¤® à¤¸à¤‚à¤­à¤¾à¤²à¤¤à¥€ à¤¹à¥ˆà¥¤ à¤†à¤ª à¤¸à¤¿à¤°à¥à¤«à¤¼ à¤…à¤ªà¤µà¤¾à¤¦ à¤µà¤¾à¤²à¥‡ à¤®à¤¾à¤®à¤²à¥‡ à¤¸à¤‚à¤­à¤¾à¤²à¤¤à¥‡ à¤¹à¥ˆà¤‚à¥¤",
-    "Owner-Independent": "à¤°à¥‹à¤œà¤¼à¤®à¤°à¥à¤°à¤¾ à¤•à¥‡ à¤•à¤¾à¤®à¤•à¤¾à¤œ à¤•à¥‡ à¤²à¤¿à¤ à¤†à¤ª à¤œà¤¼à¤°à¥‚à¤°à¥€ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆà¤‚à¥¤ à¤…à¤¬ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤¬à¤¢à¤¼à¤¾à¤¨à¥‡ à¤•à¤¾ à¤¸à¤®à¤¯ à¤¹à¥ˆà¥¤",
+    "Owner-Trapped": "जब आप रुकते हैं, बिज़नेस भी रुक जाता है।",
+    "Owner-Dependent": "आपका बिज़नेस तभी चलता है जब आप देख रहे होते हैं। नज़र हटी, बिज़नेस रुका।",
+    "Team-Run": "आपकी टीम दिन का ज़्यादातर काम संभालती है। आप सिर्फ़ अपवाद वाले मामले संभालते हैं।",
+    "Owner-Independent": "रोज़मर्रा के कामकाज के लिए आप ज़रूरी नहीं हैं। अब बिज़नेस बढ़ाने का समय है।",
   },
 
   generalQuestions: [
     {
-      question: "à¤¸à¥‹à¤šà¤¿à¤ à¤†à¤ª 10 à¤¦à¤¿à¤¨ à¤•à¥‡ à¤«à¤¼à¥ˆà¤®à¤¿à¤²à¥€ à¤Ÿà¥à¤°à¤¿à¤ª à¤ªà¤° à¤œà¤¾à¤¤à¥‡ à¤¹à¥ˆà¤‚ à¤”à¤° à¤«à¤¼à¥‹à¤¨ à¤¸à¤¾à¤‡à¤²à¥‡à¤‚à¤Ÿ à¤°à¤–à¤¤à¥‡ à¤¹à¥ˆà¤‚à¥¤ à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¤¾ à¤•à¥à¤¯à¤¾ à¤¹à¥‹à¤—à¤¾?",
+      question: "सोचिए आप 10 दिन के फ़ैमिली ट्रिप पर जाते हैं और फ़ोन साइलेंट रखते हैं। आपके बिज़नेस का क्या होगा?",
       options: [
-        "à¤®à¥‡à¤°à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤•à¥à¤› à¤¨à¤¹à¥€à¤‚ à¤šà¤²à¤¤à¤¾",
-        "à¤•à¥à¤› à¤•à¤¾à¤® à¤¹à¥‹ à¤œà¤¾à¤¤à¤¾ à¤¹à¥ˆ, à¤²à¥‡à¤•à¤¿à¤¨ à¤®à¥‡à¤°à¥€ à¤—à¥ˆà¤°à¤¹à¤¾à¤œà¤¼à¤¿à¤°à¥€ à¤®à¥‡à¤‚ à¤¸à¤®à¤¸à¥à¤¯à¤¾à¤à¤ à¤œà¤®à¤¾ à¤¹à¥‹ à¤œà¤¾à¤¤à¥€ à¤¹à¥ˆà¤‚",
-        "à¤¸à¤¬ à¤¬à¤¿à¤¨à¤¾ à¤°à¥à¤•à¤¾à¤µà¤Ÿ à¤šà¤²à¤¤à¤¾ à¤¹à¥ˆ â€” à¤®à¥‡à¤°à¥‡ à¤ªà¤¾à¤¸ à¤¸à¤¹à¥€ à¤Ÿà¥€à¤® à¤”à¤° à¤ªà¥à¤°à¥‹à¤¸à¥€à¤œà¤° à¤¹à¥ˆà¤‚, à¤¬à¤¸ à¤•à¤­à¥€-à¤•à¤­à¤¾à¤° à¤•à¥‹à¤ˆ à¤…à¤ªà¤µà¤¾à¤¦ à¤®à¥‡à¤°à¥‡ à¤ªà¤¾à¤¸ à¤†à¤¤à¤¾ à¤¹à¥ˆ",
+        "मेरे बिना कुछ नहीं चलता",
+        "कुछ काम हो जाता है, लेकिन मेरी गैरहाज़िरी में समस्याएँ जमा हो जाती हैं",
+        "सब बिना रुकावट चलता है — मेरे पास सही टीम और प्रोसीजर हैं, बस कभी-कभार कोई अपवाद मेरे पास आता है",
       ],
     },
     {
-      question: "à¤†à¤ªà¤•à¥‡ à¤•à¥à¤› à¤¸à¥à¤Ÿà¥ˆà¤‚à¤¡à¤°à¥à¤¡ à¤¹à¥ˆà¤‚ à¤œà¤¿à¤¨à¤•à¤¾ à¤ªà¤¾à¤²à¤¨ à¤¹à¥‹à¤¨à¤¾ à¤šà¤¾à¤¹à¤¿à¤ â€” à¤•à¥à¤µà¤¾à¤²à¤¿à¤Ÿà¥€, à¤ˆà¤®à¤¾à¤¨à¤¦à¤¾à¤°à¥€, à¤®à¥‚à¤²à¥à¤¯à¥¤ à¤¯à¤¹ à¤•à¥Œà¤¨ à¤¸à¥à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤ à¤•à¤°à¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤‡à¤¨à¤•à¤¾ à¤ªà¤¾à¤²à¤¨ à¤¹à¥‹ à¤°à¤¹à¤¾ à¤¹à¥ˆ?",
+      question: "आपके कुछ स्टैंडर्ड हैं जिनका पालन होना चाहिए — क्वालिटी, ईमानदारी, मूल्य। यह कौन सुनिश्चित करता है कि इनका पालन हो रहा है?",
       options: [
-        "à¤®à¥ˆà¤‚ à¤–à¥à¤¦ à¤¦à¥‡à¤–à¤¤à¤¾ à¤¹à¥‚à¤ à¤”à¤° à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤•à¥‹ à¤¸à¥à¤§à¤¾à¤°à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤•à¤¹à¤¤à¤¾ à¤¹à¥‚à¤",
-        "à¤®à¥ˆà¤‚ à¤®à¤¾à¤¨ à¤²à¥‡à¤¤à¤¾ à¤¹à¥‚à¤ à¤•à¤¿ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤µà¤¹à¥€ à¤•à¤°à¥‡à¤—à¤¾ à¤œà¥‹ à¤®à¥ˆà¤‚à¤¨à¥‡ à¤¸à¤¿à¤–à¤¾à¤¯à¤¾ à¤¹à¥ˆ â€” à¤ªà¤¤à¤¾ à¤¤à¤¬ à¤šà¤²à¤¤à¤¾ à¤¹à¥ˆ à¤œà¤¬ à¤•à¥à¤› à¤—à¤¡à¤¼à¤¬à¤¡à¤¼ à¤¹à¥‹ à¤œà¤¾à¤¤à¥€ à¤¹à¥ˆ",
-        "à¤°à¥‹à¤œà¤¼ à¤œà¤¾à¤à¤š à¤¹à¥‹à¤¤à¥€ à¤¹à¥ˆ â€” à¤®à¥à¤à¥‡ à¤•à¤¿à¤¸à¥€ à¤®à¥ˆà¤¨à¥‡à¤œà¤° à¤¯à¤¾ à¤°à¤¿à¤•à¥‰à¤°à¥à¤¡ à¤¸à¥‡ à¤à¤• à¤¸à¤¾à¤°à¤¾à¤‚à¤¶ à¤®à¤¿à¤²à¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤•à¥à¤¯à¤¾ à¤—à¤¡à¤¼à¤¬à¤¡à¤¼ à¤¹à¥à¤ˆ",
+        "मैं खुद देखता हूँ और स्टाफ़ को सुधारने के लिए कहता हूँ",
+        "मैं मान लेता हूँ कि स्टाफ़ वही करेगा जो मैंने सिखाया है — पता तब चलता है जब कुछ गड़बड़ हो जाती है",
+        "रोज़ जाँच होती है — मुझे किसी मैनेजर या रिकॉर्ड से एक सारांश मिलता है कि क्या गड़बड़ हुई",
       ],
     },
     {
-      question: "à¤†à¤ª à¤à¤• à¤¨à¤¯à¤¾ à¤•à¤°à¥à¤®à¤šà¤¾à¤°à¥€ à¤°à¤–à¤¤à¥‡ à¤¹à¥ˆà¤‚à¥¤ à¤‰à¤¸à¥‡ à¤Ÿà¥à¤°à¥‡à¤¨à¤¿à¤‚à¤— à¤¦à¥‡à¤¨à¥‡ à¤•à¥€ à¤œà¤¼à¤¿à¤®à¥à¤®à¥‡à¤¦à¤¾à¤°à¥€ à¤•à¤¿à¤¸à¤•à¥€ à¤¹à¥ˆ?",
+      question: "आप एक नया कर्मचारी रखते हैं। उसे ट्रेनिंग देने की ज़िम्मेदारी किसकी है?",
       options: [
-        "à¤µà¤¹ à¤•à¤¾à¤® à¤•à¤°à¤¤à¥‡-à¤•à¤°à¤¤à¥‡ à¤–à¥à¤¦ à¤¸à¥€à¤– à¤²à¥‡à¤¤à¤¾ à¤¹à¥ˆ",
-        "à¤®à¥ˆà¤‚ à¤¸à¤¬à¤•à¥‹ à¤–à¥à¤¦ à¤Ÿà¥à¤°à¥‡à¤¨à¤¿à¤‚à¤— à¤¦à¥‡à¤¤à¤¾ à¤¹à¥‚à¤",
-        "à¤Ÿà¥à¤°à¥‡à¤¨à¤¿à¤‚à¤— à¤®à¤Ÿà¥€à¤°à¤¿à¤¯à¤² à¤”à¤° à¤ªà¥à¤°à¥‹à¤—à¥à¤°à¥‡à¤¸ à¤Ÿà¥à¤°à¥ˆà¤•à¤¿à¤‚à¤— à¤®à¥Œà¤œà¥‚à¤¦ à¤¹à¥ˆ, à¤‡à¤¸à¤²à¤¿à¤ à¤‘à¤¨à¤¬à¥‹à¤°à¥à¤¡à¤¿à¤‚à¤— à¤®à¥‡à¤°à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤­à¥€ à¤šà¤²à¤¤à¥€ à¤¹à¥ˆ",
+        "वह काम करते-करते खुद सीख लेता है",
+        "मैं सबको खुद ट्रेनिंग देता हूँ",
+        "ट्रेनिंग मटीरियल और प्रोग्रेस ट्रैकिंग मौजूद है, इसलिए ऑनबोर्डिंग मेरे बिना भी चलती है",
       ],
     },
     {
-      question: "à¤†à¤ªà¤•à¤¾ à¤¸à¤¬à¤¸à¥‡ à¤…à¤¨à¥à¤­à¤µà¥€ à¤•à¤°à¥à¤®à¤šà¤¾à¤°à¥€ à¤•à¤² à¤¬à¤¤à¤¾ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤µà¤¹ 30 à¤¦à¤¿à¤¨ à¤®à¥‡à¤‚ à¤¨à¥Œà¤•à¤°à¥€ à¤›à¥‹à¤¡à¤¼ à¤°à¤¹à¤¾ à¤¹à¥ˆà¥¤ à¤•à¥à¤¯à¤¾ à¤¹à¥‹à¤—à¤¾?",
+      question: "आपका सबसे अनुभवी कर्मचारी कल बता देता है कि वह 30 दिन में नौकरी छोड़ रहा है। क्या होगा?",
       options: [
-        "à¤®à¥ˆà¤‚ à¤®à¥à¤¶à¥à¤•à¤¿à¤² à¤®à¥‡à¤‚ à¤¹à¥‚à¤ â€” à¤¬à¤¹à¥à¤¤ à¤¸à¤¾à¤°à¤¾ à¤•à¤¾à¤® à¤¸à¤¿à¤°à¥à¤«à¤¼ à¤‰à¤¸à¤•à¥‡ à¤¦à¤¿à¤®à¤¾à¤—à¤¼ à¤®à¥‡à¤‚ à¤¹à¥ˆ",
-        "à¤¹à¤® à¤¸à¤‚à¤­à¤¾à¤² à¤²à¥‡à¤‚à¤—à¥‡, à¤²à¥‡à¤•à¤¿à¤¨ à¤®à¥à¤à¥‡ à¤•à¥à¤› à¤®à¤¹à¥€à¤¨à¥‹à¤‚ à¤¤à¤• à¤‰à¤¸à¤•à¤¾ à¤•à¤¾à¤® à¤–à¥à¤¦ à¤¸à¤‚à¤­à¤¾à¤²à¤¨à¤¾ à¤ªà¤¡à¤¼à¥‡à¤—à¤¾",
-        "à¤‰à¤¸à¤•à¤¾ à¤•à¤¾à¤® à¤²à¤¿à¤–à¤¿à¤¤ à¤°à¥‚à¤ª à¤®à¥‡à¤‚ à¤¦à¤°à¥à¤œ à¤¹à¥ˆ, à¤”à¤° à¤•à¤¿à¤¸à¥€ à¤•à¥‹ à¤¤à¤¯ à¤¸à¤®à¤¯-à¤¸à¥€à¤®à¤¾ à¤®à¥‡à¤‚ à¤‰à¤¸ à¤•à¤¾à¤® à¤•à¥‡ à¤²à¤¿à¤ à¤¤à¥ˆà¤¯à¤¾à¤° à¤•à¤¿à¤¯à¤¾ à¤œà¤¾ à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆ",
+        "मैं मुश्किल में हूँ — बहुत सारा काम सिर्फ़ उसके दिमाग़ में है",
+        "हम संभाल लेंगे, लेकिन मुझे कुछ महीनों तक उसका काम खुद संभालना पड़ेगा",
+        "उसका काम लिखित रूप में दर्ज है, और किसी को तय समय-सीमा में उस काम के लिए तैयार किया जा सकता है",
       ],
     },
     {
-      question: "à¤†à¤ªà¤•à¥‡ à¤ªà¤¿à¤›à¤²à¥‡ 10 à¤¨à¤ à¤—à¥à¤°à¤¾à¤¹à¤•à¥‹à¤‚ à¤•à¥‹ à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¥‡ à¤¬à¤¾à¤°à¥‡ à¤®à¥‡à¤‚ à¤•à¥ˆà¤¸à¥‡ à¤ªà¤¤à¤¾ à¤šà¤²à¤¾?",
+      question: "आपके पिछले 10 नए ग्राहकों को आपके बिज़नेस के बारे में कैसे पता चला?",
       options: [
-        "à¤®à¥ˆà¤‚ à¤–à¥à¤¦ à¤¶à¤¾à¤®à¤¿à¤² à¤¥à¤¾ â€” à¤•à¥‰à¤² à¤•à¤°à¤¨à¤¾, à¤«à¤¼à¥‰à¤²à¥‹-à¤…à¤ª à¤•à¤°à¤¨à¤¾, à¤¬à¤¿à¤•à¥à¤°à¥€ à¤ªà¤•à¥à¤•à¥€ à¤•à¤°à¤¨à¤¾",
-        "à¤¸à¥‡à¤²à¥à¤¸ à¤Ÿà¥€à¤® à¤¯à¤¾ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤¨à¥‡ à¤à¤• à¤†à¤œà¤¼à¤®à¤¾à¤ à¤¹à¥à¤ à¤ªà¤¿à¤š à¤¯à¤¾ à¤¸à¥à¤•à¥à¤°à¤¿à¤ªà¥à¤Ÿ à¤¸à¥‡ à¤‰à¤¨à¥à¤¹à¥‡à¤‚ à¤•à¥‰à¤² à¤•à¤¿à¤¯à¤¾",
-        "à¤µà¤¿à¤œà¥à¤žà¤¾à¤ªà¤¨ à¤”à¤° à¤®à¤¾à¤°à¥à¤•à¥‡à¤Ÿà¤¿à¤‚à¤— à¤¸à¥‡ â€” à¤¡à¤¿à¤œà¤¿à¤Ÿà¤², à¤¸à¥‹à¤¶à¤² à¤®à¥€à¤¡à¤¿à¤¯à¤¾, à¤µà¥‡à¤¬à¤¸à¤¾à¤‡à¤Ÿ à¤²à¥€à¤¡",
+        "मैं खुद शामिल था — कॉल करना, फ़ॉलो-अप करना, बिक्री पक्की करना",
+        "सेल्स टीम या स्टाफ़ ने एक आज़माए हुए पिच या स्क्रिप्ट से उन्हें कॉल किया",
+        "विज्ञापन और मार्केटिंग से — डिजिटल, सोशल मीडिया, वेबसाइट लीड",
       ],
     },
     {
-      question: "à¤ªà¤¿à¤›à¤²à¥‡ à¤®à¤¹à¥€à¤¨à¥‡ à¤œà¥‹ à¤‡à¤¨à¥à¤•à¥à¤µà¤¾à¤¯à¤°à¥€ à¤†à¤ˆà¤‚ à¤”à¤° à¤œà¤¿à¤¨à¥à¤¹à¥‹à¤‚à¤¨à¥‡ à¤–à¤°à¥€à¤¦à¤¾ à¤¨à¤¹à¥€à¤‚ â€” à¤‰à¤¨à¤®à¥‡à¤‚ à¤¸à¥‡ à¤•à¤¿à¤¤à¤¨à¥‹à¤‚ à¤•à¤¾ à¤«à¤¼à¥‰à¤²à¥‹-à¤…à¤ª à¤¹à¥à¤†?",
+      question: "पिछले महीने जो इन्क्वायरी आईं और जिन्होंने खरीदा नहीं — उनमें से कितनों का फ़ॉलो-अप हुआ?",
       options: [
-        "à¤•à¥‹à¤ˆ à¤°à¤¿à¤•à¥‰à¤°à¥à¤¡ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ",
-        "à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤•à¤­à¥€-à¤•à¤­à¥€ à¤«à¤¼à¥‰à¤²à¥‹-à¤…à¤ª à¤•à¤°à¤¤à¤¾ à¤¹à¥ˆ, à¤¯à¤¾ à¤¬à¤¡à¤¼à¥€ à¤µà¤¾à¤²à¥€ à¤‡à¤¨à¥à¤•à¥à¤µà¤¾à¤¯à¤°à¥€ à¤•à¥‹ à¤®à¥ˆà¤‚ à¤–à¥à¤¦ à¤ªà¤•à¤¡à¤¼à¤¤à¤¾ à¤¹à¥‚à¤",
-        "à¤¹à¤° à¤‡à¤¨à¥à¤•à¥à¤µà¤¾à¤¯à¤°à¥€ à¤«à¤¼à¥‰à¤²à¥‹-à¤…à¤ª à¤•à¥€ à¤¤à¤¾à¤°à¥€à¤–à¤¼ à¤•à¥‡ à¤¸à¤¾à¤¥ à¤¦à¤°à¥à¤œ à¤¹à¥‹à¤¤à¥€ à¤¹à¥ˆ",
+        "कोई रिकॉर्ड नहीं है",
+        "स्टाफ़ कभी-कभी फ़ॉलो-अप करता है, या बड़ी वाली इन्क्वायरी को मैं खुद पकड़ता हूँ",
+        "हर इन्क्वायरी फ़ॉलो-अप की तारीख़ के साथ दर्ज होती है",
       ],
     },
   ],
@@ -738,73 +738,73 @@ const hi: BilText = {
   categoryQuestions: {
     A: [
       {
-        question: "à¤à¤• à¤—à¥à¤°à¤¾à¤¹à¤• à¤«à¤¼à¥‹à¤¨ à¤•à¤°à¤•à¥‡ à¤‘à¤°à¥à¤¡à¤° à¤•à¤¾ à¤¸à¥à¤Ÿà¥‡à¤Ÿà¤¸ à¤ªà¥‚à¤›à¤¤à¤¾ à¤¹à¥ˆà¥¤ à¤‰à¤¸à¥‡ à¤¸à¤¹à¥€ à¤œà¤µà¤¾à¤¬ à¤¦à¥‡à¤¨à¥‡ à¤®à¥‡à¤‚ à¤†à¤ªà¤•à¥‹ à¤•à¤¿à¤¤à¤¨à¤¾ à¤¸à¤®à¤¯ à¤²à¤—à¤¤à¤¾ à¤¹à¥ˆ?",
+        question: "एक ग्राहक फ़ोन करके ऑर्डर का स्टेटस पूछता है। उसे सही जवाब देने में आपको कितना समय लगता है?",
         options: [
-          "à¤®à¥ˆà¤‚ à¤¯à¤¾à¤¦à¤¦à¤¾à¤¶à¥à¤¤ à¤¸à¥‡ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¬à¤¤à¤¾ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥‚à¤",
-          "à¤®à¥ˆà¤‚ à¤µà¤°à¥à¤•à¤°à¥‹à¤‚ à¤•à¥‹ à¤«à¤¼à¥‹à¤¨ à¤•à¤°à¤¤à¤¾ à¤¹à¥‚à¤, à¤°à¤œà¤¿à¤¸à¥à¤Ÿà¤° à¤”à¤° à¤¤à¥ˆà¤¯à¤¾à¤° à¤®à¤¾à¤² à¤•à¤¾ à¤²à¥‰à¤— à¤¦à¥‡à¤–à¤¤à¤¾ à¤¹à¥‚à¤",
-          "à¤®à¥ˆà¤‚ à¤ªà¥à¤°à¥‹à¤¡à¤•à¥à¤¶à¤¨ à¤¶à¥‡à¤¡à¥à¤¯à¥‚à¤² à¤¦à¥‡à¤–à¤¤à¤¾ à¤¹à¥‚à¤ â€” à¤¸à¥à¤Ÿà¥‡à¤Ÿà¤¸ à¤”à¤° à¤ªà¥‚à¤°à¤¾ à¤¹à¥‹à¤¨à¥‡ à¤•à¥€ à¤¸à¤‚à¤­à¤¾à¤µà¤¿à¤¤ à¤¤à¤¾à¤°à¥€à¤–à¤¼ à¤ªà¤¹à¤²à¥‡ à¤¸à¥‡ à¤¨à¤¿à¤•à¤²à¥€ à¤¹à¥à¤ˆ à¤¹à¥ˆ",
+          "मैं याददाश्त से अंदाज़ा बता देता हूँ",
+          "मैं वर्करों को फ़ोन करता हूँ, रजिस्टर और तैयार माल का लॉग देखता हूँ",
+          "मैं प्रोडक्शन शेड्यूल देखता हूँ — स्टेटस और पूरा होने की संभावित तारीख़ पहले से निकली हुई है",
         ],
       },
       {
-        question: "à¤ªà¤¿à¤›à¤²à¥‡ 3 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤ªà¥à¤°à¥‹à¤¡à¤•à¥à¤¶à¤¨ à¤”à¤° à¤°à¤¿à¤œà¥‡à¤•à¥à¤¶à¤¨ à¤ªà¥à¤°à¤¤à¤¿à¤¶à¤¤ â€” à¤•à¥à¤¯à¤¾ à¤†à¤ª à¤…à¤­à¥€ à¤¬à¤¤à¤¾ à¤¸à¤•à¤¤à¥‡ à¤¹à¥ˆà¤‚?",
+        question: "पिछले 3 महीने का प्रोडक्शन और रिजेक्शन प्रतिशत — क्या आप अभी बता सकते हैं?",
         options: [
-          "à¤•à¥‹à¤ˆ à¤¸à¤¹à¥€ à¤°à¤¿à¤•à¥‰à¤°à¥à¤¡ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ",
-          "à¤®à¥à¤à¥‡ à¤®à¥‹à¤Ÿà¤¾-à¤®à¥‹à¤Ÿà¤¾ à¤ªà¤¤à¤¾ à¤¹à¥ˆ, à¤¸à¤Ÿà¥€à¤• à¤¨à¤¹à¥€à¤‚",
-          "à¤¹à¤¾à¤ â€” à¤®à¥ˆà¤‚ à¤•à¤¿à¤¸à¥€ à¤¸à¥‡ à¤ªà¥‚à¤›à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤®à¥‡à¤‚ à¤¦à¥‡à¤– à¤²à¥‡à¤¤à¤¾ à¤¹à¥‚à¤",
+          "कोई सही रिकॉर्ड नहीं है",
+          "मुझे मोटा-मोटा पता है, सटीक नहीं",
+          "हाँ — मैं किसी से पूछे बिना रिपोर्ट में देख लेता हूँ",
         ],
       },
     ],
     B: [
       {
-        question: "à¤…à¤­à¥€ à¤†à¤ªà¤•à¥‡ à¤—à¥‹à¤¦à¤¾à¤® à¤®à¥‡à¤‚ à¤œà¥‹ à¤¸à¥à¤Ÿà¥‰à¤• à¤ªà¤¡à¤¼à¤¾ à¤¹à¥ˆ, à¤‰à¤¸à¤®à¥‡à¤‚ à¤¸à¥‡ à¤•à¤¿à¤¤à¤¨à¤¾ 6 à¤®à¤¹à¥€à¤¨à¥‡ à¤¸à¥‡ à¤¹à¤¿à¤²à¤¾ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ?",
+        question: "अभी आपके गोदाम में जो स्टॉक पड़ा है, उसमें से कितना 6 महीने से हिला नहीं है?",
         options: [
-          "à¤•à¥‹à¤ˆ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¨à¤¹à¥€à¤‚ â€” à¤–à¥à¤¦ à¤œà¤¾à¤•à¤° à¤¦à¥‡à¤–à¤¨à¤¾ à¤ªà¤¡à¤¼à¥‡à¤—à¤¾",
-          "à¤®à¥à¤à¥‡ à¤¯à¤¾à¤¦à¤¦à¤¾à¤¶à¥à¤¤ à¤¸à¥‡ à¤®à¥‹à¤Ÿà¤¾-à¤®à¥‹à¤Ÿà¤¾ à¤ªà¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤•à¥Œà¤¨-à¤¸à¥‡ à¤†à¤‡à¤Ÿà¤® à¤§à¥€à¤®à¥‡ à¤¬à¤¿à¤• à¤°à¤¹à¥‡ à¤¹à¥ˆà¤‚",
-          "à¤®à¥à¤à¥‡ à¤à¤œà¤¿à¤‚à¤— à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤®à¤¿à¤²à¤¤à¥€ à¤¹à¥ˆ â€” à¤®à¥à¤à¥‡ à¤ à¥€à¤•-à¤ à¥€à¤• à¤ªà¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤§à¥€à¤®à¥‡ à¤¬à¤¿à¤•à¤¨à¥‡ à¤µà¤¾à¤²à¥‡ à¤¸à¥à¤Ÿà¥‰à¤• à¤®à¥‡à¤‚ à¤•à¤¿à¤¤à¤¨à¥€ à¤°à¤•à¤® à¤«à¤à¤¸à¥€ à¤¹à¥ˆ",
+          "कोई अंदाज़ा नहीं — खुद जाकर देखना पड़ेगा",
+          "मुझे याददाश्त से मोटा-मोटा पता है कि कौन-से आइटम धीमे बिक रहे हैं",
+          "मुझे एजिंग रिपोर्ट मिलती है — मुझे ठीक-ठीक पता है कि धीमे बिकने वाले स्टॉक में कितनी रकम फँसी है",
         ],
       },
       {
-        question: "à¤…à¤­à¥€ à¤†à¤ªà¤•à¤¾ à¤•à¤¿à¤¤à¤¨à¤¾ à¤ªà¥ˆà¤¸à¤¾ à¤®à¤¾à¤°à¥à¤•à¥‡à¤Ÿ à¤®à¥‡à¤‚ à¤ªà¤¡à¤¼à¤¾ à¤¹à¥ˆ, à¤”à¤° à¤‰à¤¸à¤®à¥‡à¤‚ à¤¸à¥‡ à¤•à¤¿à¤¤à¤¨à¤¾ à¤†à¤ªà¤•à¥€ à¤•à¥à¤°à¥‡à¤¡à¤¿à¤Ÿ à¤¶à¤°à¥à¤¤à¥‹à¤‚ à¤¸à¥‡ à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾ à¤²à¥‡à¤Ÿ à¤¹à¥‹ à¤šà¥à¤•à¤¾ à¤¹à¥ˆ?",
+        question: "अभी आपका कितना पैसा मार्केट में पड़ा है, और उसमें से कितना आपकी क्रेडिट शर्तों से ज़्यादा लेट हो चुका है?",
         options: [
-          "à¤®à¥à¤à¥‡ à¤®à¥‹à¤Ÿà¤¾ à¤•à¥à¤² à¤†à¤à¤•à¤¡à¤¼à¤¾ à¤ªà¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤…à¤—à¤° à¤®à¥ˆà¤‚ à¤•à¤¹à¥‚à¤ à¤¤à¥‹ à¤®à¥‡à¤°à¤¾ à¤…à¤•à¤¾à¤‰à¤‚à¤Ÿà¥‡à¤‚à¤Ÿ à¤¬à¤¤à¤¾ à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤®à¥ˆà¤‚ à¤•à¤¿à¤¸à¥€ à¤¸à¥‡ à¤ªà¥‚à¤›à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤†à¤‰à¤Ÿà¤¸à¥à¤Ÿà¥ˆà¤‚à¤¡à¤¿à¤‚à¤— à¤”à¤° à¤à¤œà¤¿à¤‚à¤— à¤¦à¥‡à¤– à¤²à¥‡à¤¤à¤¾ à¤¹à¥‚à¤",
+          "मुझे मोटा कुल आँकड़ा पता है",
+          "अगर मैं कहूँ तो मेरा अकाउंटेंट बता सकता है",
+          "मैं किसी से पूछे बिना आउटस्टैंडिंग और एजिंग देख लेता हूँ",
         ],
       },
     ],
     C: [
       {
-        question: "à¤•à¤² à¤•à¤¿à¤¤à¤¨à¥‡ à¤²à¥‹à¤— à¤¶à¥‹à¤°à¥‚à¤® à¤®à¥‡à¤‚ à¤†à¤, à¤”à¤° à¤•à¤¿à¤¤à¤¨à¥‹à¤‚ à¤¨à¥‡ à¤–à¤°à¥€à¤¦à¤¾à¤°à¥€ à¤•à¥€?",
+        question: "कल कितने लोग शोरूम में आए, और कितनों ने खरीदारी की?",
         options: [
-          "à¤•à¥‹à¤ˆ à¤¸à¤¹à¥€ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¨à¤¹à¥€à¤‚ â€” à¤•à¥à¤› à¤¦à¤°à¥à¤œ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ",
-          "à¤®à¥‡à¤°à¥‡ à¤¦à¤¿à¤®à¤¾à¤—à¤¼ à¤®à¥‡à¤‚ à¤à¤• à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¹à¥ˆ",
-          "à¤¯à¤¹ à¤ à¥€à¤• à¤¸à¥‡ à¤Ÿà¥à¤°à¥ˆà¤• à¤¹à¥‹à¤¤à¤¾ à¤¹à¥ˆ, à¤”à¤° à¤®à¥à¤à¥‡ à¤à¤• à¤¸à¤¾à¤«à¤¼ à¤Ÿà¥à¤°à¥‡à¤‚à¤¡ à¤¦à¤¿à¤–à¤¤à¤¾ à¤¹à¥ˆ",
+          "कोई सही अंदाज़ा नहीं — कुछ दर्ज नहीं है",
+          "मेरे दिमाग़ में एक अंदाज़ा है",
+          "यह ठीक से ट्रैक होता है, और मुझे एक साफ़ ट्रेंड दिखता है",
         ],
       },
       {
-        question: "à¤•à¤² à¤à¤• à¤—à¥à¤°à¤¾à¤¹à¤• à¤¨à¥‡ à¤•à¥à¤› à¤®à¤¾à¤à¤—à¤¾ à¤œà¥‹ à¤†à¤ªà¤•à¥‡ à¤ªà¤¾à¤¸ à¤¸à¥à¤Ÿà¥‰à¤• à¤®à¥‡à¤‚ à¤¨à¤¹à¥€à¤‚ à¤¥à¤¾à¥¤ à¤¯à¤¹ à¤•à¤¹à¤¾à¤ à¤¦à¤°à¥à¤œ à¤¹à¥‹à¤¤à¤¾ à¤¹à¥ˆ?",
+        question: "कल एक ग्राहक ने कुछ माँगा जो आपके पास स्टॉक में नहीं था। यह कहाँ दर्ज होता है?",
         options: [
-          "à¤•à¤¹à¥€à¤‚ à¤¨à¤¹à¥€à¤‚ â€” à¤‰à¤¸à¥‡ à¤®à¤¨à¤¾ à¤•à¤° à¤¦à¤¿à¤¯à¤¾ à¤”à¤° à¤µà¤¹ à¤šà¤²à¤¾ à¤—à¤¯à¤¾",
-          "à¤…à¤—à¤° à¤à¤¸à¤¾ à¤¬à¤¾à¤°-à¤¬à¤¾à¤° à¤¹à¥‹ à¤¤à¥‹ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤®à¥à¤à¥‡ à¤œà¤¼à¥à¤¬à¤¾à¤¨à¥€ à¤¬à¤¤à¤¾ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤¬à¤¿à¤•à¥à¤°à¥€ à¤–à¥‹à¤¨à¥‡ à¤•à¥‡ à¤•à¤¾à¤°à¤£ à¤¦à¤°à¥à¤œ à¤¹à¥‹à¤¤à¥‡ à¤¹à¥ˆà¤‚ à¤”à¤° à¤®à¥ˆà¤‚ à¤‰à¤¨à¤•à¥€ à¤¸à¤®à¥€à¤•à¥à¤·à¤¾ à¤•à¤°à¤¤à¤¾ à¤¹à¥‚à¤",
+          "कहीं नहीं — उसे मना कर दिया और वह चला गया",
+          "अगर ऐसा बार-बार हो तो स्टाफ़ मुझे ज़ुबानी बता देता है",
+          "बिक्री खोने के कारण दर्ज होते हैं और मैं उनकी समीक्षा करता हूँ",
         ],
       },
     ],
     D: [
       {
-        question: "à¤†à¤ª 3 à¤¦à¤¿à¤¨ à¤•à¥‡ à¤²à¤¿à¤ à¤¦à¥à¤•à¤¾à¤¨ à¤¸à¥‡ à¤¦à¥‚à¤° à¤¹à¥ˆà¤‚à¥¤ à¤†à¤œ à¤•à¥€ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤”à¤° à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤•à¥€ à¤¹à¤¾à¤œà¤¼à¤¿à¤°à¥€ à¤•à¤¾ à¤ªà¤¤à¤¾ à¤†à¤ªà¤•à¥‹ à¤•à¥ˆà¤¸à¥‡ à¤šà¤²à¤¤à¤¾ à¤¹à¥ˆ?",
+        question: "आप 3 दिन के लिए दुकान से दूर हैं। आज की बिक्री और स्टाफ़ की हाज़िरी का पता आपको कैसे चलता है?",
         options: [
-          "à¤•à¥‹à¤ˆ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¨à¤¹à¥€à¤‚ â€” à¤­à¤°à¥‹à¤¸à¤¾ à¤•à¤°à¤¨à¤¾ à¤ªà¤¡à¤¼à¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤µà¥‡ à¤ à¥€à¤• à¤¸à¥‡ à¤•à¤¾à¤® à¤•à¤° à¤°à¤¹à¥‡ à¤¹à¥‹à¤‚à¤—à¥‡",
-          "à¤®à¥ˆà¤‚ à¤…à¤ªà¤¨à¥‡ à¤®à¥ˆà¤¨à¥‡à¤œà¤° à¤•à¥‹ à¤«à¤¼à¥‹à¤¨ à¤•à¤°à¤¤à¤¾ à¤¹à¥‚à¤ à¤”à¤° à¤µà¤¹ à¤¬à¤¤à¤¾ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤à¤• à¤¸à¤¹à¥€ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿà¤¿à¤‚à¤— à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤¹à¥ˆ â€” à¤®à¥à¤à¥‡ à¤­à¤°à¥‹à¤¸à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤®à¥‡à¤°à¥€ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤•à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤•à¥à¤› à¤­à¥€ à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤¸à¥‡ à¤¬à¤¾à¤¹à¤° à¤¨à¤¹à¥€à¤‚ à¤œà¤¾à¤¤à¤¾",
+          "कोई अंदाज़ा नहीं — भरोसा करना पड़ता है कि वे ठीक से काम कर रहे होंगे",
+          "मैं अपने मैनेजर को फ़ोन करता हूँ और वह बता देता है",
+          "एक सही रिपोर्टिंग सिस्टम है — मुझे भरोसा है कि मेरी जानकारी के बिना कुछ भी सिस्टम से बाहर नहीं जाता",
         ],
       },
       {
-        question: "à¤•à¤² à¤•à¥€ à¤•à¥à¤²à¥‹à¤œà¤¼à¤¿à¤‚à¤— â€” à¤•à¥ˆà¤¶, à¤‘à¤¨à¤²à¤¾à¤‡à¤¨, à¤”à¤° à¤œà¥‹ à¤…à¤¸à¤² à¤®à¥‡à¤‚ à¤¬à¤¿à¤•à¤¾à¥¤ à¤¯à¥‡ à¤¤à¥€à¤¨à¥‹à¤‚ à¤†à¤ªà¤¸ à¤®à¥‡à¤‚ à¤®à¤¿à¤²à¤¤à¥‡ à¤¹à¥ˆà¤‚, à¤¯à¤¹ à¤•à¥Œà¤¨ à¤œà¤¾à¤à¤šà¤¤à¤¾ à¤¹à¥ˆ, à¤”à¤° à¤…à¤—à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¤à¥‡ à¤¤à¥‹ à¤•à¥à¤¯à¤¾ à¤¹à¥‹à¤¤à¤¾ à¤¹à¥ˆ?",
+        question: "कल की क्लोज़िंग — कैश, ऑनलाइन, और जो असल में बिका। ये तीनों आपस में मिलते हैं, यह कौन जाँचता है, और अगर नहीं मिलते तो क्या होता है?",
         options: [
-          "à¤…à¤²à¤— à¤¸à¥‡ à¤•à¥‹à¤ˆ à¤¨à¤¹à¥€à¤‚ à¤œà¤¾à¤à¤šà¤¤à¤¾",
-          "à¤œà¤¬ à¤®à¥ˆà¤‚ à¤®à¥Œà¤œà¥‚à¤¦ à¤¹à¥‹à¤¤à¤¾ à¤¹à¥‚à¤, à¤¤à¤¬ à¤®à¥ˆà¤‚ à¤–à¥à¤¦ à¤œà¤¾à¤à¤šà¤¤à¤¾ à¤¹à¥‚à¤",
-          "à¤®à¥à¤à¥‡ à¤°à¥‹à¤œà¤¼à¤¾à¤¨à¤¾ à¤•à¤¾ à¤Ÿà¥ˆà¤²à¥€ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤®à¤¿à¤²à¤¤à¤¾ à¤¹à¥ˆ à¤”à¤° à¤•à¤¿à¤¸à¥€ à¤­à¥€ à¤•à¤®à¥€ à¤•à¥‹ à¤•à¤¾à¤°à¤£ à¤•à¥‡ à¤¸à¤¾à¤¥ à¤šà¤¿à¤¹à¥à¤¨à¤¿à¤¤ à¤•à¤¿à¤¯à¤¾ à¤œà¤¾à¤¤à¤¾ à¤¹à¥ˆ",
+          "अलग से कोई नहीं जाँचता",
+          "जब मैं मौजूद होता हूँ, तब मैं खुद जाँचता हूँ",
+          "मुझे रोज़ाना का टैली रिपोर्ट मिलता है और किसी भी कमी को कारण के साथ चिह्नित किया जाता है",
         ],
       },
     ],
@@ -813,87 +813,87 @@ const hi: BilText = {
   answerClauses: {
     operationalEfficiency: [
       [
-        "à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤®à¥‡à¤‚ à¤¤à¤¬ à¤¤à¤• à¤•à¥à¤› à¤¨à¤¹à¥€à¤‚ à¤¹à¤¿à¤²à¤¤à¤¾ à¤œà¤¬ à¤¤à¤• à¤†à¤ª à¤–à¥à¤¦ à¤‰à¤¸à¥‡ à¤¨ à¤¦à¥‡à¤–à¥‡à¤‚",
-        "à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤•à¥à¤› à¤•à¤¾à¤® à¤¤à¥‹ à¤¹à¥‹ à¤œà¤¾à¤¤à¤¾ à¤¹à¥ˆ, à¤²à¥‡à¤•à¤¿à¤¨ à¤†à¤ªà¤•à¥€ à¤—à¥ˆà¤°à¤¹à¤¾à¤œà¤¼à¤¿à¤°à¥€ à¤®à¥‡à¤‚ à¤¸à¤®à¤¸à¥à¤¯à¤¾à¤à¤ à¤¤à¥‡à¤œà¤¼à¥€ à¤¸à¥‡ à¤œà¤®à¤¾ à¤¹à¥‹ à¤œà¤¾à¤¤à¥€ à¤¹à¥ˆà¤‚",
-        "à¤†à¤ªà¤•à¥€ à¤Ÿà¥€à¤® à¤”à¤° à¤ªà¥à¤°à¥‹à¤¸à¥€à¤œà¤° à¤¸à¤¬ à¤•à¥à¤› à¤¬à¤¿à¤¨à¤¾ à¤°à¥à¤•à¤¾à¤µà¤Ÿ à¤šà¤²à¤¾à¤¤à¥‡ à¤¹à¥ˆà¤‚, à¤”à¤° à¤¬à¤¸ à¤•à¤­à¥€-à¤•à¤­à¤¾à¤° à¤•à¥‹à¤ˆ à¤…à¤ªà¤µà¤¾à¤¦ à¤†à¤ª à¤¤à¤• à¤ªà¤¹à¥à¤à¤šà¤¤à¤¾ à¤¹à¥ˆ",
+        "आपके बिज़नेस में तब तक कुछ नहीं हिलता जब तक आप खुद उसे न देखें",
+        "आपके बिना कुछ काम तो हो जाता है, लेकिन आपकी गैरहाज़िरी में समस्याएँ तेज़ी से जमा हो जाती हैं",
+        "आपकी टीम और प्रोसीजर सब कुछ बिना रुकावट चलाते हैं, और बस कभी-कभार कोई अपवाद आप तक पहुँचता है",
       ],
       [
-        "à¤†à¤ªà¤•à¥‹ à¤–à¥à¤¦ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤•à¥€ à¤—à¤²à¤¤à¤¿à¤¯à¤¾à¤ à¤ªà¤•à¤¡à¤¼à¤¨à¥€ à¤”à¤° à¤¸à¥à¤§à¤°à¤µà¤¾à¤¨à¥€ à¤ªà¤¡à¤¼à¤¤à¥€ à¤¹à¥ˆà¤‚",
-        "à¤†à¤ª à¤®à¤¾à¤¨ à¤²à¥‡à¤¤à¥‡ à¤¹à¥ˆà¤‚ à¤•à¤¿ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤µà¤¹à¥€ à¤•à¤°à¥‡à¤—à¤¾ à¤œà¥‹ à¤†à¤ªà¤¨à¥‡ à¤¸à¤¿à¤–à¤¾à¤¯à¤¾ à¤¹à¥ˆ, à¤”à¤° à¤ªà¤¤à¤¾ à¤¤à¤­à¥€ à¤šà¤²à¤¤à¤¾ à¤¹à¥ˆ à¤œà¤¬ à¤•à¥à¤› à¤—à¤¡à¤¼à¤¬à¤¡à¤¼ à¤¹à¥‹ à¤œà¤¾à¤¤à¥€ à¤¹à¥ˆ",
-        "à¤†à¤ªà¤•à¥‹ à¤°à¥‹à¤œà¤¼ à¤•à¤¿à¤¸à¥€ à¤®à¥ˆà¤¨à¥‡à¤œà¤° à¤¯à¤¾ à¤°à¤¿à¤•à¥‰à¤°à¥à¤¡ à¤¸à¥‡ à¤à¤• à¤¸à¤¾à¤°à¤¾à¤‚à¤¶ à¤®à¤¿à¤²à¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤•à¥à¤¯à¤¾ à¤—à¤¡à¤¼à¤¬à¤¡à¤¼ à¤¹à¥à¤ˆ",
+        "आपको खुद स्टाफ़ की गलतियाँ पकड़नी और सुधरवानी पड़ती हैं",
+        "आप मान लेते हैं कि स्टाफ़ वही करेगा जो आपने सिखाया है, और पता तभी चलता है जब कुछ गड़बड़ हो जाती है",
+        "आपको रोज़ किसी मैनेजर या रिकॉर्ड से एक सारांश मिलता है कि क्या गड़बड़ हुई",
       ],
     ],
     humanCapital: [
       [
-        "à¤¨à¤ à¤²à¥‹à¤— à¤œà¤¼à¥à¤¯à¤¾à¤¦à¤¾à¤¤à¤° à¤•à¤¾à¤® à¤•à¤°à¤¤à¥‡-à¤•à¤°à¤¤à¥‡ à¤–à¥à¤¦ à¤¹à¥€ à¤¸à¥€à¤–à¤¤à¥‡ à¤¹à¥ˆà¤‚",
-        "à¤¹à¤° à¤¨à¤ à¤•à¤°à¥à¤®à¤šà¤¾à¤°à¥€ à¤•à¥‹ à¤†à¤ª à¤–à¥à¤¦ à¤Ÿà¥à¤°à¥‡à¤¨à¤¿à¤‚à¤— à¤¦à¥‡à¤¤à¥‡ à¤¹à¥ˆà¤‚",
-        "à¤Ÿà¥à¤°à¥‡à¤¨à¤¿à¤‚à¤— à¤®à¤Ÿà¥€à¤°à¤¿à¤¯à¤² à¤”à¤° à¤ªà¥à¤°à¥‹à¤—à¥à¤°à¥‡à¤¸ à¤Ÿà¥à¤°à¥ˆà¤•à¤¿à¤‚à¤— à¤•à¥€ à¤µà¤œà¤¹ à¤¸à¥‡ à¤‘à¤¨à¤¬à¥‹à¤°à¥à¤¡à¤¿à¤‚à¤— à¤†à¤ªà¤•à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤­à¥€ à¤šà¤²à¤¤à¥€ à¤¹à¥ˆ",
+        "नए लोग ज़्यादातर काम करते-करते खुद ही सीखते हैं",
+        "हर नए कर्मचारी को आप खुद ट्रेनिंग देते हैं",
+        "ट्रेनिंग मटीरियल और प्रोग्रेस ट्रैकिंग की वजह से ऑनबोर्डिंग आपके बिना भी चलती है",
       ],
       [
-        "à¤…à¤—à¤° à¤†à¤ªà¤•à¤¾ à¤¸à¤¬à¤¸à¥‡ à¤…à¤¨à¥à¤­à¤µà¥€ à¤µà¥à¤¯à¤•à¥à¤¤à¤¿ à¤šà¤²à¤¾ à¤œà¤¾à¤, à¤¤à¥‹ à¤¬à¤¿à¤œà¤¼à¤¨à¥‡à¤¸ à¤•à¤¾ à¤¬à¤¹à¥à¤¤ à¤¬à¤¡à¤¼à¤¾ à¤¹à¤¿à¤¸à¥à¤¸à¤¾ à¤‰à¤¸à¤•à¥‡ à¤¸à¤¾à¤¥ à¤šà¤²à¤¾ à¤œà¤¾à¤à¤—à¤¾",
-        "à¤…à¤—à¤° à¤µà¤¹ à¤šà¤²à¤¾ à¤œà¤¾à¤ à¤¤à¥‹ à¤†à¤ªà¤•à¥‹ à¤•à¥à¤› à¤®à¤¹à¥€à¤¨à¥‹à¤‚ à¤¤à¤• à¤‰à¤¸à¤•à¤¾ à¤•à¤¾à¤® à¤–à¥à¤¦ à¤¸à¤‚à¤­à¤¾à¤²à¤¨à¤¾ à¤ªà¤¡à¤¼à¥‡à¤—à¤¾",
-        "à¤‰à¤¸à¤•à¤¾ à¤•à¤¾à¤® à¤²à¤¿à¤–à¤¿à¤¤ à¤°à¥‚à¤ª à¤®à¥‡à¤‚ à¤¦à¤°à¥à¤œ à¤¹à¥ˆ, à¤‡à¤¸à¤²à¤¿à¤ à¤•à¤¿à¤¸à¥€ à¤•à¥‹ à¤¤à¤¯ à¤¸à¤®à¤¯-à¤¸à¥€à¤®à¤¾ à¤®à¥‡à¤‚ à¤‰à¤¸ à¤•à¤¾à¤® à¤•à¥‡ à¤²à¤¿à¤ à¤¤à¥ˆà¤¯à¤¾à¤° à¤•à¤¿à¤¯à¤¾ à¤œà¤¾ à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆ",
+        "अगर आपका सबसे अनुभवी व्यक्ति चला जाए, तो बिज़नेस का बहुत बड़ा हिस्सा उसके साथ चला जाएगा",
+        "अगर वह चला जाए तो आपको कुछ महीनों तक उसका काम खुद संभालना पड़ेगा",
+        "उसका काम लिखित रूप में दर्ज है, इसलिए किसी को तय समय-सीमा में उस काम के लिए तैयार किया जा सकता है",
       ],
     ],
     customerAcquisition: [
       [
-        "à¤†à¤ª à¤…à¤ªà¤¨à¥‡ à¤ªà¤¿à¤›à¤²à¥‡ 10 à¤—à¥à¤°à¤¾à¤¹à¤•à¥‹à¤‚ à¤•à¥€ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤ªà¤•à¥à¤•à¥€ à¤•à¤°à¤¨à¥‡ à¤®à¥‡à¤‚ à¤–à¥à¤¦ à¤¶à¤¾à¤®à¤¿à¤² à¤¥à¥‡",
-        "à¤†à¤ªà¤•à¥€ à¤¸à¥‡à¤²à¥à¤¸ à¤Ÿà¥€à¤® à¤¨à¥‡ à¤‰à¤¨à¥à¤¹à¥‡à¤‚ à¤à¤• à¤†à¤œà¤¼à¤®à¤¾à¤ à¤¹à¥à¤ à¤ªà¤¿à¤š à¤¯à¤¾ à¤¸à¥à¤•à¥à¤°à¤¿à¤ªà¥à¤Ÿ à¤¸à¥‡ à¤œà¥‹à¤¡à¤¼à¤¾",
-        "à¤µà¤¿à¤œà¥à¤žà¤¾à¤ªà¤¨ à¤”à¤° à¤®à¤¾à¤°à¥à¤•à¥‡à¤Ÿà¤¿à¤‚à¤— à¤–à¥à¤¦ à¤¹à¥€ à¤‰à¤¨à¥à¤¹à¥‡à¤‚ à¤²à¥‡ à¤†à¤ˆ",
+        "आप अपने पिछले 10 ग्राहकों की बिक्री पक्की करने में खुद शामिल थे",
+        "आपकी सेल्स टीम ने उन्हें एक आज़माए हुए पिच या स्क्रिप्ट से जोड़ा",
+        "विज्ञापन और मार्केटिंग खुद ही उन्हें ले आई",
       ],
       [
-        "à¤œà¤¿à¤¨ à¤‡à¤¨à¥à¤•à¥à¤µà¤¾à¤¯à¤°à¥€ à¤¸à¥‡ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤¨à¤¹à¥€à¤‚ à¤¹à¥à¤ˆ, à¤‰à¤¨à¤•à¤¾ à¤•à¥‹à¤ˆ à¤°à¤¿à¤•à¥‰à¤°à¥à¤¡ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ",
-        "à¤‡à¤¨à¥à¤•à¥à¤µà¤¾à¤¯à¤°à¥€ à¤•à¤¾ à¤«à¤¼à¥‰à¤²à¥‹-à¤…à¤ª à¤•à¤­à¥€-à¤•à¤­à¥€ à¤¹à¥‹à¤¤à¤¾ à¤¹à¥ˆ, à¤¯à¤¾ à¤†à¤ª à¤¬à¤¡à¤¼à¥€ à¤µà¤¾à¤²à¥€ à¤•à¥‹ à¤–à¥à¤¦ à¤ªà¤•à¤¡à¤¼à¤¤à¥‡ à¤¹à¥ˆà¤‚",
-        "à¤¹à¤° à¤‡à¤¨à¥à¤•à¥à¤µà¤¾à¤¯à¤°à¥€ à¤«à¤¼à¥‰à¤²à¥‹-à¤…à¤ª à¤•à¥€ à¤¤à¤¾à¤°à¥€à¤–à¤¼ à¤•à¥‡ à¤¸à¤¾à¤¥ à¤¦à¤°à¥à¤œ à¤¹à¥‹à¤¤à¥€ à¤¹à¥ˆ",
+        "जिन इन्क्वायरी से बिक्री नहीं हुई, उनका कोई रिकॉर्ड नहीं है",
+        "इन्क्वायरी का फ़ॉलो-अप कभी-कभी होता है, या आप बड़ी वाली को खुद पकड़ते हैं",
+        "हर इन्क्वायरी फ़ॉलो-अप की तारीख़ के साथ दर्ज होती है",
       ],
     ],
     dataVisibility: {
       A: [
         [
-          "à¤‘à¤°à¥à¤¡à¤° à¤•à¥‡ à¤¸à¥à¤Ÿà¥‡à¤Ÿà¤¸ à¤•à¥‡ à¤²à¤¿à¤ à¤†à¤ª à¤—à¥à¤°à¤¾à¤¹à¤• à¤•à¥‹ à¤¸à¤¿à¤°à¥à¤«à¤¼ à¤¯à¤¾à¤¦à¤¦à¤¾à¤¶à¥à¤¤ à¤¸à¥‡ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¬à¤¤à¤¾ à¤¸à¤•à¤¤à¥‡ à¤¹à¥ˆà¤‚",
-          "à¤‘à¤°à¥à¤¡à¤° à¤•à¤¾ à¤¸à¥à¤Ÿà¥‡à¤Ÿà¤¸ à¤œà¤¾à¤¨à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤µà¤°à¥à¤•à¤°à¥‹à¤‚ à¤•à¥‹ à¤«à¤¼à¥‹à¤¨ à¤•à¤°à¤¨à¤¾ à¤”à¤° à¤°à¤œà¤¿à¤¸à¥à¤Ÿà¤° à¤¦à¥‡à¤–à¤¨à¤¾ à¤ªà¤¡à¤¼à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤†à¤ªà¤•à¤¾ à¤ªà¥à¤°à¥‹à¤¡à¤•à¥à¤¶à¤¨ à¤¶à¥‡à¤¡à¥à¤¯à¥‚à¤² à¤¸à¥à¤Ÿà¥‡à¤Ÿà¤¸ à¤”à¤° à¤ªà¥‚à¤°à¤¾ à¤¹à¥‹à¤¨à¥‡ à¤•à¥€ à¤¸à¤‚à¤­à¤¾à¤µà¤¿à¤¤ à¤¤à¤¾à¤°à¥€à¤–à¤¼ à¤ªà¤¹à¤²à¥‡ à¤¸à¥‡ à¤¦à¤¿à¤–à¤¾à¤¤à¤¾ à¤¹à¥ˆ",
+          "ऑर्डर के स्टेटस के लिए आप ग्राहक को सिर्फ़ याददाश्त से अंदाज़ा बता सकते हैं",
+          "ऑर्डर का स्टेटस जानने के लिए वर्करों को फ़ोन करना और रजिस्टर देखना पड़ता है",
+          "आपका प्रोडक्शन शेड्यूल स्टेटस और पूरा होने की संभावित तारीख़ पहले से दिखाता है",
         ],
         [
-          "à¤ªà¥à¤°à¥‹à¤¡à¤•à¥à¤¶à¤¨ à¤”à¤° à¤°à¤¿à¤œà¥‡à¤•à¥à¤¶à¤¨ à¤ªà¥à¤°à¤¤à¤¿à¤¶à¤¤ à¤•à¤¾ à¤•à¥‹à¤ˆ à¤¸à¤¹à¥€ à¤°à¤¿à¤•à¥‰à¤°à¥à¤¡ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ",
-          "à¤†à¤ªà¤•à¥‹ à¤ªà¥à¤°à¥‹à¤¡à¤•à¥à¤¶à¤¨ à¤”à¤° à¤°à¤¿à¤œà¥‡à¤•à¥à¤¶à¤¨ à¤•à¥‡ à¤†à¤à¤•à¤¡à¤¼à¥‡ à¤¸à¤¿à¤°à¥à¤«à¤¼ à¤®à¥‹à¤Ÿà¥‡ à¤¤à¥Œà¤° à¤ªà¤° à¤ªà¤¤à¤¾ à¤¹à¥ˆà¤‚",
-          "à¤†à¤ª à¤•à¤¿à¤¸à¥€ à¤¸à¥‡ à¤ªà¥‚à¤›à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤‡à¤¸à¥‡ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤®à¥‡à¤‚ à¤¦à¥‡à¤– à¤²à¥‡à¤¤à¥‡ à¤¹à¥ˆà¤‚",
+          "प्रोडक्शन और रिजेक्शन प्रतिशत का कोई सही रिकॉर्ड नहीं है",
+          "आपको प्रोडक्शन और रिजेक्शन के आँकड़े सिर्फ़ मोटे तौर पर पता हैं",
+          "आप किसी से पूछे बिना इसे रिपोर्ट में देख लेते हैं",
         ],
       ],
       B: [
         [
-          "6 à¤®à¤¹à¥€à¤¨à¥‡ à¤¸à¥‡ à¤¨ à¤¹à¤¿à¤²à¥‡ à¤¸à¥à¤Ÿà¥‰à¤• à¤•à¤¾ à¤ªà¤¤à¤¾ à¤²à¤—à¤¾à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤†à¤ªà¤•à¥‹ à¤–à¥à¤¦ à¤œà¤¾à¤•à¤° à¤¦à¥‡à¤–à¤¨à¤¾ à¤ªà¤¡à¤¼à¥‡à¤—à¤¾",
-          "à¤†à¤ªà¤•à¥‹ à¤¯à¤¾à¤¦à¤¦à¤¾à¤¶à¥à¤¤ à¤¸à¥‡ à¤¬à¤¸ à¤®à¥‹à¤Ÿà¤¾-à¤®à¥‹à¤Ÿà¤¾ à¤ªà¤¤à¤¾ à¤¹à¥ˆ à¤•à¤¿ à¤•à¥Œà¤¨-à¤¸à¥‡ à¤†à¤‡à¤Ÿà¤® à¤§à¥€à¤®à¥‡ à¤¬à¤¿à¤• à¤°à¤¹à¥‡ à¤¹à¥ˆà¤‚",
-          "à¤à¤œà¤¿à¤‚à¤— à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤†à¤ªà¤•à¥‹ à¤ à¥€à¤•-à¤ à¥€à¤• à¤¦à¤¿à¤–à¤¾à¤¤à¥€ à¤¹à¥ˆ à¤•à¤¿ à¤§à¥€à¤®à¥‡ à¤¬à¤¿à¤•à¤¨à¥‡ à¤µà¤¾à¤²à¥‡ à¤¸à¥à¤Ÿà¥‰à¤• à¤®à¥‡à¤‚ à¤•à¤¿à¤¤à¤¨à¥€ à¤°à¤•à¤® à¤«à¤à¤¸à¥€ à¤¹à¥ˆ",
+          "6 महीने से न हिले स्टॉक का पता लगाने के लिए आपको खुद जाकर देखना पड़ेगा",
+          "आपको याददाश्त से बस मोटा-मोटा पता है कि कौन-से आइटम धीमे बिक रहे हैं",
+          "एजिंग रिपोर्ट आपको ठीक-ठीक दिखाती है कि धीमे बिकने वाले स्टॉक में कितनी रकम फँसी है",
         ],
         [
-          "à¤®à¤¾à¤°à¥à¤•à¥‡à¤Ÿ à¤®à¥‡à¤‚ à¤ªà¤¡à¤¼à¥‡ à¤ªà¥ˆà¤¸à¥‡ à¤•à¤¾ à¤†à¤ªà¤•à¥‹ à¤¸à¤¿à¤°à¥à¤«à¤¼ à¤®à¥‹à¤Ÿà¤¾ à¤•à¥à¤² à¤†à¤à¤•à¤¡à¤¼à¤¾ à¤ªà¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤…à¤—à¤° à¤†à¤ª à¤ªà¥‚à¤›à¥‡à¤‚ à¤¤à¥‹ à¤†à¤ªà¤•à¤¾ à¤…à¤•à¤¾à¤‰à¤‚à¤Ÿà¥‡à¤‚à¤Ÿ à¤¬à¤•à¤¾à¤¯à¤¾ à¤°à¤•à¤® à¤¬à¤¤à¤¾ à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤†à¤ª à¤•à¤¿à¤¸à¥€ à¤¸à¥‡ à¤ªà¥‚à¤›à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤†à¤‰à¤Ÿà¤¸à¥à¤Ÿà¥ˆà¤‚à¤¡à¤¿à¤‚à¤— à¤”à¤° à¤à¤œà¤¿à¤‚à¤— à¤¦à¥‹à¤¨à¥‹à¤‚ à¤¦à¥‡à¤– à¤²à¥‡à¤¤à¥‡ à¤¹à¥ˆà¤‚",
+          "मार्केट में पड़े पैसे का आपको सिर्फ़ मोटा कुल आँकड़ा पता है",
+          "अगर आप पूछें तो आपका अकाउंटेंट बकाया रकम बता सकता है",
+          "आप किसी से पूछे बिना आउटस्टैंडिंग और एजिंग दोनों देख लेते हैं",
         ],
       ],
       C: [
         [
-          "à¤•à¤² à¤•à¤¿à¤¤à¤¨à¥‡ à¤²à¥‹à¤— à¤†à¤ à¤¯à¤¾ à¤•à¤¿à¤¤à¤¨à¥‹à¤‚ à¤¨à¥‡ à¤–à¤°à¥€à¤¦à¤¾, à¤‡à¤¸à¤•à¤¾ à¤†à¤ªà¤•à¥‹ à¤•à¥‹à¤ˆ à¤¸à¤¹à¥€ à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ",
-          "à¤†à¤ªà¤•à¥‡ à¤ªà¤¾à¤¸ à¤†à¤¨à¥‡ à¤µà¤¾à¤²à¥‡ à¤—à¥à¤°à¤¾à¤¹à¤•à¥‹à¤‚ à¤”à¤° à¤¬à¤¿à¤•à¥à¤°à¥€ à¤•à¤¾ à¤¬à¤¸ à¤à¤• à¤…à¤‚à¤¦à¤¾à¤œà¤¼à¤¾ à¤¹à¥ˆ",
-          "à¤†à¤¨à¥‡ à¤µà¤¾à¤²à¥‡ à¤—à¥à¤°à¤¾à¤¹à¤• à¤”à¤° à¤¬à¤¿à¤•à¥à¤°à¥€ à¤ à¥€à¤• à¤¸à¥‡ à¤Ÿà¥à¤°à¥ˆà¤• à¤¹à¥‹à¤¤à¥‡ à¤¹à¥ˆà¤‚, à¤”à¤° à¤†à¤ªà¤•à¥‹ à¤à¤• à¤¸à¤¾à¤«à¤¼ à¤Ÿà¥à¤°à¥‡à¤‚à¤¡ à¤¦à¤¿à¤–à¤¤à¤¾ à¤¹à¥ˆ",
+          "कल कितने लोग आए या कितनों ने खरीदा, इसका आपको कोई सही अंदाज़ा नहीं है",
+          "आपके पास आने वाले ग्राहकों और बिक्री का बस एक अंदाज़ा है",
+          "आने वाले ग्राहक और बिक्री ठीक से ट्रैक होते हैं, और आपको एक साफ़ ट्रेंड दिखता है",
         ],
         [
-          "à¤¸à¥à¤Ÿà¥‰à¤• à¤¨ à¤¹à¥‹à¤¨à¥‡ à¤¸à¥‡ à¤–à¥‹à¤ˆ à¤¹à¥à¤ˆ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤•à¤¹à¥€à¤‚ à¤¦à¤°à¥à¤œ à¤¨à¤¹à¥€à¤‚ à¤¹à¥‹à¤¤à¥€",
-          "à¤…à¤—à¤° à¤à¤¸à¤¾ à¤¬à¤¾à¤°-à¤¬à¤¾à¤° à¤¹à¥‹ à¤¤à¥‹ à¤¸à¥à¤Ÿà¤¾à¤«à¤¼ à¤†à¤ªà¤•à¥‹ à¤œà¤¼à¥à¤¬à¤¾à¤¨à¥€ à¤¬à¤¤à¤¾ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤¬à¤¿à¤•à¥à¤°à¥€ à¤–à¥‹à¤¨à¥‡ à¤•à¥‡ à¤•à¤¾à¤°à¤£ à¤¦à¤°à¥à¤œ à¤¹à¥‹à¤¤à¥‡ à¤¹à¥ˆà¤‚ à¤”à¤° à¤†à¤ª à¤‰à¤¨à¤•à¥€ à¤¸à¤®à¥€à¤•à¥à¤·à¤¾ à¤•à¤°à¤¤à¥‡ à¤¹à¥ˆà¤‚",
+          "स्टॉक न होने से खोई हुई बिक्री कहीं दर्ज नहीं होती",
+          "अगर ऐसा बार-बार हो तो स्टाफ़ आपको ज़ुबानी बता देता है",
+          "बिक्री खोने के कारण दर्ज होते हैं और आप उनकी समीक्षा करते हैं",
         ],
       ],
       D: [
         [
-          "à¤…à¤—à¤° à¤†à¤ª à¤¦à¥‚à¤° à¤¹à¥‹à¤‚, à¤¤à¥‹ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤”à¤° à¤¹à¤¾à¤œà¤¼à¤¿à¤°à¥€ à¤œà¤¾à¤¨à¤¨à¥‡ à¤•à¥‡ à¤²à¤¿à¤ à¤†à¤ªà¤•à¥‹ à¤­à¤°à¥‹à¤¸à¥‡ à¤ªà¤° à¤°à¤¹à¤¨à¤¾ à¤ªà¤¡à¤¼à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤†à¤ªà¤•à¤¾ à¤®à¥ˆà¤¨à¥‡à¤œà¤° à¤«à¤¼à¥‹à¤¨ à¤•à¤°à¤•à¥‡ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤”à¤° à¤¹à¤¾à¤œà¤¼à¤¿à¤°à¥€ à¤¬à¤¤à¤¾ à¤¦à¥‡à¤¤à¤¾ à¤¹à¥ˆ",
-          "à¤à¤• à¤¸à¤¹à¥€ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿà¤¿à¤‚à¤— à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤¹à¥ˆ, à¤‡à¤¸à¤²à¤¿à¤ à¤†à¤ªà¤•à¥€ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤•à¥‡ à¤¬à¤¿à¤¨à¤¾ à¤•à¥à¤› à¤­à¥€ à¤¸à¤¿à¤¸à¥à¤Ÿà¤® à¤¸à¥‡ à¤¬à¤¾à¤¹à¤° à¤¨à¤¹à¥€à¤‚ à¤œà¤¾à¤¤à¤¾",
+          "अगर आप दूर हों, तो बिक्री और हाज़िरी जानने के लिए आपको भरोसे पर रहना पड़ता है",
+          "आपका मैनेजर फ़ोन करके बिक्री और हाज़िरी बता देता है",
+          "एक सही रिपोर्टिंग सिस्टम है, इसलिए आपकी जानकारी के बिना कुछ भी सिस्टम से बाहर नहीं जाता",
         ],
         [
-          "à¤•à¥ˆà¤¶, à¤‘à¤¨à¤²à¤¾à¤‡à¤¨ à¤”à¤° à¤…à¤¸à¤²à¥€ à¤¬à¤¿à¤•à¥à¤°à¥€ à¤†à¤ªà¤¸ à¤®à¥‡à¤‚ à¤®à¤¿à¤²à¤¤à¥‡ à¤¹à¥ˆà¤‚ à¤¯à¤¾ à¤¨à¤¹à¥€à¤‚, à¤¯à¤¹ à¤•à¥‹à¤ˆ à¤…à¤²à¤— à¤¸à¥‡ à¤¨à¤¹à¥€à¤‚ à¤œà¤¾à¤à¤šà¤¤à¤¾",
-          "à¤œà¤¬ à¤†à¤ª à¤®à¥Œà¤œà¥‚à¤¦ à¤¹à¥‹à¤¤à¥‡ à¤¹à¥ˆà¤‚, à¤¤à¤¬ à¤†à¤ª à¤–à¥à¤¦ à¤œà¤¾à¤à¤šà¤¤à¥‡ à¤¹à¥ˆà¤‚",
-          "à¤†à¤ªà¤•à¥‹ à¤°à¥‹à¤œà¤¼à¤¾à¤¨à¤¾ à¤•à¤¾ à¤Ÿà¥ˆà¤²à¥€ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ à¤®à¤¿à¤²à¤¤à¤¾ à¤¹à¥ˆ, à¤”à¤° à¤•à¤¿à¤¸à¥€ à¤­à¥€ à¤•à¤®à¥€ à¤•à¥‹ à¤•à¤¾à¤°à¤£ à¤•à¥‡ à¤¸à¤¾à¤¥ à¤šà¤¿à¤¹à¥à¤¨à¤¿à¤¤ à¤•à¤¿à¤¯à¤¾ à¤œà¤¾à¤¤à¤¾ à¤¹à¥ˆ",
+          "कैश, ऑनलाइन और असली बिक्री आपस में मिलते हैं या नहीं, यह कोई अलग से नहीं जाँचता",
+          "जब आप मौजूद होते हैं, तब आप खुद जाँचते हैं",
+          "आपको रोज़ाना का टैली रिपोर्ट मिलता है, और किसी भी कमी को कारण के साथ चिह्नित किया जाता है",
         ],
       ],
     },
