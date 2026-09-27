@@ -1,0 +1,1833 @@
+﻿diff --git a/GOOGLE_SHEETS_SOP.md b/GOOGLE_SHEETS_SOP.md
+index ebf301e..3f7f6ea 100644
+--- a/GOOGLE_SHEETS_SOP.md
++++ b/GOOGLE_SHEETS_SOP.md
+@@ -13,7 +13,7 @@ This Standard Operating Procedure (SOP) defines the structure, column definition
+ | Key | Value (Example) | What it controls (Description) |
+ | :--- | :--- | :--- |
+ | `pricing_amount` | `2499` | The numeric checkout price shown on the landing page. The site automatically prefixes `Γé╣` if you don't include it (e.g. `2499` ΓåÆ Γé╣2,499). |
+-| `owner_photo_url` | `/raghav.jpg` | The image path or external URL for Raghav's profile photo. |
++| `owner_photo_url` | `/raghav.webp` | The image path or external URL for Raghav's profile photo. |
+ 
+ ---
+ 
+diff --git a/GOOGLE_SHEET_SETUP.md b/GOOGLE_SHEET_SETUP.md
+index 7c89e49..83f4386 100644
+--- a/GOOGLE_SHEET_SETUP.md
++++ b/GOOGLE_SHEET_SETUP.md
+@@ -31,7 +31,7 @@ Acts as a key-value store for global configurations.
+ * **Headers**: `Key`, `Value`
+ * **Purpose**:
+   * `Key`: The variable name. The website only reads `pricing_amount` and `owner_photo_url`.
+-  * `Value`: The actual value (e.g. `2499`, `/raghav.jpg`).
++  * `Value`: The actual value (e.g. `2499`, `/raghav.webp`).
+ 
+ ### 2. `FAQs` Tab
+ Stores dynamic questions and answers shown on the landing page FAQ section.
+@@ -106,7 +106,7 @@ Copy and paste this sample row data into your spreadsheet to verify the connecti
+ | Key | Value |
+ | :--- | :--- |
+ | `pricing_amount` | `2499` |
+-| `owner_photo_url` | `/raghav.jpg` |
++| `owner_photo_url` | `/raghav.webp` |
+ 
+ ### `FAQs` Tab Sample
+ | Question | Answer |
+diff --git a/app/bml/bml-card.ts b/app/bml/bml-card.ts
+index 33c5da7..6335dd5 100644
+--- a/app/bml/bml-card.ts
++++ b/app/bml/bml-card.ts
+@@ -79,7 +79,7 @@ export function downloadResultCard(data: CardData): void {
+   ctx.fillStyle = "#9A9A93";
+   ctx.font = "bold 14px Inter, sans-serif";
+   ctx.textAlign = "right";
+-  ctx.fillText("BML DIAGNOSTIC", 660, 90);
++  ctx.fillText("BIL DIAGNOSTIC", 660, 90);
+ 
+   // Divider Line
+   ctx.strokeStyle = currentTheme.border;
+@@ -290,7 +290,7 @@ export function downloadResultCard(data: CardData): void {
+ 
+   // Download flow
+   const link = document.createElement("a");
+-  link.download = `${exportName.trim().replace(/\s+/g, "_")}_BML_Score.png`;
++  link.download = `${exportName.trim().replace(/\s+/g, "_")}_BIL_Score.png`;
+   link.href = canvas.toDataURL("image/png");
+   link.click();
+ }
+diff --git a/app/bml/bml-client.tsx b/app/bml/bml-client.tsx
+index 654a951..f762dd9 100644
+--- a/app/bml/bml-client.tsx
++++ b/app/bml/bml-client.tsx
+@@ -243,7 +243,7 @@ export default function BMLCalculator() {
+               <div className="relative w-full rounded-2xl overflow-hidden border border-[#2b3040]/10 shadow-md bg-white">
+                 <div className="relative h-48 w-full bg-[#141414]">
+                   <Image
+-                    src="/factory_banner.png"
++                    src="/factory_banner.webp"
+                     alt="Factory Banner"
+                     fill
+                     sizes="(max-width: 768px) 100vw, 720px"
+@@ -280,10 +280,10 @@ export default function BMLCalculator() {
+               <div className="space-y-6 pt-6">
+                 <div className="text-center space-y-2">
+                   <h1 className="text-3xl md:text-4xl font-extrabold text-[#2b3040] tracking-tight">
+-                    Business Maturity Calculator
++                    Business Independence Level Calculator
+                   </h1>
+                   <p className="text-[#2b3040]/70 font-medium">
+-                    Discover if your business is <span className="text-[#edb605] font-bold">Chaotic</span>, <span className="text-[#0058ed] font-bold">Stable</span>, or <span className="text-emerald-600 font-bold">Ready to Scale</span>. Takes 30 seconds.
++                    Discover if your business is <span className="text-[#edb605] font-bold">Chaotic</span>, <span className="text-[#0058ed] font-bold">Stable</span>, or <span className="text-emerald-600 font-bold">Ready to Scale</span>. Takes 2 minutes.
+                   </p>
+                 </div>
+ 
+@@ -470,7 +470,7 @@ export default function BMLCalculator() {
+                 Aapka result ready hai!
+               </h1>
+               <p className="text-[18px] leading-[28px] text-[#666666] max-w-xs mx-auto">
+-                Apna personalized Business Maturity breakdown kahan bhejein?
++                Apna personalized Business Independence breakdown kahan bhejein?
+               </p>
+             </div>
+ 
+@@ -724,7 +724,7 @@ export default function BMLCalculator() {
+                 {/* Ladder Card */}
+                 <div className="bg-white border border-[#1C1C1C] p-[26px] rounded-none">
+                   <div className="text-[11px] tracking-[0.14em] uppercase text-[#6B6B66] font-semibold mb-2.5">
+-                    Your climb &mdash; maturity ladder
++                    Your climb &mdash; independence ladder
+                   </div>
+                   <div className="display flex gap-2">
+                     {levels.map((l, i) => {
+@@ -912,7 +912,7 @@ export default function BMLCalculator() {
+                             onChange={setShowScoreRing}
+                           />
+                           <CustomToggle
+-                            label="Maturity level & stage"
++                            label="Independence level & stage"
+                             checked={showLevel}
+                             onChange={setShowLevel}
+                           />
+@@ -955,7 +955,7 @@ export default function BMLCalculator() {
+                           <div className="flex flex-col gap-1 border-b pb-3 flex-shrink-0" style={{ borderColor: currentTheme.border }}>
+                             <div className="flex justify-between items-baseline">
+                               <span className="font-['Archivo'] font-black tracking-[0.06em] text-[12px] uppercase">SYSTEMS FOR SME</span>
+-                              <span className="text-[9px] tracking-[0.1em] font-extrabold text-[#9A9A93] uppercase">BML DIAGNOSTIC</span>
++                              <span className="text-[9px] tracking-[0.1em] font-extrabold text-[#9A9A93] uppercase">BIL DIAGNOSTIC</span>
+                             </div>
+                           </div>
+ 
+diff --git a/app/bml/page.tsx b/app/bml/page.tsx
+index d1046c8..b61b41e 100644
+--- a/app/bml/page.tsx
++++ b/app/bml/page.tsx
+@@ -13,8 +13,8 @@ const BMLCalculatorClient = dynamic(() => import("./bml-client"), {
+ });
+ 
+ export const metadata: Metadata = {
+-  title: "Business Maturity Level (BML) Calculator | Systems for SME",
+-  description: "Take the free 5-minute BML Calculator to find out how dependent your business is on you ΓÇö and get a specific systems roadmap to fix it.",
++  title: "Business Independence Level (BIL) Calculator | Systems for SME",
++  description: "Take the free 2-minute BIL Calculator to find out how dependent your business is on you ΓÇö and get a specific systems roadmap to fix it.",
+ };
+ 
+ export default function BMLPage() {
+diff --git a/app/booking/booking-client.tsx b/app/booking/booking-client.tsx
+index e6c1cc3..3c10661 100644
+--- a/app/booking/booking-client.tsx
++++ b/app/booking/booking-client.tsx
+@@ -658,7 +658,7 @@ export default function BookingPage() {
+         <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+           <div className="font-extrabold text-sm uppercase text-[#201b11]">Systems for SME</div>
+           <div className="flex gap-8 text-xs font-bold uppercase tracking-wider">
+-            <Link href="/bml" className="text-[#4f4633] hover:text-[#775a00] transition-colors">BML Calculator</Link>
++            <Link href="/bml" className="text-[#4f4633] hover:text-[#775a00] transition-colors">BIL Calculator</Link>
+             <Link href="/vault" className="text-[#4f4633] hover:text-[#775a00] transition-colors">Vault</Link>
+           </div>
+           <p className="text-[10px] font-bold uppercase tracking-wider text-[#725b22]/70">┬⌐ 2026 Systems for SME. All rights reserved.</p>
+diff --git a/app/components/ConditionalLayout.tsx b/app/components/ConditionalLayout.tsx
+index 0a80c05..9558b6c 100644
+--- a/app/components/ConditionalLayout.tsx
++++ b/app/components/ConditionalLayout.tsx
+@@ -15,6 +15,7 @@ export default function ConditionalLayout({
+ 
+   // Standalone pages that define their own headers/footers
+   const isStandalone =
++    pathname === "/" ||
+     pathname === "/bml" ||
+     pathname === "/booking";
+ 
+diff --git a/app/components/Nav.tsx b/app/components/Nav.tsx
+index 768436e..80c4e3c 100644
+--- a/app/components/Nav.tsx
++++ b/app/components/Nav.tsx
+@@ -21,7 +21,7 @@ export default function Nav() {
+           Vault
+         </Link>
+         <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
+-          BML Calculator
++          BIL Calculator
+         </Link>
+       </nav>
+ 
+@@ -63,7 +63,7 @@ export default function Nav() {
+             className="text-[#080808] hover:text-[#ffd21f] font-bold text-sm uppercase tracking-wider py-2 border-b border-zinc-100"
+             href="/bml"
+           >
+-            BML Calculator
++            BIL Calculator
+           </Link>
+           <Link
+             onClick={() => setIsOpen(false)}
+diff --git a/app/components/home/AboutUs.tsx b/app/components/home/AboutUs.tsx
+new file mode 100644
+index 0000000..72993a3
+--- /dev/null
++++ b/app/components/home/AboutUs.tsx
+@@ -0,0 +1,35 @@
++import Image from "next/image";
++import { GOLD } from "./theme";
++
++/* About Us ΓÇö follows the Figma:
++   - heading: Montserrat Medium 36 (same as the other section titles)
++   - quote:   Montserrat ExtraLight 28 / line-height 32 / letter-spacing 0, 291px wide,
++              bold quote marks
++   - copy:    Montserrat Regular 16 / letter-spacing 3% / white, 351px wide, justified
++   - sign-off: #535353, right-aligned */
++export default function AboutUs() {
++  return (
++    <section id="about" className="scroll-mt-16 text-white py-16 md:py-24 px-5" style={{ backgroundColor: "#111111" }}>
++      <div className="max-w-[900px] mx-auto text-center">
++        <h2 className="text-4xl font-medium">About Us</h2>
++
++        <p className="mt-[52px] mx-auto max-w-[291px] md:max-w-3xl text-[28px] md:text-3xl leading-[32px] md:leading-snug font-thin">
++          <span className="font-bold">&ldquo;</span> We make your business ready to run without you being there all the time, by creating the essential operational systems. <span className="font-bold">&rdquo;</span>
++        </p>
++
++        <Image src="/iit-dhanbad.png" alt="IIT (ISM) Dhanbad" width={92} height={105} className="mx-auto mt-14 object-contain" />
++
++        <div className="mx-auto mt-8 max-w-[351px] text-justify text-base font-light leading-5 tracking-[0.03em] text-white">
++          <p>
++            We are a team of <b className="font-bold" style={{ color: GOLD }}>IIT Dhanbad</b> graduated engineers with understanding of Indian SME culture. We started this by fixing a family business and realized the need across entire India.
++          </p>
++          <p className="mt-5">
++            <b className="font-bold">Our goal</b> is to make Indian Lala businesses attractive to Global Talent and Investors. <i>All that needs is fixing the core operations systems clubbed with decent marketing.</i>
++          </p>
++        </div>
++
++        <p className="mx-auto mt-8 max-w-[351px] text-right text-sm font-medium text-[#535353]">- Team, Systems For SME</p>
++      </div>
++    </section>
++  );
++}
+diff --git a/app/components/home/BmlButton.tsx b/app/components/home/BmlButton.tsx
+new file mode 100644
+index 0000000..e9e6cd6
+--- /dev/null
++++ b/app/components/home/BmlButton.tsx
+@@ -0,0 +1,42 @@
++import Link from "next/link";
++import { GOLD } from "./theme";
++
++/**
++ * "Find My BIL Score" CTA ΓåÆ /bml (the route keeps its old path).
++ * - variant="gold": gold pill + white arrow-circle (use on dark backgrounds)
++ * - variant="dark": black pill + white arrow-circle (use on gold backgrounds)
++ * The arrow is drawn large inside its circle, as in the Figma.
++ */
++export default function BmlButton({
++  variant = "gold",
++  className = "",
++}: {
++  variant?: "gold" | "dark";
++  className?: string;
++}) {
++  if (variant === "dark") {
++    return (
++      <Link
++        href="/bml"
++        className={`inline-flex items-center gap-3 rounded-full pl-8 pr-2 py-2 font-semibold uppercase bg-[#111111] text-white hover:opacity-90 active:scale-95 transition-all ${className}`}
++      >
++        Find My BIL Score
++        <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-[#111111]" aria-hidden>
++          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
++        </span>
++      </Link>
++    );
++  }
++  return (
++    <Link
++      href="/bml"
++      className={`inline-flex items-center gap-3 rounded-full pl-7 pr-2 py-2 font-semibold uppercase text-[#111111] hover:opacity-95 active:scale-95 transition-all ${className}`}
++      style={{ backgroundColor: GOLD }}
++    >
++      Find My BIL Score
++      <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#111111]" aria-hidden>
++        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
++      </span>
++    </Link>
++  );
++}
+diff --git a/app/components/home/CheckBml.tsx b/app/components/home/CheckBml.tsx
+new file mode 100644
+index 0000000..647dcf6
+--- /dev/null
++++ b/app/components/home/CheckBml.tsx
+@@ -0,0 +1,23 @@
++import { GOLD } from "./theme";
++import TrustRow from "./TrustRow";
++import BmlButton from "./BmlButton";
++
++export default function CheckBml() {
++  return (
++    <section style={{ backgroundColor: GOLD }} className="text-center py-16 md:py-24 px-5">
++      {/* Four fixed lines, as in the Figma ΓÇö mixed weights: light "Check your" and
++          "(BIL)", bold name. Each line is its own block so the break never depends
++          on screen width. */}
++      <h2 className="mx-auto leading-[1.15] text-[#111111] text-[30px] md:text-5xl">
++        <span className="block font-medium">Check your</span>
++        <span className="block font-bold">Business</span>
++        <span className="block font-bold">Independence</span>
++        <span className="block">
++          <span className="font-bold">Level</span> <span className="font-medium">(BIL)</span>
++        </span>
++      </h2>
++      <div className="mt-10"><TrustRow /></div>
++      <div className="mt-10"><BmlButton variant="dark" /></div>
++    </section>
++  );
++}
+diff --git a/app/components/home/Hero.tsx b/app/components/home/Hero.tsx
+new file mode 100644
+index 0000000..642182f
+--- /dev/null
++++ b/app/components/home/Hero.tsx
+@@ -0,0 +1,38 @@
++import Image from "next/image";
++import { GOLD } from "./theme";
++import BmlButton from "./BmlButton";
++
++export default function Hero() {
++  return (
++    <section className="relative bg-[#111111] text-white overflow-hidden rounded-b-[40px]">
++      {/* Owner photo ΓÇö blended bottom-right */}
++      <div className="absolute bottom-0 right-0 w-[72%] sm:w-[54%] md:w-[46%] max-w-[560px] aspect-[9/11] pointer-events-none select-none">
++        <Image src="/hero-owner.png" alt="Stressed business owner checking his phone" fill sizes="(max-width:768px) 72vw, 560px" className="object-contain object-bottom" priority />
++      </div>
++      {/* Gold glow at the bottom (subtle) */}
++      <div className="absolute inset-x-0 bottom-0 h-36 pointer-events-none" style={{ background: "linear-gradient(to top, rgba(253,197,33,0.28), rgba(253,197,33,0))" }} />
++      {/* Content */}
++      <div className="relative z-10 max-w-[1200px] mx-auto px-5 pt-14 pb-36 md:py-28">
++        <div className="max-w-[620px]">
++          <h1 className="font-semibold leading-[0.98] tracking-tight text-[52px] sm:text-[62px] md:text-[74px]">
++            <span style={{ color: GOLD }}>Systemize</span><br />
++            Your Business For 10X Growth
++          </h1>
++          {/* Tagline + stats follow the Figma: regular body weight, semibold gold
++              highlights; only the middle stat ("50+ Strategy Sessions") is gold. */}
++          <p className="mt-5 text-xl md:text-2xl font-normal">
++            Spend More Time On <span style={{ color: GOLD }} className="font-semibold">Strategy</span>,<br />
++            <span style={{ color: GOLD }} className="font-semibold">Health</span> &amp; <span style={{ color: GOLD }} className="font-semibold">Family</span>
++          </p>
++          <p className="mt-4 text-xs md:text-sm font-normal">
++            <span className="font-bold">3000+</span> Owners Checked BIL |<br />
++            <span style={{ color: GOLD }}><span className="font-bold">50+</span> Strategy Sessions</span> | <span className="font-bold">7+</span> Industries
++          </p>
++          <div className="mt-8">
++            <BmlButton variant="gold" className="text-base" />
++          </div>
++        </div>
++      </div>
++    </section>
++  );
++}
+diff --git a/app/components/home/HomeFooter.tsx b/app/components/home/HomeFooter.tsx
+new file mode 100644
+index 0000000..3a26b0e
+--- /dev/null
++++ b/app/components/home/HomeFooter.tsx
+@@ -0,0 +1,62 @@
++import Image from "next/image";
++import Link from "next/link";
++import { GOLD, INK } from "./theme";
++
++function InstagramIcon() {
++  return (
++    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
++      <defs>
++        <linearGradient id="ig-grad" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">
++          <stop offset="0" stopColor="#FEDA75" />
++          <stop offset="0.35" stopColor="#FA7E1E" />
++          <stop offset="0.6" stopColor="#D62976" />
++          <stop offset="0.8" stopColor="#962FBF" />
++          <stop offset="1" stopColor="#4F5BD5" />
++        </linearGradient>
++      </defs>
++      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="url(#ig-grad)" strokeWidth="2" />
++      <circle cx="12" cy="12" r="4.5" stroke="url(#ig-grad)" strokeWidth="2" />
++      <circle cx="17.6" cy="6.4" r="1.4" fill="url(#ig-grad)" />
++    </svg>
++  );
++}
++
++export default function HomeFooter() {
++  return (
++    <footer style={{ backgroundColor: INK }} className="text-white">
++      {/* Gold bar */}
++      <div className="h-2 w-full" style={{ backgroundColor: GOLD }} />
++
++      <div className="max-w-[600px] mx-auto px-5 py-14 flex flex-col items-center text-center">
++        {/* Our Services */}
++        <h3 className="text-lg font-semibold">Our Services</h3>
++        <ul className="mt-5 space-y-3 text-[15px] text-white/55">
++          <li>
++            <Link href="/bml" className="hover:text-white transition-colors">Business Independence Level Calculator</Link>
++          </li>
++          <li>
++            <Link href="/booking" className="hover:text-white transition-colors">Systems Strategy Session</Link>
++          </li>
++        </ul>
++
++        {/* Connect with us */}
++        <h3 className="mt-12 text-lg font-semibold">Connect with us</h3>
++        <a
++          href="https://www.instagram.com/systems_for_sme/"
++          target="_blank"
++          rel="noopener noreferrer"
++          className="mt-5 inline-flex items-center gap-3 rounded-full border border-white/25 px-6 py-3 hover:border-white/50 transition-colors"
++        >
++          <InstagramIcon />
++          <span className="text-[15px] text-white/85">@systems_for_sme</span>
++        </a>
++
++        {/* Logo */}
++        <div className="mt-16 flex flex-col items-center gap-3">
++          <Image src="/logo-mark.png" alt="Systems for SME" width={64} height={64} />
++          <span className="text-xl font-extrabold">Systems for SME</span>
++        </div>
++      </div>
++    </footer>
++  );
++}
+diff --git a/app/components/home/HomeNav.tsx b/app/components/home/HomeNav.tsx
+new file mode 100644
+index 0000000..dcf3271
+--- /dev/null
++++ b/app/components/home/HomeNav.tsx
+@@ -0,0 +1,39 @@
++"use client";
++import { useState } from "react";
++import Link from "next/link";
++import Image from "next/image";
++import BmlButton from "./BmlButton";
++
++export default function HomeNav() {
++  const [menuOpen, setMenuOpen] = useState(false);
++  return (
++    <header className="sticky top-0 z-50 bg-[#111111]">
++      <div className="max-w-[1200px] mx-auto flex items-center justify-between px-5 h-16">
++        <Link href="/" className="flex items-center gap-2.5">
++          <Image src="/logo-mark.png" alt="Systems for SME" width={38} height={38} />
++          <span className="font-extrabold text-lg tracking-tight text-white">Systems for SME</span>
++        </Link>
++        <nav className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-wider text-white">
++          <a href="#what-we-do" className="hover:text-[#FDC521] transition-colors">What we do</a>
++          <a href="#how" className="hover:text-[#FDC521] transition-colors">How it works</a>
++          <a href="#about" className="hover:text-[#FDC521] transition-colors">About</a>
++        </nav>
++        <button
++          className="md:hidden text-2xl font-bold p-2 text-white"
++          onClick={() => setMenuOpen(!menuOpen)}
++          aria-label="Toggle menu"
++        >
++          {menuOpen ? "Γ£ò" : "Γÿ░"}
++        </button>
++      </div>
++      {menuOpen && (
++        <div className="md:hidden border-t border-white/10 bg-[#111111] px-5 py-4 flex flex-col gap-4 text-sm font-bold uppercase tracking-wider text-white">
++          <a href="#what-we-do" onClick={() => setMenuOpen(false)}>What we do</a>
++          <a href="#how" onClick={() => setMenuOpen(false)}>How it works</a>
++          <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
++          <BmlButton variant="gold" className="justify-center mt-1" />
++        </div>
++      )}
++    </header>
++  );
++}
+diff --git a/app/components/home/HowItWorks.tsx b/app/components/home/HowItWorks.tsx
+new file mode 100644
+index 0000000..24449ec
+--- /dev/null
++++ b/app/components/home/HowItWorks.tsx
+@@ -0,0 +1,29 @@
++import { GOLD } from "./theme";
++
++const steps = [
++  "You realize\nthe need",
++  "You check your\nBIL score",
++  "Book a detailed\nsystems strategy call",
++  "We build the\nsystems for you",
++];
++
++export default function HowItWorks() {
++  return (
++    <section id="how" className="scroll-mt-16 py-16 md:py-24 px-5" style={{ backgroundColor: "#111111" }}>
++      <div className="max-w-[560px] mx-auto">
++        <h2 className="text-4xl font-medium text-center text-white">How it works?</h2>
++        <ol className="mt-12 flex flex-col items-center gap-6">
++          {steps.map((s) => (
++            <li
++              key={s}
++              className="text-center whitespace-pre-line rounded-full px-10 py-4 font-bold uppercase leading-tight text-[#111111]"
++              style={{ backgroundColor: GOLD }}
++            >
++              {s}
++            </li>
++          ))}
++        </ol>
++      </div>
++    </section>
++  );
++}
+diff --git a/app/components/home/ProductTracking.tsx b/app/components/home/ProductTracking.tsx
+new file mode 100644
+index 0000000..a53b8f3
+--- /dev/null
++++ b/app/components/home/ProductTracking.tsx
+@@ -0,0 +1,216 @@
++"use client";
++
++import { useEffect, useRef, useState } from "react";
++import Image from "next/image";
++import { GOLD } from "./theme";
++
++type CaseStudy = {
++  n: number;
++  category: string;
++  problem: string;
++  solution: string;
++  image: string;
++  ratio: number;
++  client: string;
++  location: string;
++  detail: string;
++};
++
++const CASES: CaseStudy[] = [
++  {
++    n: 1,
++    category: "Manufacturing",
++    problem: "Manual data tracking provides no insights. Also paper slips are often lost.",
++    solution: "A robust tracking module, with KPIs at a glance.",
++    image: "/case-manufacturing.png",
++    ratio: 726 / 422,
++    client: "Shemkein (MK Industries)",
++    location: "Bathinda, PB",
++    detail:
++      "A cooler motor manufacturing company was tracking their product replacements in an un-systemized way on paper slips, that frequently got lost. We built a Custom Web App - mobile first, easy to use. Now the staff makes the entries, owner can see KPIΓÇÖs and make smarter decisions to optimize processes.",
++  },
++  {
++    n: 2,
++    category: "QSR - Services",
++    problem: "Cafe staff works fine when ownerΓÇÖs present - in his absence SOPs failed, no reporting.",
++    solution: "Pay-roll connected Task reporting system gives control on staff.",
++    image: "/case-qsr.png",
++    ratio: 722 / 440,
++    client: "BREAD & SIPPP Cafe",
++    location: "Kamla Nagar, New Delhi",
++    detail:
++      "A cafe owner had assigned tasks and SOPs to staff, which usually worked smoothly, but in ownerΓÇÖs absence, failed. This reporting layer captures shift-wise tasks with image proofs, and daily percentage of work reflects in payroll. Ensures that work goes on, even when you are not there.",
++  },
++  {
++    n: 3,
++    category: "Retail Services",
++    problem: "Handled 700+ daily milk delivery on paper, took 4hr daily, still manual errors exist.",
++    solution: "Everything tracked clearly, without errors and extra time.",
++    image: "/case-retail.png",
++    ratio: 722 / 376,
++    client: "Rajlok Dairy",
++    location: "Kamla Nagar, New Delhi",
++    // TODO(rahul): replace with the real Rajlok Dairy write-up. Placeholder derived from the dashboard shown.
++    detail:
++      "A dairy handling 700+ milk deliveries a day was running everything on paper - about 4 hours daily, and still prone to manual errors. We built a Daily Operations Dashboard that tracks sales, collections, stock movement and profit in one close-day view - so the day reconciles automatically, without errors or extra time.",
++  },
++];
++
++// How long each card stays up before auto-advancing to the next one.
++const AUTO_ADVANCE_MS = 2000;
++
++export default function ProductTracking() {
++  const [active, setActive] = useState(0);
++  const [expanded, setExpanded] = useState(false);
++  const [zoomSrc, setZoomSrc] = useState<string | null>(null);
++  const [isVisible, setIsVisible] = useState(false);
++  const [autoTick, setAutoTick] = useState(0); // bumped on manual nav to restart the timer
++  const touchStart = useRef<{ x: number; y: number } | null>(null);
++  const sectionRef = useRef<HTMLElement>(null);
++
++  const c = CASES[active];
++
++  const goTo = (i: number) => {
++    setActive((i + CASES.length) % CASES.length);
++    setExpanded(false);
++    setAutoTick((t) => t + 1); // manual navigation gets a fresh full interval
++  };
++
++  // Only auto-play while the carousel is on screen, so it's already moving
++  // by the time a scrolling user reaches it (and doesn't run in the background).
++  useEffect(() => {
++    const el = sectionRef.current;
++    if (!el) return;
++    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
++      threshold: 0.4,
++    });
++    observer.observe(el);
++    return () => observer.disconnect();
++  }, []);
++
++  // Auto-advance to the next case study. Paused while off-screen, while a
++  // card is expanded (someone's reading), or while the zoom lightbox is open.
++  useEffect(() => {
++    if (!isVisible || expanded || zoomSrc) return;
++    const id = setInterval(() => {
++      setActive((a) => (a + 1) % CASES.length);
++    }, AUTO_ADVANCE_MS);
++    return () => clearInterval(id);
++  }, [isVisible, expanded, zoomSrc, autoTick]);
++
++  const onTouchStart = (e: React.TouchEvent) => {
++    const t = e.touches[0];
++    touchStart.current = { x: t.clientX, y: t.clientY };
++  };
++
++  const onTouchEnd = (e: React.TouchEvent) => {
++    if (!touchStart.current) return;
++    const t = e.changedTouches[0];
++    const dx = t.clientX - touchStart.current.x;
++    const dy = t.clientY - touchStart.current.y;
++    touchStart.current = null;
++    // Only treat as a swipe when it's mostly horizontal and long enough.
++    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
++    goTo(dx < 0 ? active + 1 : active - 1);
++  };
++
++  return (
++    <section ref={sectionRef} className="bg-[#111111] py-16 md:py-24 px-5">
++      <div className="max-w-[640px] mx-auto">
++        <h2 className="text-4xl font-medium text-center text-white mb-7">Case Studies...</h2>
++        <div
++          className="rounded-[28px] overflow-hidden border border-white select-none"
++          style={{ touchAction: "pan-y" }}
++          onTouchStart={onTouchStart}
++          onTouchEnd={onTouchEnd}
++        >
++          {/* Problem ΓÇö black */}
++          <div className="bg-[#111111] text-white px-6 md:px-9 pt-7 pb-9">
++            <span className="w-11 h-11 rounded-full bg-white text-[#111111] flex items-center justify-center font-bold text-lg">
++              {c.n}
++            </span>
++            <div className="mt-5 text-[11px] font-semibold uppercase tracking-[0.35em] text-[#4A4A4A]">
++              {c.category}
++            </div>
++            <h3 className="mt-3 text-[30px] md:text-[34px] font-medium leading-[1.14]">{c.problem}</h3>
++          </div>
++
++          {/* Solution ΓÇö cream */}
++          <div className="px-6 md:px-9 pt-8 pb-7" style={{ backgroundColor: "#FFFFFF" }}>
++            <h3 className="text-[30px] md:text-[34px] font-medium leading-[1.14] text-[#111111]">{c.solution}</h3>
++
++            <div
++              className="relative w-full rounded-2xl overflow-hidden border border-black/10 mt-7 bg-white"
++              style={{ aspectRatio: c.ratio }}
++            >
++              <Image src={c.image} alt={`${c.client} dashboard`} fill sizes="(max-width:640px) 90vw, 600px" className="object-cover object-top" />
++            </div>
++
++            {expanded && (
++              <div className="mt-7">
++                <div className="text-[15px] text-[#111111]/60">Client:</div>
++                <div className="mt-1 text-2xl font-bold text-[#111111] leading-tight">{c.client}</div>
++                <div className="text-[15px] text-[#111111]/55">{c.location}</div>
++                <p className="mt-5 text-[15px] leading-relaxed text-justify text-[#111111]/80">{c.detail}</p>
++              </div>
++            )}
++
++            {/* Buttons */}
++            <div className="mt-8 flex gap-4">
++              <button
++                onClick={() => setExpanded((v) => !v)}
++                className="flex-1 rounded-full py-4 font-medium text-lg bg-[#111111] text-white hover:opacity-90 active:scale-95 transition-all"
++              >
++                {expanded ? "Show Less" : "See Details"}
++              </button>
++              <button
++                onClick={() => setZoomSrc(c.image)}
++                className="flex-1 rounded-full py-4 font-medium text-lg text-[#111111] hover:opacity-90 active:scale-95 transition-all"
++                style={{ backgroundColor: GOLD }}
++              >
++                Zoom Image
++              </button>
++            </div>
++          </div>
++        </div>
++
++        {/* Dots */}
++        {CASES.length > 1 && (
++          <div className="mt-8 flex justify-center gap-2">
++            {CASES.map((cs, i) => (
++              <button
++                key={cs.n}
++                onClick={() => goTo(i)}
++                aria-label={`Show case study ${i + 1}`}
++                className={`h-2.5 rounded-full transition-all duration-300 ${i === active ? "w-6" : "w-2.5"}`}
++                style={{ backgroundColor: i === active ? GOLD : "rgba(255,255,255,0.25)" }}
++              />
++            ))}
++          </div>
++        )}
++      </div>
++
++      {/* Zoom lightbox */}
++      {zoomSrc && (
++        <div
++          className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
++          onClick={() => setZoomSrc(null)}
++          role="dialog"
++          aria-modal="true"
++        >
++          <div className="relative max-w-[1100px] w-full" onClick={(e) => e.stopPropagation()}>
++            {/* eslint-disable-next-line @next/next/no-img-element */}
++            <img src={zoomSrc} alt="Dashboard preview" className="w-full h-auto max-h-[88vh] object-contain rounded-xl" />
++            <button
++              onClick={() => setZoomSrc(null)}
++              aria-label="Close"
++              className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-white text-[#111111] text-xl font-bold flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
++            >
++              Γ£ò
++            </button>
++          </div>
++        </div>
++      )}
++    </section>
++  );
++}
+diff --git a/app/components/home/ReadyCta.tsx b/app/components/home/ReadyCta.tsx
+new file mode 100644
+index 0000000..7bb1284
+--- /dev/null
++++ b/app/components/home/ReadyCta.tsx
+@@ -0,0 +1,13 @@
++import { GOLD } from "./theme";
++import TrustRow from "./TrustRow";
++import BmlButton from "./BmlButton";
++
++export default function ReadyCta() {
++  return (
++    <section style={{ backgroundColor: GOLD }} className="text-center py-16 md:py-20 px-5">
++      <h2 className="text-[32px] md:text-5xl font-medium leading-[1.15] max-w-md mx-auto text-[#111111]">Ready to Systemize your business?</h2>
++      <div className="mt-6"><TrustRow /></div>
++      <div className="mt-8"><BmlButton variant="dark" className="text-base" /></div>
++    </section>
++  );
++}
+diff --git a/app/components/home/SoundFamiliar.tsx b/app/components/home/SoundFamiliar.tsx
+new file mode 100644
+index 0000000..73599d1
+--- /dev/null
++++ b/app/components/home/SoundFamiliar.tsx
+@@ -0,0 +1,30 @@
++import Image from "next/image";
++
++const familiarCards = [
++  { img: "/familiar-muneem.png", label: "Everything depends on you." },
++  { img: "/familiar-chhuti.png", label: "You can't take any family vacations." },
++  { img: "/familiar-cashflow.png", label: "No clear visibility & reporting of your data." },
++];
++
++export default function SoundFamiliar() {
++  return (
++    <section className="max-w-[720px] mx-auto px-5 py-16 md:py-24">
++      <h2 className="text-4xl font-medium text-center leading-[1.2]">Does this sound familiar?</h2>
++      <div className="mt-10 flex flex-col gap-4">
++        {familiarCards.map((c) => (
++          <div key={c.img} className="flex items-center gap-5 rounded-2xl bg-[#FBF6EA] shadow-[0_2px_10px_rgba(0,0,0,0.05)] p-3">
++            <div className="relative w-[108px] h-[108px] flex-shrink-0 rounded-xl overflow-hidden">
++              <Image src={c.img} alt={c.label} fill sizes="108px" className="object-cover" />
++            </div>
++            <p className="font-medium text-[25px] leading-tight text-[#111111]">{c.label}</p>
++          </div>
++        ))}
++      </div>
++      <blockquote className="mt-12 max-w-md mx-auto text-center">
++        <p className="text-[28px] font-medium leading-tight text-[#111111]/40">
++          &ldquo;If your business can&apos;t run for <span className="font-bold text-[#111111]">two weeks</span> without you, you don&apos;t own a business, <span className="font-bold text-[#111111]">you own a job</span>&rdquo;
++        </p>
++      </blockquote>
++    </section>
++  );
++}
+diff --git a/app/components/home/StatBand.tsx b/app/components/home/StatBand.tsx
+new file mode 100644
+index 0000000..2a09bed
+--- /dev/null
++++ b/app/components/home/StatBand.tsx
+@@ -0,0 +1,20 @@
++import Image from "next/image";
++import { INK } from "./theme";
++
++export default function StatBand() {
++  return (
++    <section style={{ backgroundColor: INK }} className="overflow-hidden">
++      <div className="relative w-full max-w-[1000px] mx-auto aspect-[804/330]">
++        {/* Full hologram image as the band background */}
++        <Image src="/data-banner.png" alt="Personalized systems & data" fill sizes="(max-width:1000px) 100vw, 1000px" className="object-cover" />
++        {/* Text overlaid on the dark left side */}
++        <div className="absolute inset-0 flex flex-col justify-center pl-[6%] pr-[45%]">
++          <span className="font-black leading-none text-white text-[15vw] sm:text-[64px] md:text-[88px]">50+</span>
++          <span className="mt-1 md:mt-3 font-medium leading-tight text-white/90 text-[3.6vw] sm:text-[18px] md:text-[26px]">
++            Personalized<br />Systems Designed
++          </span>
++        </div>
++      </div>
++    </section>
++  );
++}
+diff --git a/app/components/home/Testimonials.tsx b/app/components/home/Testimonials.tsx
+new file mode 100644
+index 0000000..98ecb56
+--- /dev/null
++++ b/app/components/home/Testimonials.tsx
+@@ -0,0 +1,126 @@
++"use client";
++
++import { useEffect, useRef, useState } from "react";
++import { GOLD } from "./theme";
++
++export type Review = {
++  name: string;
++  role: string;
++  text: string;
++  rating?: number;
++};
++
++// How long each testimonial stays up before auto-advancing to the next one.
++const AUTO_ADVANCE_MS = 2000;
++
++// Neutral pastel backgrounds cycled per reviewer, paired with a generic
++// person-silhouette icon (not a real photo) so each testimonial reads
++// distinctly without needing individual customer headshots.
++const AVATAR_PALETTE = ["#F4E3C1", "#DCEBE3", "#E6DCF2", "#F2DCE0", "#DCE6F2"];
++
++function Avatar({ index }: { index: number }) {
++  const bg = AVATAR_PALETTE[index % AVATAR_PALETTE.length];
++  return (
++    <span
++      className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center"
++      style={{ backgroundColor: bg }}
++    >
++      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
++        <circle cx="12" cy="8" r="4" fill="#111111" fillOpacity="0.5" />
++        <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" fill="#111111" fillOpacity="0.5" />
++      </svg>
++    </span>
++  );
++}
++
++export default function Testimonials({ reviews }: { reviews: Review[] }) {
++  const [active, setActive] = useState(0);
++  const [isVisible, setIsVisible] = useState(false);
++  const [autoTick, setAutoTick] = useState(0); // bumped on manual nav to restart the timer
++  const touchStart = useRef<{ x: number; y: number } | null>(null);
++  const sectionRef = useRef<HTMLElement>(null);
++  const r = reviews[active] ?? reviews[0];
++
++  const swipe = (dir: number) => {
++    setActive((a) => (a + dir + reviews.length) % reviews.length);
++    setAutoTick((t) => t + 1);
++  };
++
++  const goTo = (i: number) => {
++    setActive(i);
++    setAutoTick((t) => t + 1);
++  };
++
++  // Only auto-play while the testimonials are on screen.
++  useEffect(() => {
++    const el = sectionRef.current;
++    if (!el || reviews.length <= 1) return;
++    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
++      threshold: 0.4,
++    });
++    observer.observe(el);
++    return () => observer.disconnect();
++  }, [reviews.length]);
++
++  // Auto-advance to the next testimonial while visible.
++  useEffect(() => {
++    if (!isVisible || reviews.length <= 1) return;
++    const id = setInterval(() => {
++      setActive((a) => (a + 1) % reviews.length);
++    }, AUTO_ADVANCE_MS);
++    return () => clearInterval(id);
++  }, [isVisible, autoTick, reviews.length]);
++
++  const onTouchStart = (e: React.TouchEvent) => {
++    const t = e.touches[0];
++    touchStart.current = { x: t.clientX, y: t.clientY };
++  };
++
++  const onTouchEnd = (e: React.TouchEvent) => {
++    if (!touchStart.current) return;
++    const t = e.changedTouches[0];
++    const dx = t.clientX - touchStart.current.x;
++    const dy = t.clientY - touchStart.current.y;
++    touchStart.current = null;
++    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
++    swipe(dx < 0 ? 1 : -1);
++  };
++
++  return (
++    <section ref={sectionRef} className="bg-white py-16 md:py-24 px-5">
++      <div className="max-w-[640px] mx-auto">
++        <h2 className="text-4xl font-bold text-center tracking-tight text-[#111111]">Testimonials</h2>
++
++        <div
++          className="mt-10 rounded-[20px] border border-black/10 bg-white p-6 md:p-7 shadow-sm select-none"
++          style={{ touchAction: "pan-y" }}
++          onTouchStart={onTouchStart}
++          onTouchEnd={onTouchEnd}
++        >
++          <div className="flex items-center gap-4">
++            <Avatar index={active} />
++            <div>
++              <div className="text-lg font-bold text-[#111111] leading-tight">{r.name}</div>
++              <div className="mt-0.5 text-[13px] font-medium text-[#111111]/45">{r.role}</div>
++            </div>
++          </div>
++          <p className="mt-5 text-[14px] leading-relaxed text-justify text-[#111111]/65">{r.text}</p>
++        </div>
++
++        {reviews.length > 1 && (
++          <div className="mt-6 flex justify-center gap-2">
++            {reviews.map((rev, i) => (
++              <button
++                key={`${rev.name}-${i}`}
++                onClick={() => goTo(i)}
++                aria-label={`Show testimonial ${i + 1}`}
++                className="w-2 h-2 rounded-full transition-colors"
++                style={{ backgroundColor: i === active ? GOLD : "rgba(17,17,17,0.2)" }}
++              />
++            ))}
++          </div>
++        )}
++      </div>
++    </section>
++  );
++}
+diff --git a/app/components/home/TrustRow.tsx b/app/components/home/TrustRow.tsx
+new file mode 100644
+index 0000000..5e73cdd
+--- /dev/null
++++ b/app/components/home/TrustRow.tsx
+@@ -0,0 +1,31 @@
++/* The three trust chips (icon-in-circle + label) shown on the gold CTA sections.
++   Sizes follow the Figma: 40px circles, small semibold labels. */
++export default function TrustRow() {
++  const items = [
++    { label: "Free Tool", icon: <span className="text-xl font-normal leading-none">Γé╣</span> },
++    {
++      label: "Takes under 2min",
++      icon: (
++        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 2h6M12 5V2" /><circle cx="12" cy="13" r="8" /><path d="M12 10v3l2 1.5" /></svg>
++      ),
++    },
++    {
++      label: "3K+ Users",
++      icon: (
++        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>
++      ),
++    },
++  ];
++  return (
++    <div className="flex items-start justify-center gap-8 sm:gap-12">
++      {items.map((it) => (
++        <div key={it.label} className="flex flex-col items-center gap-2 text-center">
++          <span className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/50 flex items-center justify-center text-[#111111]">
++            {it.icon}
++          </span>
++          <span className="text-xs md:text-sm font-semibold text-[#111111]">{it.label}</span>
++        </div>
++      ))}
++    </div>
++  );
++}
+diff --git a/app/components/home/WhatWeDo.tsx b/app/components/home/WhatWeDo.tsx
+new file mode 100644
+index 0000000..a288eb3
+--- /dev/null
++++ b/app/components/home/WhatWeDo.tsx
+@@ -0,0 +1,80 @@
++"use client";
++
++import { useEffect, useRef, useState } from "react";
++import Image from "next/image";
++import { GOLD } from "./theme";
++
++const STATEMENT =
++  "You can NOT build a 1000Cr business on a broken foundation. We solidify that foundation by building the first 3 layers for your business - so you can finally operate at the top";
++
++export default function WhatWeDo() {
++  const words = STATEMENT.split(" ");
++  const textRef = useRef<HTMLParagraphElement>(null);
++  const [progress, setProgress] = useState(0);
++
++  // Scroll-linked reveal: words turn from dim to white as the paragraph
++  // rises up the screen. Fully white once its top nears the upper part of
++  // the viewport ΓÇö starts lighting up as it enters from the bottom. A wider
++  // start-to-end span here means more scrolling is needed, i.e. slower.
++  useEffect(() => {
++    let raf = 0;
++    const update = () => {
++      const el = textRef.current;
++      if (!el) return;
++      const rect = el.getBoundingClientRect();
++      const vh = window.innerHeight;
++      const startY = vh; // enters from the bottom edge
++      const endY = vh * 0.2; // fully lit once it nears the top
++      const raw = (startY - rect.top) / (startY - endY);
++      setProgress(Math.min(1, Math.max(0, raw)));
++    };
++    const onScroll = () => {
++      cancelAnimationFrame(raf);
++      raf = requestAnimationFrame(update);
++    };
++    update();
++    window.addEventListener("scroll", onScroll, { passive: true });
++    window.addEventListener("resize", onScroll);
++    return () => {
++      cancelAnimationFrame(raf);
++      window.removeEventListener("scroll", onScroll);
++      window.removeEventListener("resize", onScroll);
++    };
++  }, []);
++
++  return (
++    <section id="what-we-do" className="text-white py-16 md:py-24" style={{ backgroundColor: "#111111" }}>
++      <div className="max-w-[1100px] mx-auto px-5">
++        <div className="flex justify-center mb-6">
++          <Image src="/logo-mark.png" alt="" width={56} height={56} />
++        </div>
++        <h2 className="text-4xl font-medium text-center">What we do?</h2>
++      </div>
++      <div className="relative w-full max-w-[640px] mx-auto aspect-[1200/1030] mt-4">
++        <Image src="/pyramid.webp" alt="The 4 layers of a self-running business" fill sizes="(max-width:768px) 100vw, 640px" className="object-contain" />
++      </div>
++      <div className="max-w-[1100px] mx-auto px-5">
++        {/* Big statement ΓÇö words light up white one by one as you scroll */}
++        <p
++          ref={textRef}
++          className="mt-28 md:mt-40 text-center text-[28px] md:text-[44px] font-semibold max-w-[313px] md:max-w-2xl mx-auto leading-[32px] md:leading-[1.3]"
++        >
++          {words.map((word, i) => {
++            const threshold = i / words.length;
++            const active = progress >= threshold;
++            return (
++              <span key={i} className={`transition-colors duration-300 ${active ? "text-white" : "text-[#565656]"}`}>
++                {word}{" "}
++              </span>
++            );
++          })}
++        </p>
++        {/* Caption below the big statement */}
++        <p className="mt-12 text-center text-sm font-medium max-w-md mx-auto text-white/40">
++          Layer <span className="font-bold text-white">1, 2 and 3</span> are the <span className="font-bold text-white">foundation</span>.<br />
++          We <span className="font-bold" style={{ color: GOLD }}>fix</span> these in your business.
++        </p>
++      </div>
++    </section>
++  );
++}
+diff --git a/app/components/home/theme.ts b/app/components/home/theme.ts
+new file mode 100644
+index 0000000..3e0c7b3
+--- /dev/null
++++ b/app/components/home/theme.ts
+@@ -0,0 +1,3 @@
++/* Shared brand tokens for the landing-page redesign. */
++export const GOLD = "#FDC521";
++export const INK = "#111111";
+diff --git a/app/home-client.tsx b/app/home-client.tsx
+index cc7dca7..edba23f 100644
+--- a/app/home-client.tsx
++++ b/app/home-client.tsx
+@@ -1,600 +1,70 @@
+-"use client";
+-import { useState, useEffect } from "react";
+-import Link from "next/link";
+-import Image from "next/image";
++import HomeNav from "./components/home/HomeNav";
++import Hero from "./components/home/Hero";
++import SoundFamiliar from "./components/home/SoundFamiliar";
++import StatBand from "./components/home/StatBand";
++import CheckBml from "./components/home/CheckBml";
++import WhatWeDo from "./components/home/WhatWeDo";
++import ProductTracking from "./components/home/ProductTracking";
++import AboutUs from "./components/home/AboutUs";
++import Testimonials, { Review } from "./components/home/Testimonials";
++import HowItWorks from "./components/home/HowItWorks";
++import ReadyCta from "./components/home/ReadyCta";
++import HomeFooter from "./components/home/HomeFooter";
++import { Montserrat } from "next/font/google";
+ 
+-const defaultReviews = [
++// The redesign's brand font (from Figma).
++const montserrat = Montserrat({
++  subsets: ["latin"],
++  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
++  display: "swap",
++});
++
++const defaultReviews: Review[] = [
+   {
+     name: "Anand K.",
+     role: "Retail Chain Owner",
+     text: "I was managing 15 retail stores via phone calls. After one session, we moved to a dashboard. I finally had a Sunday off after 3 years.",
+-    rating: 5
++    rating: 5,
+   },
+   {
+     name: "Priya M.",
+     role: "Manufacturing Director",
+     text: "Raghav understands the reality of Indian SME staff. He doesn't suggest complex tech they won't use. He suggests what actually works.",
+-    rating: 5
++    rating: 5,
+   },
+   {
+     name: "Vikram Singh",
+     role: "Logistics Provider",
+-    text: "The best Γé╣1500 I've spent on my business. The roadmap alone saved me 2 months of trial and error with different softwares.",
+-    rating: 5
+-  }
+-];
+-
+-const defaultFAQs = [
+-  {
+-    question: "What if I don't use any tech right now?",
+-    answer: "That's perfectly fine. We start from wherever you are. Whether you're using pen and paper or WhatsApp, our goal is to find the *simplest* next step for you."
+-  },
+-  {
+-    question: "Will you implement the systems for me?",
+-    answer: "This session is for strategy and a roadmap. If you need implementation support after the session, we can discuss a full consulting engagement, but there is no obligation."
+-  },
+-  {
+-    question: "Is this session suitable for any industry?",
+-    answer: "The principles of systems apply to almost any business. However, I specialize in Manufacturing, Retail, Wholesale, and Logistics."
++    text: "The best money I've spent on my business. The roadmap alone saved me 2 months of trial and error with different softwares.",
++    rating: 5,
+   },
+-  {
+-    question: "How do I prepare for the session?",
+-    answer: "Just bring your biggest operational headaches and an open mind. If you have an org chart or a list of your current staff roles, that's a bonus."
+-  }
+ ];
+ 
+-export default function LandingPage({ content }: { content: any }) {
+-  const priceText = content.settings.pricing_amount 
+-    ? (String(content.settings.pricing_amount).startsWith("Γé╣") ? content.settings.pricing_amount : `Γé╣${content.settings.pricing_amount}`) 
+-    : "Γé╣1,499";
+-
+-  const ownerPhoto = content.settings.owner_photo_url || "/raghav.jpg";
+-  const reviewsList = content.reviews && content.reviews.length > 0 ? content.reviews : defaultReviews;
+-  const faqsList = content.faqs && content.faqs.length > 0 ? content.faqs : defaultFAQs;
++/**
++ * Landing page ΓÇö a thin composition of the section components in
++ * `app/components/home/`. Each section lives in its own file; this file just
++ * orders them and wires the dynamic reviews (from the Google Sheet) through.
++ */
++export default function LandingPage({ content }: { content: { reviews?: Review[] } }) {
++  const reviews: Review[] =
++    content.reviews && content.reviews.length > 0 ? content.reviews : defaultReviews;
+ 
+   return (
+-    <div className="brutalist-theme">
+-      {/* 2. Hero Section */}
+-      <section className="pt-8 pb-section-padding-desktop px-gutter max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+-        <div>
+-          <div className="flex items-center gap-4 mb-8">
+-            <span className="h-[2px] w-12 bg-primary-container block"></span>
+-            <span className="font-section-label text-section-label text-text-primary uppercase tracking-[0.2em]">
+-              FOR SME OWNERS &amp; FAMILY BUSINESS HEIRS
+-            </span>
+-          </div>
+-          <h1 className="font-display-xl text-display-xl-mobile md:text-display-xl text-text-primary mb-8 leading-[0.95]">
+-            Your Business Runs You. <br />
+-            <span className="text-zinc-400">Let&apos;s Fix That.</span>
+-          </h1>
+-          <p className="font-body-lg text-body-lg text-on-surface-variant mb-12 max-w-[540px]">
+-            A 60-minute Systems Strategy Session to diagnose your operational bottlenecks and map out a clear path to delegation and scalability.
+-          </p>
+-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
+-            <Link
+-              className="bg-primary-container text-text-primary font-button-text text-button-text uppercase py-5 px-10 flex items-center justify-center gap-2 hover:brightness-95 transition-all text-center border-2 border-text-primary"
+-              href="/booking"
+-            >
+-              Book the Session ΓÇö {priceText}
+-              <span className="material-symbols-outlined">arrow_forward</span>
+-            </Link>
+-            <Link
+-              className="bg-transparent text-text-primary font-button-text text-button-text uppercase py-5 px-10 border-2 border-text-primary flex items-center justify-center gap-2 hover:bg-surface-muted transition-colors text-center"
+-              href="#process"
+-            >
+-              See What&apos;s Included
+-              <span className="material-symbols-outlined">arrow_downward</span>
+-            </Link>
+-          </div>
+-          <div className="flex items-center gap-4">
+-            <div className="flex -space-x-1">
+-              <div className="w-10 h-10 bg-surface-muted border border-text-primary flex items-center justify-center">
+-                <span className="material-symbols-outlined text-[20px]">factory</span>
+-              </div>
+-              <div className="w-10 h-10 bg-surface-muted border border-text-primary flex items-center justify-center">
+-                <span className="material-symbols-outlined text-[20px]">storefront</span>
+-              </div>
+-              <div className="w-10 h-10 bg-surface-muted border border-text-primary flex items-center justify-center">
+-                <span className="material-symbols-outlined text-[20px]">local_shipping</span>
+-              </div>
+-            </div>
+-            <p className="font-section-label text-[11px] text-text-primary uppercase tracking-widest">
+-              Used by business owners in steel, retail &amp; logistics.
+-            </p>
+-          </div>
+-        </div>
+-
+-        <div className="relative bg-surface-muted border-2 border-text-primary p-4 lg:p-12 aspect-square lg:aspect-auto lg:h-[600px] flex items-center justify-center overflow-hidden">
+-          <div className="w-full h-full border border-zinc-300 bg-white shadow-2xl relative p-8 flex flex-col gap-6">
+-            <div className="h-6 w-1/3 bg-primary-container"></div>
+-            <div className="space-y-3">
+-              <div className="h-3 w-full bg-zinc-100"></div>
+-              <div className="h-3 w-full bg-zinc-100"></div>
+-              <div className="h-3 w-3/4 bg-zinc-100"></div>
+-            </div>
+-            <div className="grid grid-cols-2 gap-6 mt-4">
+-              <div className="aspect-video bg-zinc-50 border border-zinc-200 flex items-center justify-center">
+-                <span className="material-symbols-outlined text-zinc-300 text-5xl">bar_chart</span>
+-              </div>
+-              <div className="aspect-video bg-primary-container/10 border border-primary-container flex items-center justify-center">
+-                <span className="material-symbols-outlined text-primary-container text-5xl">account_tree</span>
+-              </div>
+-            </div>
+-            <div className="h-32 w-full border border-dashed border-zinc-300 flex items-center justify-center">
+-              <span className="text-zinc-300 font-section-label uppercase">Operations Map V1.0</span>
+-            </div>
+-            <div className="absolute bottom-8 right-8 w-20 h-20 bg-primary-container flex items-center justify-center border-2 border-text-primary shadow-[8px_8px_0px_0px_rgba(10,10,10,1)]">
+-              <span className="material-symbols-outlined text-text-primary text-4xl">check</span>
+-            </div>
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 3. Pain Agitation */}
+-      <section className="bg-text-primary text-white py-section-padding-desktop px-gutter" id="problems">
+-        <div className="max-w-[1200px] mx-auto">
+-          <div className="mb-16">
+-            <p className="font-section-label text-section-label text-primary-container mb-4 uppercase tracking-[0.2em]">
+-              THE CHALLENGE
+-            </p>
+-            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-4">
+-              Does this sound familiar?
+-            </h2>
+-            <p className="text-zinc-400 max-w-[600px]">
+-              Running an SME is hard, but it shouldn&apos;t be exhausting. Most owners are trapped in these cycles:
+-            </p>
+-          </div>
+-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-800 border border-zinc-800">
+-            <div className="bg-text-primary p-10 hover:bg-zinc-900 transition-colors">
+-              <span className="material-symbols-outlined text-primary-container text-4xl mb-6">psychology</span>
+-              <h3 className="font-bold text-xl mb-4">The &ldquo;Founder&apos;s Trap&rdquo;</h3>
+-              <p className="text-zinc-400">
+-                Decisions stop at your desk. Nothing moves unless you&apos;re personally involved or give the final okay.
+-              </p>
+-            </div>
+-            <div className="bg-text-primary p-10 hover:bg-zinc-900 transition-colors">
+-              <span className="material-symbols-outlined text-primary-container text-4xl mb-6">chat_error</span>
+-              <h3 className="font-bold text-xl mb-4">WhatsApp Management</h3>
+-              <p className="text-zinc-400">
+-                Operations happen over 50 different WhatsApp groups. Information is scattered and accountability is zero.
+-              </p>
+-            </div>
+-            <div className="bg-text-primary p-10 hover:bg-zinc-900 transition-colors">
+-              <span className="material-symbols-outlined text-primary-container text-4xl mb-6">person_alert</span>
+-              <h3 className="font-bold text-xl mb-4">Unreliable Hiring</h3>
+-              <p className="text-zinc-400">
+-                You hire people but end up doing their work because &ldquo;it&apos;s faster to do it myself than explain it.&rdquo;
+-              </p>
+-            </div>
+-            <div className="bg-text-primary p-10 hover:bg-zinc-900 transition-colors">
+-              <span className="material-symbols-outlined text-primary-container text-4xl mb-6">sync_problem</span>
+-              <h3 className="font-bold text-xl mb-4">Firefighting Daily</h3>
+-              <p className="text-zinc-400">
+-                You spend 90% of your day solving urgent problems instead of focusing on growing the business.
+-              </p>
+-            </div>
+-            <div className="bg-text-primary p-10 hover:bg-zinc-900 transition-colors">
+-              <span className="material-symbols-outlined text-primary-container text-4xl mb-6">visibility_off</span>
+-              <h3 className="font-bold text-xl mb-4">Zero Visibility</h3>
+-              <p className="text-zinc-400">
+-                You don&apos;t know your real-time margins or stock levels without asking 3 different people for reports.
+-              </p>
+-            </div>
+-            <div className="bg-text-primary p-10 hover:bg-zinc-900 transition-colors">
+-              <span className="material-symbols-outlined text-primary-container text-4xl mb-6">home_work</span>
+-              <h3 className="font-bold text-xl mb-4">Generational Friction</h3>
+-              <p className="text-zinc-400">
+-                As an heir, you want to modernize, but the &ldquo;old way&rdquo; of doing things is holding the company back.
+-              </p>
+-            </div>
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 4. What is the Session */}
+-      <section className="py-section-padding-desktop px-gutter bg-white" id="process">
+-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-start">
+-          <div>
+-            <p className="font-section-label text-section-label text-text-primary mb-4 uppercase tracking-[0.2em]">
+-              THE SOLUTION
+-            </p>
+-            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">
+-              What is the Systems Strategy Session?
+-            </h2>
+-            <div className="space-y-8">
+-              <div className="flex gap-6">
+-                <div className="flex-shrink-0 w-12 h-12 bg-primary-container flex items-center justify-center font-bold border border-text-primary">
+-                  01
+-                </div>
+-                <div>
+-                  <h4 className="font-bold text-lg mb-2 uppercase">Operational Audit</h4>
+-                  <p className="text-on-surface-variant">
+-                    We map out your current workflowΓÇöfrom lead to deliveryΓÇöand find where the leaks are.
+-                  </p>
+-                </div>
+-              </div>
+-              <div className="flex gap-6">
+-                <div className="flex-shrink-0 w-12 h-12 bg-primary-container flex items-center justify-center font-bold border border-text-primary">
+-                  02
+-                </div>
+-                <div>
+-                  <h4 className="font-bold text-lg mb-2 uppercase">Bottleneck Diagnosis</h4>
+-                  <p className="text-on-surface-variant">
+-                    Identify which tasks *must* be done by you and which can be automated or delegated immediately.
+-                  </p>
+-                </div>
+-              </div>
+-              <div className="flex gap-6">
+-                <div className="flex-shrink-0 w-12 h-12 bg-primary-container flex items-center justify-center font-bold border border-text-primary">
+-                  03
+-                </div>
+-                <div>
+-                  <h4 className="font-bold text-lg mb-2 uppercase">Implementation Roadmap</h4>
+-                  <p className="text-on-surface-variant">
+-                    A step-by-step plan on which tools (ERP, CRM, Notion) and processes to install first.
+-                  </p>
+-                </div>
+-              </div>
+-            </div>
+-          </div>
+-          <div className="bg-surface-muted border-2 border-text-primary p-12 relative">
+-            <div className="absolute -top-6 -right-6 bg-primary-container text-text-primary font-bold px-6 py-3 border-2 border-text-primary shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]">
+-              60 MINS
+-            </div>
+-            <h3 className="text-2xl font-black mb-6 uppercase tracking-tighter">THE AGENDA</h3>
+-            <ul className="space-y-4">
+-              <li className="flex items-center gap-3 border-b border-zinc-200 pb-4">
+-                <span className="material-symbols-outlined text-primary-container">timer</span>
+-                <span>10m: Deep Dive into your current pain points</span>
+-              </li>
+-              <li className="flex items-center gap-3 border-b border-zinc-200 pb-4">
+-                <span className="material-symbols-outlined text-primary-container">architecture</span>
+-                <span>25m: Live Mapping of your critical path</span>
+-              </li>
+-              <li className="flex items-center gap-3 border-b border-zinc-200 pb-4">
+-                <span className="material-symbols-outlined text-primary-container">edit_note</span>
+-                <span>15m: Tool &amp; Team recommendations</span>
+-              </li>
+-              <li className="flex items-center gap-3">
+-                <span className="material-symbols-outlined text-primary-container">question_answer</span>
+-                <span>10m: Open Q&amp;A for your specific industry</span>
+-              </li>
+-            </ul>
+-            <div className="mt-12">
+-              <Link
+-                className="inline-flex items-center gap-2 text-text-primary font-bold border-b-2 border-primary-container hover:border-text-primary transition-all"
+-                href="/booking"
+-              >
+-                RESERVE YOUR SPOT NOW
+-                <span className="material-symbols-outlined">arrow_forward</span>
+-              </Link>
+-            </div>
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 5. Deliverable Value Stack */}
+-      <section className="py-section-padding-desktop px-gutter bg-surface-muted" id="value">
+-        <div className="max-w-[1000px] mx-auto">
+-          <div className="text-center mb-16">
+-            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-4">
+-              Massive Value. Tiny Investment.
+-            </h2>
+-            <p className="text-on-surface-variant">What you get for the price of a dinner for two.</p>
+-          </div>
+-          <div className="bg-white border-2 border-text-primary overflow-hidden shadow-[16px_16px_0px_0px_rgba(10,10,10,0.05)]">
+-            <table className="w-full text-left border-collapse">
+-              <thead>
+-                <tr className="bg-text-primary text-white">
+-                  <th className="p-6 font-section-label uppercase tracking-widest border-r border-zinc-700">
+-                    Deliverable
+-                  </th>
+-                  <th className="p-6 font-section-label uppercase tracking-widest text-right">
+-                    Market Value
+-                  </th>
+-                </tr>
+-              </thead>
+-              <tbody className="text-text-primary">
+-                <tr className="border-b border-zinc-100">
+-                  <td className="p-6 border-r border-zinc-100">
+-                    <span className="font-bold block">1-on-1 Systems Audit (60 Mins)</span>
+-                    <span className="text-sm text-zinc-500">
+-                      Direct consultation focused on your unique business logic.
+-                    </span>
+-                  </td>
+-                  <td className="p-6 text-right font-bold text-text-primary">Γé╣15,000</td>
+-                </tr>
+-                <tr className="border-b border-zinc-100">
+-                  <td className="p-6 border-r border-zinc-100">
+-                    <span className="font-bold block">The SME Tool-Kit (PDF)</span>
+-                    <span className="text-sm text-zinc-500">
+-                      Curated list of 15+ softwares for inventory, sales &amp; finance.
+-                    </span>
+-                  </td>
+-                  <td className="p-6 text-right font-bold text-text-primary">Γé╣2,500</td>
+-                </tr>
+-                <tr className="border-b border-zinc-100">
+-                  <td className="p-6 border-r border-zinc-100">
+-                    <span className="font-bold block">Sample SOP Template</span>
+-                    <span className="text-sm text-zinc-500">
+-                      A plug-and-play format to start documenting your roles.
+-                    </span>
+-                  </td>
+-                  <td className="p-6 text-right font-bold text-text-primary">Γé╣1,500</td>
+-                </tr>
+-                <tr className="bg-primary-container/5">
+-                  <td className="p-6 border-r border-zinc-100">
+-                    <span className="font-bold block text-lg text-text-primary">Total Real-World Value</span>
+-                  </td>
+-                  <td className="p-6 text-right font-black text-lg text-text-primary">Γé╣19,000+</td>
+-                </tr>
+-              </tbody>
+-            </table>
+-            <div className="p-10 bg-primary-container flex flex-col md:flex-row items-center justify-between gap-8 border-t-2 border-text-primary">
+-              <div>
+-                <span className="block font-black text-4xl">ONLY {priceText}</span>
+-                <span className="text-sm font-bold uppercase tracking-wider text-on-primary-container">
+-                  Offer valid for first 100 bookings
+-                </span>
+-              </div>
+-              <Link
+-                className="w-full md:w-auto bg-text-primary text-white px-10 py-5 font-black uppercase text-center hover:bg-zinc-800 transition-colors"
+-                href="/booking"
+-              >
+-                CLAIM THIS VALUE NOW
+-              </Link>
+-            </div>
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 6. Who it is for / Not for */}
+-      <section className="py-section-padding-desktop px-gutter bg-white border-t border-zinc-100">
+-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+-          <div className="p-12 border-2 border-text-primary bg-white">
+-            <div className="flex items-center gap-3 mb-8">
+-              <span className="material-symbols-outlined text-green-600 text-3xl">check_circle</span>
+-              <h3 className="font-black text-2xl uppercase tracking-tighter">THIS IS FOR YOU IF:</h3>
+-            </div>
+-            <ul className="space-y-6">
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined text-zinc-400 mt-1">arrow_forward</span>
+-                <p className="font-medium">You run a manufacturing, retail, or service business with Γé╣1Cr+ turnover.</p>
+-              </li>
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined text-zinc-400 mt-1">arrow_forward</span>
+-                <p className="font-medium">
+-                  You feel like you&apos;ve hit a ceiling and can&apos;t grow without working more hours.
+-                </p>
+-              </li>
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined text-zinc-400 mt-1">arrow_forward</span>
+-                <p className="font-medium">
+-                  You are the 2nd/3rd generation in a family business trying to bring structure.
+-                </p>
+-              </li>
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined text-zinc-400 mt-1">arrow_forward</span>
+-                <p className="font-medium">You&apos;re ready to invest in tech to buy back your time.</p>
+-              </li>
+-            </ul>
+-          </div>
+-          <div className="p-12 border-2 border-zinc-200 bg-surface-muted">
+-            <div className="flex items-center gap-3 mb-8">
+-              <span className="material-symbols-outlined text-red-500 text-3xl">cancel</span>
+-              <h3 className="font-black text-2xl uppercase tracking-tighter text-zinc-400">NOT FOR YOU IF:</h3>
+-            </div>
+-            <ul className="space-y-6 text-zinc-500">
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined mt-1">close</span>
+-                <p>You&apos;re looking for &ldquo;get rich quick&rdquo; schemes or generic business coaching.</p>
+-              </li>
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined mt-1">close</span>
+-                <p>You&apos;re an early-stage startup with no revenue or existing team.</p>
+-              </li>
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined mt-1">close</span>
+-                <p>You aren&apos;t willing to change how you currently manage your staff.</p>
+-              </li>
+-              <li className="flex items-start gap-4">
+-                <span className="material-symbols-outlined mt-1">close</span>
+-                <p>You want someone to do the work for you without your input.</p>
+-              </li>
+-            </ul>
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 7. Social Proof / Testimonials */}
+-      <section className="bg-text-primary text-white py-section-padding-desktop px-gutter overflow-hidden">
+-        <div className="max-w-[1200px] mx-auto">
+-          <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-center mb-16">
+-            What Owners Are Saying
+-          </h2>
+-          {reviewsList.length > 3 ? (
+-            <div className="relative w-full overflow-hidden py-4">
+-              <div className="animate-marquee-track flex gap-8">
+-                {[...reviewsList, ...reviewsList].map((review: any, idx: number) => (
+-                  <div key={idx} className="p-8 border border-zinc-800 bg-zinc-900 flex flex-col justify-between min-w-[320px] max-w-[400px] flex-shrink-0">
+-                    <div>
+-                      <div className="flex text-primary-container mb-6">
+-                        {Array.from({ length: Math.min(5, Math.max(1, Number(review.rating || 5))) }).map((_, i) => (
+-                          <span key={i} className="material-symbols-outlined">star</span>
+-                        ))}
+-                      </div>
+-                      <p className="italic text-zinc-300 mb-8 font-body-lg">
+-                        &ldquo;{review.text}&rdquo;
+-                      </p>
+-                    </div>
+-                    <div>
+-                      <p className="font-bold">{review.name}</p>
+-                      <p className="text-sm text-zinc-500 uppercase tracking-widest">{review.role}</p>
+-                    </div>
+-                  </div>
+-                ))}
+-              </div>
+-              <style>{`
+-                @keyframes marquee {
+-                  0% { transform: translateX(0); }
+-                  100% { transform: translateX(-50%); }
+-                }
+-                .animate-marquee-track {
+-                  display: flex;
+-                  width: max-content;
+-                  animation: marquee 35s linear infinite;
+-                }
+-                .animate-marquee-track:hover {
+-                  animation-play-state: paused;
+-                }
+-              `}</style>
+-            </div>
+-          ) : (
+-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+-              {reviewsList.map((review: any, idx: number) => (
+-                <div key={idx} className="p-8 border border-zinc-800 bg-zinc-900 flex flex-col justify-between">
+-                  <div>
+-                    <div className="flex text-primary-container mb-6">
+-                      {Array.from({ length: Math.min(5, Math.max(1, Number(review.rating || 5))) }).map((_, i) => (
+-                        <span key={i} className="material-symbols-outlined">star</span>
+-                      ))}
+-                    </div>
+-                    <p className="italic text-zinc-300 mb-8 font-body-lg">
+-                      &ldquo;{review.text}&rdquo;
+-                    </p>
+-                  </div>
+-                  <div>
+-                    <p className="font-bold">{review.name}</p>
+-                    <p className="text-sm text-zinc-500 uppercase tracking-widest">{review.role}</p>
+-                  </div>
+-                </div>
+-              ))}
+-            </div>
+-          )}
+-        </div>
+-      </section>
+-
+-      {/* 8. About Raghav */}
+-      <section className="py-section-padding-desktop px-gutter bg-white" id="about">
+-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+-          <div className="relative order-2 lg:order-1">
+-            <div className="aspect-[4/5] bg-zinc-100 border-2 border-text-primary overflow-hidden relative">
+-              <Image
+-                alt="Portrait of Raghav, systems strategist"
+-                className="object-cover grayscale contrast-125"
+-                src={ownerPhoto}
+-                fill
+-                sizes="(max-width: 1024px) 100vw, 500px"
+-              />
+-            </div>
+-            <div className="absolute -bottom-10 -right-10 bg-primary-container p-10 border-2 border-text-primary shadow-[10px_10px_0px_0px_rgba(10,10,10,1)] hidden md:block">
+-              <div className="text-4xl font-black">50+</div>
+-              <div className="font-bold text-sm uppercase">SMEs Optimized</div>
+-            </div>
+-          </div>
+-          <div className="order-1 lg:order-2">
+-            <p className="font-section-label text-section-label text-text-primary mb-4 uppercase tracking-[0.2em]">
+-              THE STRATEGIST
+-            </p>
+-            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">Meet Raghav</h2>
+-            <div className="space-y-6 font-body-lg text-on-surface-variant">
+-              <p>I don&apos;t believe in &ldquo;management jargon.&rdquo; I believe in systems that work even when you aren&apos;t looking.</p>
+-              <p>
+-                Having worked with over 50 traditional businesses across India, I&apos;ve seen that the biggest
+-                bottleneck isn&apos;t capital or talentΓÇöit&apos;s the <strong>founder&apos;s time.</strong>
+-              </p>
+-              <p>
+-                I help SME owners bridge the gap between traditional grit and modern efficiency. My mission is to help
+-                you build a business that serves your life, not a life that serves your business.
+-              </p>
+-            </div>
+-            <div className="mt-12 grid grid-cols-2 gap-8 border-t border-zinc-100 pt-8">
+-              <div>
+-                <h4 className="font-black text-2xl">8+ Years</h4>
+-                <p className="text-sm uppercase font-bold text-zinc-400">Experience</p>
+-              </div>
+-              <div>
+-                <h4 className="font-black text-2xl">100%</h4>
+-                <p className="text-sm uppercase font-bold text-zinc-400">Practicality</p>
+-              </div>
+-            </div>
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 9. Guarantee */}
+-      <section className="bg-primary-container py-24 px-gutter text-center border-y-2 border-text-primary">
+-        <div className="max-w-[800px] mx-auto">
+-          <span className="material-symbols-outlined text-text-primary text-6xl mb-6">workspace_premium</span>
+-          <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-6">
+-            The &ldquo;No-Risk&rdquo; Guarantee
+-          </h2>
+-          <p className="font-body-lg text-on-primary-container mb-10">
+-            If you feel the session didn&apos;t provide at least 10x the value of your investment within the first 30
+-            minutes, tell me. I&apos;ll refund your {priceText} instantly. No questions asked. We only want happy clients.
+-          </p>
+-          <Link
+-            className="inline-block bg-text-primary text-white font-bold uppercase py-5 px-12 hover:bg-zinc-800 transition-colors"
+-            href="/booking"
+-          >
+-            I&apos;M READY TO SCALE
+-          </Link>
+-        </div>
+-      </section>
+-
+-      {/* 10. FAQ */}
+-      <section className="py-section-padding-desktop px-gutter bg-white" id="faq">
+-        <div className="max-w-[800px] mx-auto">
+-          <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-center mb-16">
+-            Frequently Asked
+-          </h2>
+-          <div className="space-y-4">
+-            {faqsList.map((faq: any, idx: number) => (
+-              <details key={idx} className="group border-2 border-text-primary">
+-                <summary className="list-none p-6 font-bold text-lg cursor-pointer flex justify-between items-center bg-white group-open:bg-zinc-50 select-none">
+-                  {faq.question}
+-                  <span className="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+-                </summary>
+-                <div className="p-6 pt-0 text-on-surface-variant border-t border-zinc-100">
+-                  {faq.answer}
+-                </div>
+-              </details>
+-            ))}
+-          </div>
+-        </div>
+-      </section>
+-
+-      {/* 11. Final CTA */}
+-      <section className="bg-text-primary text-white py-24 px-gutter text-center relative overflow-hidden" id="book">
+-        <div className="absolute top-0 left-0 w-full h-1 bg-primary-container"></div>
+-        <div className="max-w-[700px] mx-auto relative z-10">
+-          <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-8">
+-            Stop fire-fighting. <br />
+-            Start leading.
+-          </h2>
+-          <p className="text-zinc-400 mb-12 text-lg">
+-            Book your Systems Strategy Session today and get the roadmap to a business that runs itself.
+-          </p>
+-          <div className="bg-zinc-900 border border-zinc-800 p-8 md:p-12">
+-            <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+-              <div className="text-left w-full md:w-auto">
+-                <p className="text-sm font-bold uppercase tracking-widest text-primary-container mb-2">Investment</p>
+-                <p className="text-4xl font-black">
+-                  {priceText}<span className="text-lg text-zinc-500 font-normal line-through ml-3">Γé╣4,999</span>
+-                </p>
+-              </div>
+-              <Link
+-                className="w-full md:w-auto bg-primary-container text-text-primary font-black px-12 py-6 text-xl hover:brightness-110 transition-all flex items-center justify-center gap-3 border-2 border-text-primary"
+-                href="/booking"
+-              >
+-                SECURE MY SLOT
+-                <span className="material-symbols-outlined">bolt</span>
+-              </Link>
+-            </div>
+-            <p className="mt-8 text-sm text-zinc-500">Only 4 slots available for this week.</p>
+-          </div>
+-        </div>
+-      </section>
++    // overflow-x-clip (not -hidden): "hidden" turns this wrapper into a scroll
++    // container, which silently breaks the sticky nav inside it.
++    <div className={`${montserrat.className} bg-white text-[#111111] overflow-x-clip`}>
++      <HomeNav />
++      <Hero />
++      <SoundFamiliar />
++      <StatBand />
++      <CheckBml />
++      <WhatWeDo />
++      <ProductTracking />
++      <AboutUs />
++      <Testimonials reviews={reviews} />
++      <HowItWorks />
++      <ReadyCta />
++      <HomeFooter />
+     </div>
+   );
+ }
+diff --git a/app/layout.tsx b/app/layout.tsx
+index ad024d6..b78c0b5 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -64,7 +64,7 @@ function SiteFooter() {
+         {/* Right Links */}
+         <div className="flex flex-wrap gap-x-8 gap-y-4 text-xs md:text-sm font-medium text-white">
+           <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
+-            BML Calculator
++            BIL Calculator
+           </Link>
+           <Link href="/vault" className="hover:text-[#ffd21f] transition-colors">
+             Vault
+diff --git a/app/page.tsx b/app/page.tsx
+index 066ad3e..2705698 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -46,7 +46,7 @@ export default async function LandingPage() {
+   let content = {
+     settings: {
+       pricing_amount: "2999",
+-      owner_photo_url: "/raghav.jpg"
++      owner_photo_url: "/raghav.webp"
+     },
+     faqs: defaultFAQs,
+     reviews: defaultReviews,
+@@ -65,7 +65,7 @@ export default async function LandingPage() {
+           content = {
+             settings: {
+               pricing_amount: data.settings?.pricing_amount || "2999",
+-              owner_photo_url: data.settings?.owner_photo_url || "/raghav.jpg"
++              owner_photo_url: data.settings?.owner_photo_url || "/raghav.webp"
+             },
+             faqs: data.faqs && data.faqs.length > 0 ? data.faqs : defaultFAQs,
+             reviews: data.reviews && data.reviews.length > 0 ? data.reviews : defaultReviews,
+diff --git a/app/vault/vault-client.tsx b/app/vault/vault-client.tsx
+index 6efda5d..fe0dc76 100644
+--- a/app/vault/vault-client.tsx
++++ b/app/vault/vault-client.tsx
+@@ -374,12 +374,12 @@ export default function VaultPage({ content }: { content: any }) {
+         </div>
+       </section>
+ 
+-      {/* Section 2: Primary CTA (BML Calculator) */}
++      {/* Section 2: Primary CTA (BIL Calculator) */}
+       <section className="bg-text-primary py-16 px-gutter">
+         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+           <div className="max-w-xl">
+             <h2 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container mb-4">
+-              Start Here: BML Calculator
++              Start Here: BIL Calculator
+             </h2>
+             <p className="font-body-lg text-body-lg text-white">
+               2 minute ka diagnostic jo batata hai aapka business aap pe kitna depend karta hai ΓÇö aur kahan system lagana hai.
+diff --git a/design-reference/landing-mobile.png b/design-reference/landing-mobile.png
+new file mode 100644
+index 0000000..543800b
+Binary files /dev/null and b/design-reference/landing-mobile.png differ
+diff --git a/public/case-manufacturing.png b/public/case-manufacturing.png
+new file mode 100644
+index 0000000..5ab4a1a
+Binary files /dev/null and b/public/case-manufacturing.png differ
+diff --git a/public/case-qsr.png b/public/case-qsr.png
+new file mode 100644
+index 0000000..ac8d2de
+Binary files /dev/null and b/public/case-qsr.png differ
+diff --git a/public/case-retail.png b/public/case-retail.png
+new file mode 100644
+index 0000000..3a04578
+Binary files /dev/null and b/public/case-retail.png differ
+diff --git a/public/dashboard.png b/public/dashboard.png
+new file mode 100644
+index 0000000..23f8660
+Binary files /dev/null and b/public/dashboard.png differ
+diff --git a/public/data-banner.png b/public/data-banner.png
+new file mode 100644
+index 0000000..8f42bba
+Binary files /dev/null and b/public/data-banner.png differ
+diff --git a/public/factory_banner.png b/public/factory_banner.png
+deleted file mode 100644
+index 0e201aa..0000000
+Binary files a/public/factory_banner.png and /dev/null differ
+diff --git a/public/factory_banner.webp b/public/factory_banner.webp
+new file mode 100644
+index 0000000..5de8751
+Binary files /dev/null and b/public/factory_banner.webp differ
+diff --git a/public/familiar-cashflow.png b/public/familiar-cashflow.png
+new file mode 100644
+index 0000000..7711c23
+Binary files /dev/null and b/public/familiar-cashflow.png differ
+diff --git a/public/familiar-chhuti.png b/public/familiar-chhuti.png
+new file mode 100644
+index 0000000..7463c1e
+Binary files /dev/null and b/public/familiar-chhuti.png differ
+diff --git a/public/familiar-muneem.png b/public/familiar-muneem.png
+new file mode 100644
+index 0000000..369a193
+Binary files /dev/null and b/public/familiar-muneem.png differ
+diff --git a/public/hero-owner.png b/public/hero-owner.png
+new file mode 100644
+index 0000000..58831aa
+Binary files /dev/null and b/public/hero-owner.png differ
+diff --git a/public/iit-dhanbad.png b/public/iit-dhanbad.png
+new file mode 100644
+index 0000000..09ae611
+Binary files /dev/null and b/public/iit-dhanbad.png differ
+diff --git a/public/logo-mark.png b/public/logo-mark.png
+new file mode 100644
+index 0000000..7fd42d5
+Binary files /dev/null and b/public/logo-mark.png differ
+diff --git a/public/pyramid.webp b/public/pyramid.webp
+new file mode 100644
+index 0000000..c6d9a72
+Binary files /dev/null and b/public/pyramid.webp differ
+diff --git a/public/raghav.jpg b/public/raghav.jpg
+deleted file mode 100644
+index 5c5d568..0000000
+Binary files a/public/raghav.jpg and /dev/null differ
+diff --git a/public/raghav.webp b/public/raghav.webp
+new file mode 100644
+index 0000000..66c0110
+Binary files /dev/null and b/public/raghav.webp differ

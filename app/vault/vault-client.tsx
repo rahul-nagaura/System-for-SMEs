@@ -374,12 +374,12 @@ export default function VaultPage({ content }: { content: any }) {
         </div>
       </section>
 
-      {/* Section 2: Primary CTA (BML Calculator) */}
+      {/* Section 2: Primary CTA (BIL Calculator) */}
       <section className="bg-text-primary py-16 px-gutter">
         <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="max-w-xl">
             <h2 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary-container mb-4">
-              Start Here: BML Calculator
+              Start Here: BIL Calculator
             </h2>
             <p className="font-body-lg text-body-lg text-white">
               2 minute ka diagnostic jo batata hai aapka business aap pe kitna depend karta hai — aur kahan system lagana hai.

@@ -25,7 +25,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={inter.className} data-scroll-behavior="smooth">
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
@@ -64,7 +64,7 @@ function SiteFooter() {
         {/* Right Links */}
         <div className="flex flex-wrap gap-x-8 gap-y-4 text-xs md:text-sm font-medium text-white">
           <Link href="/bml" className="hover:text-[#ffd21f] transition-colors">
-            BML Calculator
+            BIL Calculator
           </Link>
           <Link href="/vault" className="hover:text-[#ffd21f] transition-colors">
             Vault
