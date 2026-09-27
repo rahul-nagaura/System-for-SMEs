@@ -322,10 +322,10 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
                       <span className="text-[14px] font-semibold">{text.pillarLabels[pillar]}</span>
                       <span className="text-[13px] text-[#8A8A8A] font-medium">{value}%</span>
                     </div>
-                    {isWeak && <div className="text-[9.5px] tracking-[0.2em] uppercase font-bold" style={{ color: GOLD_DEEP }}>{t.weakestCaption}</div>}
                     <div className="h-[3px] bg-[#EDEDED] rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-700" style={{ width: `${value}%`, backgroundColor: isWeak ? GOLD_DEEP : INK }} />
                     </div>
+                    {isWeak && <div className="text-[9.5px] tracking-[0.2em] uppercase font-bold" style={{ color: GOLD_DEEP }}>{t.weakestCaption}</div>}
                   </div>
                 );
               })}
