@@ -224,16 +224,20 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
     };
 
     try {
-      await fetch("/api/bil-submit", {
+      const res = await fetch("/api/bil-submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (!res.ok) {
+        throw new Error("Validation failed or server error");
+      }
+      setStep(10);
     } catch (err) {
       console.error("Failed to submit BIL lead:", err);
+      alert("There was an issue submitting your results. Please check your inputs and try again.");
     } finally {
       setIsSubmitting(false);
-      setStep(10);
     }
   };
 

@@ -61,7 +61,45 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
-    // ACTION 2: Submit Onboarding Booking details
+    // ACTION 2: Submit BIL V2 Quiz results
+    if (action === 'submitBil') {
+      var bilSheet = sheet.getSheetByName('BIL_Leads');
+      if (!bilSheet) {
+        return ContentService.createTextOutput(JSON.stringify({ success: false, error: "BIL_Leads sheet not found" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      // Append row for clean V2 BIL format
+      bilSheet.appendRow([
+        new Date(),
+        data.name || '',
+        data.businessName || '',
+        data.email || '',
+        data.whatsapp || '',
+        data.category || '',
+        data.revenueBracket || '',
+        data.totalScore || '',
+        data.levelName || '',
+        data.weakestPillar || '',
+        data.operationalEfficiencyPct !== undefined ? data.operationalEfficiencyPct : '',
+        data.humanCapitalPct !== undefined ? data.humanCapitalPct : '',
+        data.customerAcquisitionPct !== undefined ? data.customerAcquisitionPct : '',
+        data.dataVisibilityPct !== undefined ? data.dataVisibilityPct : '',
+        data.q1 || '',
+        data.q2 || '',
+        data.q3 || '',
+        data.q4 || '',
+        data.q5 || '',
+        data.q6 || '',
+        data.q7 || '',
+        data.q8 || ''
+      ]);
+      
+      return ContentService.createTextOutput(JSON.stringify({ success: true }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // ACTION 3: Submit Onboarding Booking details
     if (action === 'submitBooking') {
       var resultsSheet = sheet.getSheetByName('Results');
       if (!resultsSheet) {

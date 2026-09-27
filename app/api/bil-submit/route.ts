@@ -103,8 +103,8 @@ export async function POST(request: Request) {
   }
 
   const payload = {
-    action: "submitBil",
     ...body,
+    action: "submitBil",
     name: sanitize(rawName),
     businessName: sanitize(rawBusinessName),
     whatsapp: sanitize(rawPhone),
@@ -127,6 +127,13 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       throw new Error(`Google Web App returned status ${response.status}`);
+    }
+    
+    // Parse the JSON response from Google Apps Script
+    const data = await response.json();
+    if (data && data.success === false) {
+       console.error("Google Apps Script returned an error:", data.error);
+       return NextResponse.json({ success: false, error: data.error }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, message: "Submission received" });

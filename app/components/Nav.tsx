@@ -37,7 +37,7 @@ export default function Nav({
             width={40}
             height={40}
             className="w-8 h-8 min-[360px]:w-9 min-[360px]:h-9 sm:w-10 sm:h-10 flex-shrink-0"
-            priority
+            preload={true}
           />
           <span className="font-extrabold text-[15px] min-[360px]:text-[17px] sm:text-xl tracking-tight text-[#080808]">
             Systems for SME
