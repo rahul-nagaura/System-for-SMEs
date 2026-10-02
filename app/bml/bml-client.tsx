@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
 import { categories, revenueBrackets, type CategoryId, type PillarId } from "./bml-data";
@@ -72,6 +72,181 @@ function Avatar({ index }: { index: number }) {
         <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" fill={INK} fillOpacity="0.5" />
       </svg>
     </span>
+  );
+}
+
+/* The explainer video. It sits far down the results page, so nothing is downloaded
+   until the card is about to scroll into view (`preload="none"` + a poster image keep
+   the card looking finished meanwhile). In view it plays muted and looping; out of view
+   it pauses.
+   Controls (like the Figma reference): tap/click anywhere on the video to pause/play, and
+   a big play icon shows while it is paused. A bottom bar with play/pause, mute and a seek
+   line appears while the mouse hovers the video (or a keyboard user tabs into it). Touch
+   screens have no hover, so the first tap only reveals the bar (it hides again after a
+   few seconds) and later taps pause/play. A manual pause is respected: scrolling away and
+   back does not restart it. Visitors who prefer reduced motion get no autoplay. */
+type VslLabels = { play: string; pause: string; mute: string; unmute: string; seek: string };
+
+function VslVideo({ label, labels }: { label: string; labels: VslLabels }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const userPaused = useRef(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tapOnlyRevealed = useRef(false);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [time, setTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [controlsVisible, setControlsVisible] = useState(false);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!userPaused.current) video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { rootMargin: "200px 0px", threshold: 0.25 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    },
+    []
+  );
+
+  const showControls = (autoHideMs?: number) => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    setControlsVisible(true);
+    if (autoHideMs) hideTimer.current = setTimeout(() => setControlsVisible(false), autoHideMs);
+  };
+  const hideControls = () => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+    setControlsVisible(false);
+  };
+
+  const togglePlay = () => {
+    const video = ref.current;
+    if (!video) return;
+    if (video.paused) {
+      userPaused.current = false;
+      video.play().catch(() => {});
+    } else {
+      userPaused.current = true;
+      video.pause();
+    }
+  };
+
+  const toggleMute = () => {
+    const video = ref.current;
+    if (video) video.muted = !video.muted;
+  };
+
+  const seek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const video = ref.current;
+    if (!video) return;
+    video.currentTime = Number(e.target.value);
+    setTime(video.currentTime);
+  };
+
+  const barButton =
+    "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-white transition hover:bg-white/15 active:scale-95 focus-visible:outline-2 focus-visible:outline-[#FCD12A]";
+
+  return (
+    <div
+      className="relative aspect-video w-full overflow-hidden rounded-2xl"
+      style={{ backgroundColor: INK }}
+      onPointerEnter={(e) => e.pointerType !== "touch" && showControls()}
+      onPointerLeave={(e) => e.pointerType !== "touch" && hideControls()}
+      onPointerDown={(e) => {
+        if (e.pointerType !== "touch") return;
+        tapOnlyRevealed.current = !controlsVisible; // the first touch only reveals the bar
+        showControls(3000);
+      }}
+      onFocus={(e) => e.target.matches(":focus-visible") && showControls()}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) hideControls();
+      }}
+    >
+      <video
+        ref={ref}
+        className="h-full w-full object-cover"
+        poster="/bil-vsl-poster.webp"
+        preload="none"
+        muted
+        loop
+        playsInline
+        aria-label={label}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onVolumeChange={(e) => setMuted(e.currentTarget.muted)}
+        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+        onDurationChange={(e) => setDuration(Number.isFinite(e.currentTarget.duration) ? e.currentTarget.duration : 0)}
+      >
+        <source src="/bil-vsl.mp4" type="video/mp4" />
+      </video>
+      {/* Big play icon while paused (decorative — taps pass through to the button below). */}
+      {!playing && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </div>
+      )}
+      {/* Invisible full-size button: tap anywhere on the video to pause/play. It is a real
+          button so keyboard and screen-reader users can pause/play too. */}
+      <button
+        type="button"
+        onClick={() => {
+          if (tapOnlyRevealed.current) {
+            tapOnlyRevealed.current = false;
+            return;
+          }
+          togglePlay();
+        }}
+        aria-label={playing ? labels.pause : labels.play}
+        className="absolute inset-0 h-full w-full cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#FCD12A]"
+      />
+      {/* Control bar — only visible on hover / keyboard focus / just after a touch. */}
+      <div
+        className={`absolute inset-x-0 bottom-0 flex h-11 items-center gap-1 bg-black/70 px-2 backdrop-blur-sm transition-opacity duration-200 ${
+          controlsVisible ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button type="button" onClick={togglePlay} aria-label={playing ? labels.pause : labels.play} className={barButton}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            {playing ? <path d="M7 5h4v14H7zM13 5h4v14h-4z" /> : <path d="M8 5v14l11-7z" />}
+          </svg>
+        </button>
+        <button type="button" onClick={toggleMute} aria-label={muted ? labels.unmute : labels.mute} className={barButton}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 9v6h4l5 4V5L8 9H4z" strokeWidth="1" />
+            {muted ? <path d="M17 9l5 6M22 9l-5 6" fill="none" /> : <path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" />}
+          </svg>
+        </button>
+        <input
+          type="range"
+          min={0}
+          max={duration || 1}
+          step={0.1}
+          value={Math.min(time, duration || 1)}
+          onChange={seek}
+          disabled={!duration}
+          aria-label={labels.seek}
+          className="mx-2 h-1 min-w-0 flex-1 cursor-pointer accent-[#FCD12A]"
+        />
+      </div>
+    </div>
   );
 }
 
@@ -358,18 +533,9 @@ export default function BILCalculator({ pricingAmount = "4,999" }: { pricingAmou
             <p className="text-[14.5px] leading-relaxed text-[#555555]">{t.costFragment}</p>
           </section>
 
-          {/* VSL — dark card. Drop the real file at /public/bil-vsl.mp4 and swap
-              this placeholder for a <video> tag (muted autoPlay loop playsInline)
-              with burned-in captions when ready. */}
+          {/* VSL — the 45s explainer (public/bil-vsl.mp4, burned-in captions) */}
           <section className="pb-9">
-            <div className="relative aspect-video w-full rounded-2xl flex flex-col items-center justify-center gap-3" style={{ backgroundColor: INK }}>
-              <span className="w-14 h-14 rounded-full border-2 flex items-center justify-center" style={{ borderColor: GOLD_DEEP, color: GOLD_DEEP }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-              </span>
-              <span className="text-xs uppercase tracking-widest font-semibold text-white/75">{t.vslPlaceholder}</span>
-              <span className="text-[11px] text-white/40">{t.vslCaption}</span>
-              <span className="text-[11px] text-white/30 italic">{t.vslHint}</span>
-            </div>
+            <VslVideo label={t.vslLabel} labels={{ play: t.vslPlay, pause: t.vslPause, mute: t.vslMute, unmute: t.vslUnmute, seek: t.vslSeek }} />
           </section>
 
           {/* Block 6 — What this score can't see */}
