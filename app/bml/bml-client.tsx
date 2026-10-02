@@ -215,7 +215,7 @@ function VslVideo({ label, labels }: { label: string; labels: VslLabels }) {
           togglePlay();
         }}
         aria-label={playing ? labels.pause : labels.play}
-        className="absolute inset-0 h-full w-full cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#FCD12A]"
+        className="absolute inset-0 h-full w-full cursor-pointer focus-visible:outline-none"
       />
       {/* Control bar — only visible on hover / keyboard focus / just after a touch. */}
       <div
