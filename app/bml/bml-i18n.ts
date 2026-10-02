@@ -136,9 +136,13 @@ export interface UiText {
   openLoopFooter: string;
 
   // VSL
-  vslPlaceholder: string;
-  vslCaption: string;
-  vslHint: string;
+  /** Accessible name for the explainer video (not shown on screen). */
+  vslLabel: string;
+  vslPlay: string;
+  vslPause: string;
+  vslMute: string;
+  vslUnmute: string;
+  vslSeek: string;
 
   // Block 7 — CTA
   nextStepEyebrow: string;
@@ -265,9 +269,12 @@ const en: BilText = {
     ],
     openLoopFooter: "These need someone to look at your actual business.",
 
-    vslPlaceholder: "VSL placeholder",
-    vslCaption: "60 sec · muted autoplay · burned-in captions",
-    vslHint: "( real video appears here )",
+    vslLabel: "Short explainer video",
+    vslPlay: "Play video",
+    vslPause: "Pause video",
+    vslMute: "Mute",
+    vslUnmute: "Unmute",
+    vslSeek: "Video progress",
 
     nextStepEyebrow: "The next step",
     ctaHeadline: "Raise your Independence Score in 60 minutes.",
@@ -626,9 +633,12 @@ const hi: BilText = {
     ],
     openLoopFooter: "इनके लिए किसी को आपके असली बिज़नेस को देखना होगा।",
 
-    vslPlaceholder: "VSL प्लेसहोल्डर",
-    vslCaption: "60 सेकंड · म्यूट ऑटोप्ले · बर्न-इन कैप्शन",
-    vslHint: "( यहाँ असली वीडियो आएगा )",
+    vslLabel: "छोटा समझाने वाला वीडियो",
+    vslPlay: "वीडियो चलाएँ",
+    vslPause: "वीडियो रोकें",
+    vslMute: "आवाज़ बंद करें",
+    vslUnmute: "आवाज़ चालू करें",
+    vslSeek: "वीडियो की प्रगति",
 
     nextStepEyebrow: "अगला कदम",
     ctaHeadline: "60 मिनट में अपना इंडिपेंडेंस स्कोर बढ़ाएँ।",
